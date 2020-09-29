@@ -1,2 +1,3 @@
-# tools-for-gossip
-BSc project
+# Tools for Gossip
+
+BSc Project
