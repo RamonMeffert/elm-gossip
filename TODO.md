@@ -27,6 +27,7 @@ This file will act as both a to-do list and a log of finished features.
 - [ ] Permissibility
 - [ ] UI/UX ![low]
   - [ ] Make calls draggable elements (for easy call reordering)
+  - [ ] Timeline navigation (previous/next call buttons)
 
 ### Gossip graph representation
 
@@ -36,10 +37,15 @@ This file will act as both a to-do list and a log of finished features.
   - [ ] Connectedness
   - [ ] Sun graph Y/N
 - [ ] Visualize gossip graph
-  - [ ] ![hi] Integrate [elm-community/graph](https://package.elm-lang.org/packages/elm-community/graph/latest/) (works w/ graphviz/viz.js) 
+  - [ ] Pick graph rendering library. Options:
+    - [dagre-d3](https://github.com/dagrejs/dagre-d3)
+    - [d3-graphviz](https://github.com/magjac/d3-graphviz)
+    - [viz.js](https://github.com/mdaines/viz.js/) (deprecated)
+    - [elm-visualization](https://github.com/gampleman/elm-visualization)
 - [ ] ![low] UI/UX
   - [ ] ![maybe] Allow multiple text representations[^1] of graphs as input[^3]
-  - [ ] ![maybe] WYSIWYG graph editing[^4] 
+  - [ ] ![maybe] WYSIWYG graph editing[^4]
+- [x] [09-10-2020] ~~Integrate [elm-community/graph](https://package.elm-lang.org/packages/elm-community/graph/latest/)~~
 - [x] [29-09-2020] ~~Write parser for short[^2] gossip graph representation~~
 
 ### Execution tree visualisation
@@ -47,11 +53,12 @@ This file will act as both a to-do list and a log of finished features.
 - [ ] Limitation on n. of agents (trees get big fast)
 - [ ] (More items T.B.D.)
 
-
 ### Miscellaneous
 
 - [ ] ![low] Make the app look good
 - [ ] Make code [citable](https://guides.github.com/activities/citable-code/) when a release version is done
+- [ ] Figure out fitting license
+- [ ] Clean up code and make sure documentation is complete
 
 <!-- Footnotes -->
 
