@@ -43,6 +43,7 @@ This file will act as both a to-do list and a log of finished features.
     - [viz.js](https://github.com/mdaines/viz.js/) (deprecated)
     - [elm-visualization](https://github.com/gampleman/elm-visualization)
 - [ ] ![low] UI/UX
+  - [ ] Currently a bidirectional relation is visualised as two arrows. While technically correct, this should really be one arrow with two heads.
   - [ ] ![maybe] Allow multiple text representations[^1] of graphs as input[^3]
   - [ ] ![maybe] WYSIWYG graph editing[^4]
 - [x] [09-10-2020] ~~Integrate [elm-community/graph](https://package.elm-lang.org/packages/elm-community/graph/latest/)~~
