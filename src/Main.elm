@@ -64,7 +64,11 @@ update msg model =
 view : Model -> Html Message
 view model =
     div [] 
-        [ input [ value model.input, onInput Change ] [ ]
+        [ input [ value model.input, onInput Change, style "width" "400px", placeholder "Gossip graph representation" ] [ ]
         , br [] []
         , textarea [ value model.output, rows 30, cols 80 ] [ ]
+        , br [] []
+        , text "You can use "
+        , a [ href "http://webgraphviz.com/" ] [ text "WebGraphViz" ]
+        , text " to visualise the DOT code generated above."
         ]
