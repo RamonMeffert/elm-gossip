@@ -1,12 +1,15 @@
 {-
-This module basically contains functions I'd wish Elm had natively,
+This module basically contains functions on lists I'd wish Elm had natively,
 but it doesn't. So I've made them myself. Mostly based off of Haskell functions.
 -}
 
-module Helpers exposing (..)
+module ListHelpers exposing (distinct, takeWhile)
 
 
--- returns the unique items in a list
+{-| Returns the unique elements in a list.
+
+    distinct ['a', 'a', 'a'] == ['a']
+-}
 distinct : List a -> List a
 distinct list =
     let
@@ -19,7 +22,11 @@ distinct list =
     in
     distinctAcc list []
 
--- returns the items in a list up until an item matching a function is given
+
+{-| Returns the items in a list up until an item matching a function is given.
+
+    takeWhile (\n -> n < 5) [1, 3, 5, 7] == [1, 3]
+-}
 takeWhile : (a -> Bool) -> List a -> List a
 takeWhile f xs = 
     let 

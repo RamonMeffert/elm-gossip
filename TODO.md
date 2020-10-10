@@ -32,22 +32,22 @@ This file will act as both a to-do list and a log of finished features.
 ### Gossip graph representation
 
 - [ ] Input validation
-  - Every agent should at least have their own number
+  - Every agent should at least have their own number[^5]
 - [ ] Graph analysis
   - [ ] Connectedness
   - [ ] Sun graph Y/N
 - [ ] Visualize gossip graph
+  - [x] [29-09-2020] ~~Write parser for short[^2] gossip graph representation~~
+  - [x] [09-10-2020] ~~Integrate [elm-community/graph](https://package.elm-lang.org/packages/elm-community/graph/latest/)~~
   - [ ] Pick graph rendering library. Options:
     - [dagre-d3](https://github.com/dagrejs/dagre-d3)
     - [d3-graphviz](https://github.com/magjac/d3-graphviz)
     - [viz.js](https://github.com/mdaines/viz.js/) (deprecated)
     - [elm-visualization](https://github.com/gampleman/elm-visualization)
 - [ ] ![low] UI/UX
-  - [ ] Currently a bidirectional relation is visualised as two arrows. While technically correct, this should really be one arrow with two heads.
+  - [x] [10-10-2020] ~~Currently a bidirectional relation is visualised as two arrows. While technically correct, this should really be one arrow with two heads.~~
   - [ ] ![maybe] Allow multiple text representations[^1] of graphs as input[^3]
   - [ ] ![maybe] WYSIWYG graph editing[^4]
-- [x] [09-10-2020] ~~Integrate [elm-community/graph](https://package.elm-lang.org/packages/elm-community/graph/latest/)~~
-- [x] [29-09-2020] ~~Write parser for short[^2] gossip graph representation~~
 
 ### Execution tree visualisation
 
@@ -67,6 +67,7 @@ This file will act as both a to-do list and a log of finished features.
 [^2]: As seen in van Ditmarsch, H., Gattinger, M., Kuijer, L. B., & Pardo, P. (2019). Strengthening Gossip Protocols using Protocol-Dependent Knowledge. _Journal of Applied Logics_, 6(1), 157–203.
 [^3]: This might be hard, as generic input is not guaranteed to represent a gossip graph. Also might be hard to detect input type, but users could also select that manually.
 [^4]: Quite hard, depending on what the libs support
+[^5]: Maybe? Currently, it is possible to have a set of agents where only one agent has information, e.g. `"␣␣abc"` (␣ is a space). This notation indicates that agents `a` and `b` know nothing, and agent `c` has the numbers of `a`, `b` and `c`.
 
 <!-- Images -->
 
