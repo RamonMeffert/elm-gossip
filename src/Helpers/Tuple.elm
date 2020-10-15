@@ -1,4 +1,4 @@
-module TupleHelpers exposing (..)
+module Helpers.Tuple exposing (..)
 
 
 reverse : (a, a) -> (a,a)

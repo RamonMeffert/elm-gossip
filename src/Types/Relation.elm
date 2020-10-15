@@ -1,4 +1,4 @@
-module Relation exposing (..)
+module Types.Relation exposing (..)
 import Graph exposing (Edge)
 import Dict exposing (Dict)
 

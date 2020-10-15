@@ -1,4 +1,4 @@
-module Agent exposing (..)
+module Types.Agent exposing (..)
 import Graph exposing (Node)
 import Dict exposing (Dict)
 

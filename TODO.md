@@ -43,7 +43,7 @@ This file will act as both a to-do list and a log of finished features.
 - [ ] Visualize gossip graph ![eval1]
   - [x] [29-09-2020] ~~Write parser for short[^2] gossip graph representation~~
   - [x] [09-10-2020] ~~Integrate [elm-community/graph](https://package.elm-lang.org/packages/elm-community/graph/latest/)~~
-  - [ ] Pick graph rendering library. 
+  - [ ] Pick graph rendering library.
     - [dagre-d3](https://github.com/dagrejs/dagre-d3)
     - [d3-graphviz](https://github.com/magjac/d3-graphviz)
     - [viz.js](https://github.com/mdaines/viz.js/) (deprecated)

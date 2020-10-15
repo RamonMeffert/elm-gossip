@@ -1,9 +1,4 @@
-{-
-This module basically contains functions on lists I'd wish Elm had natively,
-but it doesn't. So I've made them myself. Mostly based off of Haskell functions.
--}
-
-module ListHelpers exposing (distinct, takeWhile)
+module Helpers.List exposing (distinct, takeWhile)
 
 
 {-| Returns the unique elements in a list.

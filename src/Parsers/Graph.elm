@@ -1,10 +1,10 @@
-module Parser exposing (..)
+module Parsers.Graph exposing (parse)
 import Graph exposing (..)
 import Array exposing (Array)
-import ListHelpers exposing (distinct)
-import TupleHelpers exposing (reverse)
-import Agent exposing (..)
-import Relation exposing (..)
+import Helpers.List exposing (distinct)
+import Helpers.Tuple exposing (reverse)
+import Types.Agent as Agent exposing (Agent)
+import Types.Relation as Relation exposing (Relation (..), Direction (..))
 import List exposing (..)
 import Debug exposing (..)
 
@@ -72,7 +72,9 @@ toNumberRelations tup =
                         [] -> woDups
                         ((rel, from, to)::wDupsRest) ->
                             if 
-                                rel == Number Monodirectional && (List.member (Number Bidirectional, from, to) relations || List.member (Number Bidirectional, to, from) relations)
+                                rel == Number Monodirectional &&
+                                       (List.member (Number Bidirectional, from, to) relations ||
+                                        List.member (Number Bidirectional, to, from) relations)
                             then 
                                 removeDuplicatesAcc wDupsRest woDups
                             else 
