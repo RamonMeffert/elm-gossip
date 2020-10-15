@@ -4,6 +4,7 @@ import Array exposing (Array)
 import Browser
 import Graph exposing (Graph)
 import Graph.DOT
+import Graph.DOT exposing (defaultStyles)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -60,11 +61,16 @@ update msg model =
                 (agents, relations) = GossipGraph.parse input
 
                 graph = GossipGraph.fromAgentsAndRelations agents relations
+
+                styles = 
+                    { defaultStyles 
+                    | rankdir = Graph.DOT.LR 
+                    }
             in
             { model
                 | input = input
                 , graph = graph
-                , output = Graph.DOT.outputWithStylesAndAttributes Graph.DOT.defaultStyles Agent.getDotAttrs Relation.getDotAttrs graph
+                , output = Graph.DOT.outputWithStylesAndAttributes styles Agent.getDotAttrs Relation.getDotAttrs graph
                 , agents = agents
                 , relations = relations
             }

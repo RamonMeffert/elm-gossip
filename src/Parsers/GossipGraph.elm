@@ -126,7 +126,7 @@ toRelations kind tuples =
 
                 ( from, to ) :: xs ->
                     if List.any (\r -> r.directed && r.from == to && r.to == from) relations then
-                        toRelationsAcc xs ({ from = from, to = to, directed = False, kind = kind } :: relations)
+                        toRelationsAcc xs ({ from = to, to = from, directed = False, kind = kind } :: relations)
 
                     else
                         toRelationsAcc xs ({ from = from, to = to, directed = True, kind = kind } :: relations)
