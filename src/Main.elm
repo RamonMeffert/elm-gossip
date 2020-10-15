@@ -7,7 +7,7 @@ import Graph.DOT
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Parsers.Graph exposing (parse)
+import Parsers.GossipGraph as GossipGraph
 import Types.Agent as Agent exposing (Agent)
 import Types.Relation as Relation exposing (Relation)
 
@@ -26,9 +26,11 @@ main =
 
 
 type alias Model =
-    { input : String
-    , output : String
-    , graph : Graph Agent Relation
+    { input     : String
+    , output    : String
+    , graph     : Graph Agent Relation
+    , agents    : List Agent
+    , relations : List Relation
     }
 
 
@@ -37,6 +39,8 @@ init =
     { input = ""
     , output = ""
     , graph = Graph.empty
+    , agents = []
+    , relations = []
     }
 
 
@@ -53,13 +57,16 @@ update msg model =
     case msg of
         Change input ->
             let
-                graph =
-                    parse input
+                (agents, relations) = GossipGraph.parse input
+
+                graph = GossipGraph.fromAgentsAndRelations agents relations
             in
             { model
                 | input = input
                 , graph = graph
-                , output = Graph.DOT.outputWithStylesAndAttributes Graph.DOT.defaultStyles Agent.renderNode Relation.renderEdge graph
+                , output = Graph.DOT.outputWithStylesAndAttributes Graph.DOT.defaultStyles Agent.getDotAttrs Relation.getDotAttrs graph
+                , agents = agents
+                , relations = relations
             }
 
 

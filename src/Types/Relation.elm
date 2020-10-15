@@ -1,25 +1,60 @@
 module Types.Relation exposing (..)
-import Graph exposing (Edge)
+
+{-| The `Relation` type is used to model the relations in a gossip graph.
+
+
+# Definition
+
+@docs Relation, Kind
+
+
+# Helpers
+
+@docs toEdge, getDotAttrs
+
+-}
+
 import Dict exposing (Dict)
+import Graph exposing (Edge)
 
 
-type Direction = Monodirectional | Bidirectional
+{-| A relation in a gossip graph.
+-}
+type alias Relation =
+    { from : Int
+    , to : Int
+    , directed : Bool
+    , kind : Kind
+    }
 
 
-type Relation = Number Direction | Secret Direction
+{-| The kind of knowledge a relation models.
+-}
+type Kind
+    = Number
+    | Secret
 
 
-toEdge : (Relation, Int, Int) -> Edge Relation
-toEdge (rel, from, to) = { from = from, to = to, label = rel }
+{-| Converts a gossip relation to an `Edge` for use with the `elm-community/graph` package.
+-}
+toEdge : Relation -> Edge Relation
+toEdge rel =
+    { from = rel.from, to = rel.to, label = rel }
 
 
-renderEdge : Relation -> Dict String String
-renderEdge e = 
-    if e == (Number Monodirectional) then
-        Dict.singleton "style" "dashed"
-    else if e == (Number Bidirectional) then
-        Dict.fromList [("style", "dashed"), ("dir", "both")]
-    else if e == (Secret Monodirectional) then
-        Dict.empty
-    else
-        Dict.singleton "dir" "both"
+{-| Gets the style attributes for rendering the current relation in a GraphViz graph.
+-}
+getDotAttrs : Relation -> Dict String String
+getDotAttrs e =
+    case ( e.kind, e.directed ) of
+        ( Number, True ) ->
+            Dict.singleton "style" "dashed"
+
+        ( Number, False ) ->
+            Dict.fromList [ ( "style", "dashed" ), ( "dir", "both" ) ]
+
+        ( Secret, True ) ->
+            Dict.empty
+
+        ( Secret, False ) ->
+            Dict.singleton "dir" "both"

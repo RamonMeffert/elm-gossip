@@ -1,21 +1,46 @@
 module Types.Agent exposing (..)
-import Graph exposing (Node)
+
+{-| The `Agent` type is used to model the agents in a gossip graph.
+
+
+# Definition
+
+@docs Agent
+
+
+# Helpers
+
+@docs toNode, getDotAttrs
+
+-}
+
 import Dict exposing (Dict)
+import Graph exposing (Node)
 
 
-
-type alias Agent = 
+{-| An agent in a gossip graph.
+-}
+type alias Agent =
     { id : Int
-    , name : Char 
+    , name : Char
     }
 
-{-| Converts an agent with an id to a Graph.Node.
 
-    toNode 1 'A' == Node { id = 1, label = 'A' }
+{-| Converts an agent to a `Node` for use with the `elm-community/graph` package.
+
+    toNode 1 'A' == { id = 1, label = 'A' }
+
 -}
 toNode : Agent -> Node Agent
-toNode agent = { id = agent.id, label = agent }
+toNode agent =
+    { id = agent.id, label = agent }
 
 
-renderNode : Agent -> Dict String String
-renderNode a = Dict.singleton "label" (String.fromChar a.name)
+{-| Gets the style attributes for rendering the current agent as a node in a GraphViz graph.
+
+    getDotAttrs { id = 0, name = 'A' } == Dict.singleton "label" "A"
+
+-}
+getDotAttrs : Agent -> Dict String String
+getDotAttrs a =
+    Dict.singleton "label" (String.fromChar a.name)
