@@ -7,7 +7,7 @@ accross while working on this project.
 
 October 16, 2020
 
-These thing's don't really matter, but they do bother me a bit:
+These thing's don't really matter, but they do bother me a bit. Do note that I still _like_ elm, it's just that sometimes I miss features and/or syntax from other languages.
 
 ### Pattern matching
 
@@ -33,7 +33,7 @@ match list =
                     (-1 :: match xs)
 ```
 
-In Haskell, this would like like this:
+In Haskell, this would like like this. We can use the fact that you can match patterns in the function definition as well as guards<sup>1</sup> to make the code a lot more compact.
 
 ```haskell
 match :: [Int] -> [Int]
@@ -44,7 +44,7 @@ match (x:xs)
     | otherwise = (-1 : match xs)
 ```
 
-See what I mean? The `case` statement looks the cleanest to me in most scenarios, but it often does not suffice, leaving you to the `if`-`else` construction that, granted, takes up fewer lines, but does introduce more visual clutter:
+See what I mean? In Elm, the `case` statement looks the cleanest to me in most scenarios, but it often does not suffice, leaving you to the `if`-`else` construction that, granted, takes up fewer lines, but does introduce more visual clutter (note how the conditions aren't aligned):
 
 ```elm
 match : List Int -> List Int
@@ -71,6 +71,20 @@ _Why_ aren't strings lists. Every other functional language does this, but in El
 ### Method signatures and concat
 
 _Why_ did Elm feel the need to switch the `:` and `::` operators. Both F# and Haskell, which I think were the main inspirations for Elm, have them the other way around.
+
+### Shorthand (?) lambda functions
+
+This is a really minor nitpick, but I just like writing `filter (==5) [..]` a bit better than `filter (\x -> x == 5) [..]`.
+
+<sup><sup>1</sup> It seems like elm [used to have guards][guards], but they were removed for some reason.</sup>
+
+[guards]: https://stackoverflow.com/a/23201661/4545692
+
+### (Infix) operators
+
+The ability to define infix operators was [removed in Elm 0.19][infix-removed]. Huh. No `(!!)` for me I guess
+
+[infix-removed]: https://gist.github.com/evancz/769bba8abb9ddc3bf81d69fa80cc76b1#root-design-goal
 
 ## Validation
 
