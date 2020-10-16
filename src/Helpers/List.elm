@@ -1,4 +1,9 @@
-module Helpers.List exposing (distinct, takeWhile)
+module Helpers.List exposing (distinct, dropWhile, takeWhile)
+
+{-| This module contains some useful functions on list. Generally based on their
+availability in Haskell.
+-}
+
 
 {-| Returns the unique elements in a list.
 
@@ -45,3 +50,27 @@ takeWhile f xs =
                         trav fun ys (y :: acc)
     in
     trav f xs []
+
+
+{-| Removes the items in a list up until an item matching a function is given and returns the remaining list. O(n).
+
+    dropWhile (\n -> n < 5) [ 1, 3, 5, 7 ] == [ 5, 7 ]
+
+-}
+dropWhile : (a -> Bool) -> List a -> List a
+dropWhile f xs =
+    let
+        trav : (a -> Bool) -> List a -> List a
+        trav fun list =
+            case list of
+                [] ->
+                    []
+
+                y :: ys ->
+                    if fun y then
+                        trav fun ys
+
+                    else
+                        y :: ys
+    in
+    trav f xs

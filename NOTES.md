@@ -3,6 +3,75 @@
 This is a place where I collect notes on things (problems, ideas, ...) I come
 accross while working on this project.
 
+## Minor annoyances with Elm
+
+October 16, 2020
+
+These thing's don't really matter, but they do bother me a bit:
+
+### Pattern matching
+
+Why is using `case` the only way to do pattern matching? This often causes some pretty deep indentation, especially when following the elm style guidelines (i.e. a newline and added indentation after the `->` symbol).
+A good example is when matching sub elements of lists:
+
+```elm
+match : List Int -> List Int
+match list =
+    case list of
+        [] ->
+            []
+
+        x :: xs ->
+            case x of
+                1 ->
+                    (20 :: match xs)
+
+                2 ->
+                    (10 :: match xs)
+
+                _ ->
+                    (-1 :: match xs)
+```
+
+In Haskell, this would like like this:
+
+```haskell
+match :: [Int] -> [Int]
+match [] = []
+match (x:xs)
+    | x == 1 = (20 : match xs)
+    | x == 2 = (10 : match xs)
+    | otherwise = (-1 : match xs)
+```
+
+See what I mean? The `case` statement looks the cleanest to me in most scenarios, but it often does not suffice, leaving you to the `if`-`else` construction that, granted, takes up fewer lines, but does introduce more visual clutter:
+
+```elm
+match : List Int -> List Int
+match list =
+    case list of
+        [] ->
+            []
+
+        x :: xs ->
+            if x == 1 then
+                (20 :: match xs)
+
+            else if x == 2 then
+                (10 :: match xs)
+
+            else
+                (-1 :: match xs)
+```
+
+### Strings and lists
+
+_Why_ aren't strings lists. Every other functional language does this, but in Elm I have to deal with `String.toList` and `String.fromList`.
+
+### Method signatures and concat
+
+_Why_ did Elm feel the need to switch the `:` and `::` operators. Both F# and Haskell, which I think were the main inspirations for Elm, have them the other way around.
+
 ## Validation
 
 Oct 15, 2020
