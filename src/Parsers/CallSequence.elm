@@ -34,7 +34,7 @@ parse input agents =
 
                 t :: ts ->
                     case t of
-                        -- skip the separator
+                        -- skip separators
                         Separator ->
                             tryParse ts
 

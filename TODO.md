@@ -24,12 +24,12 @@ This file will act as both a to-do list and a log of finished features.
 
 ### Call sequence analysis (depends on protocol implementation)
 
-- [ ] Call sequence parsing ![eval1]
 - [ ] Possibility
 - [ ] Permissibility
 - [ ] UI/UX ![low]
   - [ ] Make calls draggable elements (for easy call reordering)
   - [ ] Timeline navigation (previous/next call buttons)
+- [x] [16-10-2020] ~~Call sequence parsing~~ ![eval1]
 
 ### Gossip graph representation
 

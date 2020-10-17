@@ -3,6 +3,145 @@
 This is a place where I collect notes on things (problems, ideas, ...) I come
 accross while working on this project.
 
+## Rendering graphs
+
+October 17, 2020
+
+An important part of this project is visualisation. Therefore, it makes sense to take some time to think on how to best do this. In practice, this comes down—at least for a big part—to picking the right library. Before listing the options I am considering, I'll list my considerations in the form of a [MoSCoW][moscow].
+
+### Must-haves
+
+The library...
+
+- Must be able to **render directed graphs** with named nodes and different edge styles
+  - By directly interacting with `elm-community/graph`, or
+  - By interacting with an output format supported by `elm-community/graph`
+- Must be able to render said graph such that the visualisation **updates in real time**, or at least near real time
+
+### Should-haves
+
+The library...
+
+- Should **integrate with Elm**
+  - Either directly, or by using Elm's [ports][ports]
+- Should be **maintained**
+  - That is, it should use modern standards and be updated (somewhat) regularly
+
+### Could-haves
+
+The library...
+
+- Could have a way to **handle user input** to make the visualisation more interactive
+  - An extended goal of this project is to increase usability by being more WYSIWYG
+
+### Won't-haves
+
+The library...
+
+- Won't have the need for lots of **additional code in another language**, like Javascript
+
+### Libraries
+
+So far, I have found the following libraries (ordered by when I found them):
+
+- [dagre-d3](https://github.com/dagrejs/dagre-d3)
+- [d3-graphviz](https://github.com/magjac/d3-graphviz)
+- [viz.js](https://github.com/mdaines/viz.js/)
+- [elm-visualization](https://package.elm-lang.org/packages/gampleman/elm-visualization/latest/)
+- [typed-svg](https://package.elm-lang.org/packages/elm-community/typed-svg/latest/)
+- [graphvizlib.wasm](https://github.com/hpcc-systems/hpcc-js-wasm#graphviz-graphvizlibwasm)
+
+There are, without a doubt, more libraries that can do this, and I'll keep looking for others while working on the project. However, these seem like decent options. I'll go over them one by one to evaluate them, and eventually pick a ‘winner’.
+
+#### dagre-d3
+
+##### Pros
+
+- 😃 Nice looking output
+- 😃 Accepts DOT code as input
+- 😃 When used for DOT code visualisation, requires little extra Javascript
+- 😃 Maintained (Updated less than a year ago)
+
+##### Cons
+
+- 😕 Does way more than just graph visualisation so might be a bit overkill
+- 😕 Some pretty big dependencies
+- 😕 Using extra features requires Javascript
+
+**Dependencies**: lodash, graphlib, dagre, (maybe d3? It's in the name, but it's not listed)
+
+#### d3-graphviz
+
+##### Pros
+
+- 😃 Nice looking output
+- 😃 Accepts DOT code as input (i.e. it just works)
+- 😃 Supports animations
+- 😃 Uses a version of GraphViz compiled to WebAssembly, so compatibility guaranteed
+- 😃 Maintained (Updated less than a year ago)
+
+##### Cons
+
+- 😕 Includes a warning that animations might make things slow
+
+**Dependencies**: d3, graphvizlib.wasm
+
+#### viz.js
+
+Suggested in the `elm-community/graph` documentation, but is deprecated. Suggests using Dagre instead. (see above)
+
+#### elm-visualization
+
+##### Pros
+
+- 😃 Written in Elm, so integration and interaction is very nice
+- 😃 Actively maintained (Updated about a month ago)
+- 😃 The only real way to make satisfying the could-haves a possibility<sup>1</sup>
+
+##### Cons
+
+- 😕 Does way more than just graph visualisation so might be a bit overkill
+- 😕 Requires writing some code to render graphs (doesn't work out-of-the-box)
+
+**Dependencies**: (all Elm packages) elm-color, list-extra, one-true-path-experiment, elm-geometry, elm-units-prefixed, time-extra, date-format
+
+#### typed-svg
+
+##### Pros
+
+- 😃 Written in Elm, so integration and interaction is very nice
+- 😃 Just SVG, so output is extremely flexible and extensible
+- 😃 Also (like `elm-visualization`) allows user interaction
+
+##### Cons
+
+- 😕 Pretty hardcore: all rendering code has to be implemented from scratch
+
+**Dependencies**: (Elm package) avh4/elm-color
+
+#### graphvizlib.wasm
+
+##### Pros
+
+- 😃 It's just GraphViz, but on the web
+
+##### Cons
+
+- 😕 It's just GraphViz, but on the web
+
+**Dependencies**: None
+
+### Conclusion
+
+I want to see if using `elm-visualisation` is feasible, as it allows for best integration and keeps the could-haves achievable. If that doesn't work, I'll probably switch to `d3-graphviz`.
+
+---
+
+<sup><sup>1</sup>This is _technically_ also possible with some of the javascript libraries, but would require using ports _a lot_, which I frankly would like to avoid if possible</sup>
+
+[moscow]: https://en.wikipedia.org/wiki/MoSCoW_method
+[ports]:  https://guide.elm-lang.org/interop/ports.html
+
 ## Minor annoyances with Elm
 
 October 16, 2020
@@ -76,15 +215,16 @@ _Why_ did Elm feel the need to switch the `:` and `::` operators. Both F# and Ha
 
 This is a really minor nitpick, but I just like writing `filter (==5) [..]` a bit better than `filter (\x -> x == 5) [..]`.
 
-<sup><sup>1</sup> It seems like elm [used to have guards][guards], but they were removed for some reason.</sup>
-
-[guards]: https://stackoverflow.com/a/23201661/4545692
-
 ### (Infix) operators
 
 The ability to define infix operators was [removed in Elm 0.19][infix-removed]. Huh. No `(!!)` for me I guess
 
+---
+
+<sup><sup>1</sup> It seems like Elm [used to have guards][guards], but they were removed.</sup>
+
 [infix-removed]: https://gist.github.com/evancz/769bba8abb9ddc3bf81d69fa80cc76b1#root-design-goal
+[guards]: https://stackoverflow.com/a/23201661/4545692
 
 ## Validation
 
