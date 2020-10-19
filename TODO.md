@@ -28,7 +28,7 @@ This file will act as both a to-do list and a log of finished features.
 - [ ] Permissibility
 - [ ] UI/UX ![low]
   - [ ] Make calls draggable elements (for easy call reordering)
-  - [ ] Timeline navigation (previous/next call buttons)
+  - [ ] Timeline navigation (previous/next call buttons / changing zoom focus?)
 - [x] [16-10-2020] ~~Call sequence parsing~~ ![eval1]
 
 ### Gossip graph representation
