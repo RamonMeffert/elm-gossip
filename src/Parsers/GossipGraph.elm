@@ -131,6 +131,7 @@ toRelations kind tuples =
                     else
                         toRelationsAcc xs ({ from = from, to = to, directed = True, kind = kind } :: relations)
 
+
         removeDuplicates : List Relation -> List Relation
         removeDuplicates relations =
             let
@@ -140,7 +141,7 @@ toRelations kind tuples =
                             withoutDups
 
                         rel :: withDupsRest ->
-                            if rel.directed && List.any (\r -> (r.from == rel.from && r.to == rel.to) || (r.from == rel.to && r.to == rel.from)) relations then
+                            if rel.directed && List.any (\r -> (r.from == rel.from && r.to == rel.to && not r.directed) || (r.from == rel.to && r.to == rel.from && not r.directed)) relations then
                                 removeDuplicatesAcc withDupsRest withoutDups
 
                             else
