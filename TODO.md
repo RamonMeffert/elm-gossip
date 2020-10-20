@@ -28,7 +28,7 @@ This file will act as both a to-do list and a log of finished features.
 - [ ] Permissibility
 - [ ] UI/UX ![low]
   - [ ] Make calls draggable elements (for easy call reordering)
-  - [ ] Timeline navigation (previous/next call buttons)
+  - [ ] Timeline navigation (previous/next call buttons / changing zoom focus?)
 - [x] [16-10-2020] ~~Call sequence parsing~~ ![eval1]
 
 ### Gossip graph representation
@@ -40,14 +40,10 @@ This file will act as both a to-do list and a log of finished features.
 - [ ] Graph analysis
   - [ ] Connectedness
   - [ ] Sun graph Y/N
-- [ ] Visualize gossip graph ![eval1]
+- [x] [20-10-2020] ~~Visualize gossip graph~~ ![eval1]
   - [x] [29-09-2020] ~~Write parser for short[^2] gossip graph representation~~
   - [x] [09-10-2020] ~~Integrate [elm-community/graph](https://package.elm-lang.org/packages/elm-community/graph/latest/)~~
-  - [ ] Pick graph rendering library.
-    - [dagre-d3](https://github.com/dagrejs/dagre-d3)
-    - [d3-graphviz](https://github.com/magjac/d3-graphviz)
-    - [viz.js](https://github.com/mdaines/viz.js/) (deprecated)
-    - [elm-visualization](https://github.com/gampleman/elm-visualization)
+  - [x] [17-10-2020] ~~Pick graph rendering library.~~ ([rationale](./NOTES.md#rendering-graphs))
 - [ ] ![low] UI/UX
   - [x] [10-10-2020] ~~Currently a bidirectional relation is visualised as two arrows. While technically correct, this should really be one arrow with two heads.~~
   - [ ] Allow multiple text representations[^1] of graphs as input[^3]
@@ -63,6 +59,7 @@ This file will act as both a to-do list and a log of finished features.
 
 - [ ] Tree w/ simplified visualisation (e.g. using letter representations in the appendix of [^2])
   - [ ] Show gossip graph on-click (popup?)
+  - [ ] Graph to letter representation
 - [ ] Limitation on n. of agents (trees get big fast)
 - [ ] (More items T.B.D.)
 

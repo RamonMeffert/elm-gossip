@@ -11,8 +11,11 @@ It also provides a utility to create a Graph for use with the `elm-community/gra
 
 @docs parse, validate
 
+
 ## Creating a `Graph`
+
 @docs fromAgentsAndRelations
+
 
 # Internal parsing functions
 
@@ -21,11 +24,11 @@ It also provides a utility to create a Graph for use with the `elm-community/gra
 -}
 
 import Graph exposing (..)
-import Helpers.List exposing (distinct)
-import Helpers.Tuple exposing (swap)
 import List exposing (..)
 import Types.Agent as Agent exposing (..)
 import Types.Relation as Relation exposing (..)
+import Utils.List exposing (distinct)
+import Utils.Tuple exposing (swap)
 
 
 {-| The `Knowledge` type alias is a string representation of the knowledge of one agent.

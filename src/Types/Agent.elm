@@ -16,7 +16,7 @@ module Types.Agent exposing (..)
 
 import Dict exposing (Dict)
 import Graph exposing (Node)
-import Helpers.List
+import Utils.List
 
 
 {-| An agent in a gossip graph.
@@ -53,7 +53,7 @@ If it does not exist, return an error.
 fromChar : List Agent -> Char -> Result String Agent
 fromChar agents char =
     agents
-        |> Helpers.List.find (\agent -> agent.name == Char.toUpper char)
+        |> Utils.List.find (\agent -> agent.name == Char.toUpper char)
         |> Result.fromMaybe ("Agent " ++ String.fromChar (Char.toUpper char) ++ " does not exist.")
 
 
