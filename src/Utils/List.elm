@@ -1,4 +1,4 @@
-module Helpers.List exposing (distinct, dropWhile, takeWhile, find, get)
+module Utils.List exposing (distinct, dropWhile, takeWhile, find, get)
 
 {-| This module contains some useful functions on list. Generally based on their
 availability in Haskell.

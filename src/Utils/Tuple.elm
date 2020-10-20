@@ -1,4 +1,4 @@
-module Helpers.Tuple exposing (..)
+module Utils.Tuple exposing (..)
 
 {-| This module contains some useful functions on tuples.
 -}

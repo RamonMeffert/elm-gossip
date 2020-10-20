@@ -11,6 +11,7 @@ import Html.Events exposing (..)
 import Parsers.GossipGraph as GossipGraph
 import Types.Agent as Agent exposing (Agent)
 import Types.Relation as Relation exposing (Relation)
+import Renderers.GossipGraph
 
 
 
@@ -28,20 +29,24 @@ main =
 
 type alias Model =
     { input     : String
-    , output    : String
     , graph     : Graph Agent Relation
     , agents    : List Agent
     , relations : List Relation
+    , graphSettings : Renderers.GossipGraph.GraphSettings
     }
 
 
 init : Model
 init =
     { input = ""
-    , output = ""
     , graph = Graph.empty
     , agents = []
     , relations = []
+    , graphSettings = 
+        { nodeRadius = 10
+        , edgeWidth = 1
+        , arrowLength = 4
+        }
     }
 
 
@@ -61,16 +66,10 @@ update msg model =
                 (agents, relations) = GossipGraph.parse input
 
                 graph = GossipGraph.fromAgentsAndRelations agents relations
-
-                styles = 
-                    { defaultStyles 
-                    | rankdir = Graph.DOT.LR 
-                    }
             in
             { model
                 | input = input
                 , graph = graph
-                , output = Graph.DOT.outputWithStylesAndAttributes styles Agent.getDotAttrs Relation.getDotAttrs graph
                 , agents = agents
                 , relations = relations
             }
@@ -84,10 +83,5 @@ view : Model -> Html Message
 view model =
     div []
         [ input [ value model.input, onInput Change, style "width" "400px", placeholder "Gossip graph representation" ] []
-        , br [] []
-        , textarea [ value model.output, rows 30, cols 80 ] []
-        , br [] []
-        , text "You can use "
-        , a [ href "http://webgraphviz.com/" ] [ text "WebGraphViz" ]
-        , text " to visualise the DOT code generated above."
+        , Renderers.GossipGraph.render model.graph model.graphSettings
         ]

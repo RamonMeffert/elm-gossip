@@ -1,4 +1,4 @@
-module Helpers.General exposing (..)
+module Utils.General exposing (..)
 
 {-| General helper functions
 -}
