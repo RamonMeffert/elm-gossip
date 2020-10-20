@@ -3,15 +3,14 @@ module Main exposing (..)
 import Array exposing (Array)
 import Browser
 import Graph exposing (Graph)
-import Graph.DOT
 import Graph.DOT exposing (defaultStyles)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Parsers.GossipGraph as GossipGraph
+import Renderers.GossipGraph
 import Types.Agent as Agent exposing (Agent)
 import Types.Relation as Relation exposing (Relation)
-import Renderers.GossipGraph
 
 
 
@@ -28,9 +27,9 @@ main =
 
 
 type alias Model =
-    { input     : String
-    , graph     : Graph Agent Relation
-    , agents    : List Agent
+    { input : String
+    , graph : Graph Agent Relation
+    , agents : List Agent
     , relations : List Relation
     , graphSettings : Renderers.GossipGraph.GraphSettings
     }
@@ -42,7 +41,7 @@ init =
     , graph = Graph.empty
     , agents = []
     , relations = []
-    , graphSettings = 
+    , graphSettings =
         { nodeRadius = 10
         , edgeWidth = 1
         , arrowLength = 4
@@ -63,9 +62,11 @@ update msg model =
     case msg of
         Change input ->
             let
-                (agents, relations) = GossipGraph.parse input
+                ( agents, relations ) =
+                    GossipGraph.parse input
 
-                graph = GossipGraph.fromAgentsAndRelations agents relations
+                graph =
+                    GossipGraph.fromAgentsAndRelations agents relations
             in
             { model
                 | input = input

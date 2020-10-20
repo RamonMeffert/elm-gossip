@@ -1,7 +1,10 @@
 module Renderers.GossipGraph exposing (GraphSettings, render)
 
-{-| based on <https://elm-visualization.netlify.app/backgroundgraph/>
+{-| This module is for rendering gossip graphs.
+
+Based on <https://elm-visualization.netlify.app/backgroundgraph/>
 and <https://elm-visualization.netlify.app/forcedirectedgraph/>
+
 -}
 
 import Browser
@@ -22,15 +25,21 @@ import Utils.General exposing (uncurry)
 -- MODEL
 
 
+{-| The settings that are used while rendering the graph
+-}
 type alias GraphSettings =
-    -- For now, these don't have an explicit unit (cm, px, etc) but are just assumed to be px
-    -- that is, until I figure out how to get the value out of a `Length`.
+    -- For now, these don't have an explicit unit (cm, px, etc) but are just
+    -- assumed to be px. That is, until I figure out how to get the value out
+    -- of a `Length`.
     { nodeRadius : Float
     , edgeWidth : Float
     , arrowLength : Float
     }
 
 
+{-| A wrapper around the `Agent` Type so information needed for calculating its
+position can be saved in it
+-}
 type alias Entity =
     Force.Entity Int { value : Agent }
 
@@ -39,9 +48,9 @@ type alias Entity =
 -- MAIN
 
 
-{-| Renders a gossip graph. Does some pretty expensive computation to make sure 
+{-| Renders a gossip graph. Does some pretty expensive computation to make sure
 everything is aligned correctly, so ideally changes to this graph are made using
-some update function (that has yet to be written)
+some update function (has yet to be written)
 -}
 render : Graph Agent Relation -> GraphSettings -> Svg msg
 render graph settings =
@@ -51,7 +60,9 @@ render graph settings =
 
         forces =
             [ Force.links (getLinks entityGraph)
-            , Force.manyBodyStrength -200 <| List.map .id <| Graph.nodes entityGraph
+            , Force.manyBodyStrength -200 <|
+                List.map .id <|
+                    Graph.nodes entityGraph
             , Force.center 200 200
             ]
 
@@ -62,8 +73,8 @@ render graph settings =
     svg [ viewBox 0 0 400 400 ]
         [ defs []
             (arrowHeads settings)
-        , g [ class [ "links" ] ] <| List.map (linkElement computedGraph settings) <| Graph.edges computedGraph
-        , g [ class [ "nodes" ] ] <| List.map (nodeElement settings) <| Graph.nodes computedGraph
+        , g [ class [ "links" ] ] <| List.map (renderEdge computedGraph settings) <| Graph.edges computedGraph
+        , g [ class [ "nodes" ] ] <| List.map (renderNode settings) <| Graph.nodes computedGraph
         ]
 
 
@@ -71,6 +82,8 @@ render graph settings =
 -- HELPERS
 
 
+{-| Updates a graph based on a list of entities
+-}
 updateGraphWithList : Graph Entity Relation -> List Entity -> Graph Entity Relation
 updateGraphWithList =
     let
@@ -80,6 +93,8 @@ updateGraphWithList =
     List.foldr (\node graph -> Graph.update node.id (graphUpdater node) graph)
 
 
+{-| Update the node in a nodecontext
+-}
 updateContextWithValue : NodeContext Entity Relation -> Entity -> NodeContext Entity Relation
 updateContextWithValue nodeCtx value =
     let
@@ -89,18 +104,24 @@ updateContextWithValue nodeCtx value =
     { nodeCtx | node = { node | label = value } }
 
 
+{-| Convert an agent to an `Entity` so it can be used to render a graph
+-}
 agentToEntity : Agent -> Entity
 agentToEntity agent =
     Force.entity agent.id agent
 
 
+{-| Get a list of tuples representing directed relations from a graph
+-}
 getLinks : Graph Entity Relation -> List ( Int, Int )
 getLinks graph =
     List.map (\edge -> ( edge.from, edge.to )) (Graph.edges graph)
 
 
-nodeElement : GraphSettings -> Node Entity -> Svg msg
-nodeElement settings node =
+{-| Code for rendering a node.
+-}
+renderNode : GraphSettings -> Node Entity -> Svg msg
+renderNode settings node =
     g []
         [ circle
             [ r (px settings.nodeRadius)
@@ -129,8 +150,8 @@ nodeElement settings node =
 This is _always_ the case when an edge exists where this.from == that.to and vice versa,
 as edges of the same type have been merged before
 -}
-linkElementOffset : GraphSettings -> List (Attribute msg) -> Entity -> Entity -> Svg msg
-linkElementOffset settings extraAttributes source target =
+renderEdgeOffset : GraphSettings -> List (Attribute msg) -> Entity -> Entity -> Svg msg
+renderEdgeOffset settings extraAttributes source target =
     -- idea: calculate initial offsets as normal, then "rotate" them along the center of the nodes by some amount
     let
         r1 =
@@ -140,13 +161,13 @@ linkElementOffset settings extraAttributes source target =
             settings.nodeRadius + settings.arrowLength
 
         ( newSource, newTarget ) =
-            newCoordinates source target r1 r2
+            radialOffset source target r1 r2
 
         src =
-            circularOffset newSource (pi / 16) source
+            angularOffset newSource (pi / 16) source
 
         tgt =
-            circularOffset newTarget (-pi / 16) target
+            angularOffset newTarget (-pi / 16) target
     in
     line
         ([ strokeWidth (px settings.edgeWidth)
@@ -164,14 +185,14 @@ linkElementOffset settings extraAttributes source target =
 
 {-| Simple monodirectional edge. Has an arrow head at both ends.
 -}
-linkElementBidirectional : GraphSettings -> List (Attribute msg) -> Entity -> Entity -> Svg msg
-linkElementBidirectional settings extraAttributes source target =
+renderEdgeUndirected : GraphSettings -> List (Attribute msg) -> Entity -> Entity -> Svg msg
+renderEdgeUndirected settings extraAttributes source target =
     let
         r =
             settings.nodeRadius + settings.arrowLength
 
         ( src, tgt ) =
-            newCoordinates source target r r
+            radialOffset source target r r
     in
     line
         ([ strokeWidth (px settings.edgeWidth)
@@ -190,8 +211,8 @@ linkElementBidirectional settings extraAttributes source target =
 
 {-| Simple monodirectional edge. Has an arrow head at the end.
 -}
-linkElementBasic : GraphSettings -> List (Attribute msg) -> Entity -> Entity -> Svg msg
-linkElementBasic settings extraAttributes source target =
+renderEdgeDirected : GraphSettings -> List (Attribute msg) -> Entity -> Entity -> Svg msg
+renderEdgeDirected settings extraAttributes source target =
     let
         r1 =
             settings.nodeRadius
@@ -200,7 +221,7 @@ linkElementBasic settings extraAttributes source target =
             settings.nodeRadius + settings.arrowLength
 
         ( src, tgt ) =
-            newCoordinates source target r1 r2
+            radialOffset source target r1 r2
     in
     line
         ([ strokeWidth (px settings.edgeWidth)
@@ -216,8 +237,8 @@ linkElementBasic settings extraAttributes source target =
         []
 
 
-linkElement : Graph Entity Relation -> GraphSettings -> Edge Relation -> Svg ms
-linkElement graph settings edge =
+renderEdge : Graph Entity Relation -> GraphSettings -> Edge Relation -> Svg ms
+renderEdge graph settings edge =
     let
         retrieveEntity =
             Maybe.withDefault (Force.entity 0 { id = -1, name = '?' }) << Maybe.map (.node >> .label)
@@ -236,13 +257,13 @@ linkElement graph settings edge =
                 []
     in
     if List.any (\e -> edge.from == e.to && edge.to == e.from) (Graph.edges graph) then
-        linkElementOffset settings dashed source target
+        renderEdgeOffset settings dashed source target
 
     else if not edge.label.directed then
-        linkElementBidirectional settings dashed source target
+        renderEdgeUndirected settings dashed source target
 
     else
-        linkElementBasic settings dashed source target
+        renderEdgeDirected settings dashed source target
 
 
 {-| Retrieved from <https://github.com/elm-community/basics-extra/blob/master/src/Basics/Extra.elm>
@@ -252,42 +273,39 @@ fractionalModBy modulus x =
     x - modulus * toFloat (floor (x / modulus))
 
 
-{-| Move a coordinate on the edge of a node clockwise
-0 <= offset < 2pi
-the point (x,y) always lies at (radius) from (node.x, node.y)
+{-| Move a coordinate along a node, keeping the distance between them equal.
+The offset is in radians. To use degrees, use the built in `degrees` function
+when supplying an offset - it converts degrees to radians.
 -}
-circularOffset : ( Float, Float ) -> Float -> Entity -> ( Float, Float )
-circularOffset ( x, y ) offset node =
+angularOffset : ( Float, Float ) -> Float -> Entity -> ( Float, Float )
+angularOffset ( x, y ) offset node =
     let
         dx =
             x - node.x
 
-        -- this should be in (-r, r)
         dy =
             y - node.y
 
-        -- this should be in (-r, r)
         ( r, theta ) =
             toPolar ( dx, dy )
 
+        -- make sure new angle is within range
         newAngle =
             fractionalModBy (2 * pi) (theta - offset)
 
-        -- make sure new angle is within range
         ( newX, newY ) =
             fromPolar ( r, newAngle )
     in
     ( node.x + newX, node.y + newY )
 
 
-{-| Basically calculates an offset along an edge from one node to another
+{-| Given two points A and B, calculate new points C and D such that points
+C and D move away from A and B along the line AB. Offsets can be set separately
+for both sides.
 -}
-newCoordinates : Entity -> Entity -> Float -> Float -> ( ( Float, Float ), ( Float, Float ) )
-newCoordinates source target sourceOffset targetOffset =
+radialOffset : Entity -> Entity -> Float -> Float -> ( ( Float, Float ), ( Float, Float ) )
+radialOffset source target sourceOffset targetOffset =
     let
-        -- recalculate source and target coordinates to account for node radius
-        -- if this is not done, the arrows are invisible because they are covered up by the nodes
-        -- construct a right-angled triangle with the edge as hypothenuse
         dx =
             abs (source.x - target.x)
 
@@ -300,7 +318,6 @@ newCoordinates source target sourceOffset targetOffset =
         angle =
             asin (dy / hyp)
 
-        -- calculate x and y offsets
         sourceOffsetX =
             sourceOffset * cos angle
 
@@ -314,16 +331,19 @@ newCoordinates source target sourceOffset targetOffset =
             targetOffset * sin angle
 
         newSource =
-            newCoordinate source target sourceOffsetX sourceOffsetY
+            radialOffsetValue source target sourceOffsetX sourceOffsetY
 
         newTarget =
-            newCoordinate target source targetOffsetX targetOffsetY
+            radialOffsetValue target source targetOffsetX targetOffsetY
     in
     ( newSource, newTarget )
 
 
-newCoordinate : Entity -> Entity -> Float -> Float -> ( Float, Float )
-newCoordinate source target xoff yoff =
+{-| Helper function for `radialOffset`. Makes sure the offset is calculated
+correctly. Can probably be simplified, but it works.
+-}
+radialOffsetValue : Entity -> Entity -> Float -> Float -> ( Float, Float )
+radialOffsetValue source target xoff yoff =
     case ( source.x > target.x, source.y > target.y ) of
         ( True, True ) ->
             -- source is to the right and underneath the source
@@ -342,6 +362,9 @@ newCoordinate source target xoff yoff =
             ( source.x + xoff, source.y + yoff )
 
 
+{-| A function that defines shapes for arrow heads to use in rendering directed
+edges.
+-}
 arrowHeads : GraphSettings -> List (Svg msg)
 arrowHeads settings =
     let

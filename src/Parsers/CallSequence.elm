@@ -1,22 +1,28 @@
-module Parsers.CallSequence exposing (parse)
+module Parsers.CallSequence exposing (CallSequence, parse)
 
 {-| LL(1) parser for call sequences.
 -}
 
-import Utils.List exposing (dropWhile, takeWhile)
 import Types.Agent as Agent exposing (..)
 import Types.Call as Call exposing (..)
+import Utils.List exposing (dropWhile, takeWhile)
 
 
+{-| A list of consecutive calls.
+-}
 type alias CallSequence =
     List Call
 
-
+{-| A utility type for error reporting. Could be extended at some point so more
+information about the error is included.
+-}
 type alias Error =
     String
 
 
-{-| Expects a string of the format `ab ; cd ; ef`
+{-| Expects a string of the format `ab;cd;ef` and returns a `CallSequence`.
+Also checks whether calls are between different agents (identity calls are not 
+allowed) and whether all agents in the call exist.
 -}
 parse : String -> List Agent -> Result Error CallSequence
 parse input agents =
