@@ -54,7 +54,7 @@ parse : String -> ( List Agent, List Relation )
 parse input =
     let
         -- TODO: Add validation:
-        --  - I_S should always be true -> Warning if not, automatically correct
+        --  - I_S should always be true -> Warning if not, correct automatically (i.e. "ab ab" is read as "Ab aB")
         --  - Check separator character -> Error if incorrect, suggestion to use different sep. char
         --  - Check input characters    -> Error if unsupported, if of different type -> suggest setting change
         agents : List Agent
