@@ -59,7 +59,7 @@ This file will act as both a to-do list and a log of finished features.
 
 - [ ] Tree w/ simplified visualisation (e.g. using letter representations in the appendix of [^2])
   - [ ] Show gossip graph on-click (popup?)
-  - [ ] Graph to letter representation
+  - [x] [21-10-2020] ~~Graph to letter representation~~
 - [ ] Limitation on n. of agents (trees get big fast)
 - [ ] (More items T.B.D.)
 
