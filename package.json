@@ -10,8 +10,5 @@
     "sass-watch": "sass --watch src/styles/main.scss dist/css/styles.css",
     "sass-compile": "sass src/styles/main.scss dist/css/styles.css"
   },
-  "dependencies": {
-    "elm-live": "^4.0.2",
-    "global": "^4.4.0"
-  }
+  "dependencies": {}
 }
