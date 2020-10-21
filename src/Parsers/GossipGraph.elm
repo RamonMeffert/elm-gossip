@@ -1,6 +1,6 @@
 module Parsers.GossipGraph exposing
-    ( parse
-    , fromAgentsAndRelations
+    ( parse, fromAgentsAndRelations
+    , toString, fromString
     )
 
 {-| This module is responsible for recognizing agents and relations from an input string.
@@ -9,12 +9,12 @@ It also provides a utility to create a Graph for use with the `elm-community/gra
 
 # Main functions
 
-@docs parse, validate
+@docs parse, fromAgentsAndRelations
 
 
-## Creating a `Graph`
+## Converting between strings and graphs
 
-@docs fromAgentsAndRelations
+@docs fromString, toString
 
 
 # Internal parsing functions
@@ -23,10 +23,13 @@ It also provides a utility to create a Graph for use with the `elm-community/gra
 
 -}
 
+import Force exposing (Entity)
 import Graph exposing (..)
+import IntDict
 import List exposing (..)
 import Types.Agent as Agent exposing (..)
 import Types.Relation as Relation exposing (..)
+import Utils.General exposing (uncurry)
 import Utils.List exposing (distinct)
 import Utils.Tuple exposing (swap)
 
@@ -37,11 +40,23 @@ type alias Knowledge =
     String
 
 
+{-| Shorthand function combining `parse` and `fromAgentsAndRelations`. Takes an
+input string and returns a gossip graph.
+-}
+fromString : String -> Graph Agent Relation
+fromString =
+    parse >> uncurry fromAgentsAndRelations
+
+
 {-| Converts an input string to a list of `Agent`s and their corresponding `Relation`s
 -}
 parse : String -> ( List Agent, List Relation )
 parse input =
     let
+        -- TODO: Add validation:
+        --  - I_S should always be true -> Warning if not, automatically correct
+        --  - Check separator character -> Error if incorrect, suggestion to use different sep. char
+        --  - Check input characters    -> Error if unsupported, if of different type -> suggest setting change
         agents : List Agent
         agents =
             parseAgents input
@@ -67,6 +82,66 @@ fromAgentsAndRelations agents relations =
             List.map Relation.toEdge relations
     in
     Graph.fromNodesAndEdges nodes edges
+
+
+{-| Converts a gossip graph to its string representation.
+
+    graph = parse "Abc ABC abC"
+        |> uncurry fromAgentsAndRelations
+
+
+    toString graph == "Abc ABC abC"
+
+-}
+toString : Graph Agent Relation -> String
+toString graph =
+    Graph.fold (adjacencyToString (Graph.nodes graph)) [] graph
+        |> List.reverse
+        -- include separator
+        -- TODO: make separator configurable
+        |> List.intersperse " "
+        -- concatenate list of strings into string
+        |> List.foldr (++) ""
+
+
+{-| Converts and adjacency, i.e. a node and its incoming and outgoing edges, to
+a string
+-}
+adjacencyToString : List (Node Agent) -> NodeContext Agent Relation -> List String -> List String
+adjacencyToString agents context acc =
+    let
+        -- Accumulating function that takes a partially completed knowledge
+        -- string and adds a new character based on an AgentId and a RelationType
+        toCharacter : ( Int, Kind ) -> String -> String
+        toCharacter ( id, kind ) acc2 =
+            Utils.List.find (\node -> node.label.id == id) agents
+                |> Maybe.map (.label >> .name)
+                |> Maybe.withDefault '?'
+                |> (if kind == Number then
+                        Char.toLower
+
+                    else
+                        Char.toUpper
+                   )
+                |> (\c -> String.fromChar c ++ acc2)
+
+        -- get ids of relevant incoming nodes, i.e. only those for which
+        -- the relation is bidirectional
+        incoming : List ( Int, Kind )
+        incoming =
+            IntDict.values context.incoming
+                |> List.filter (\r -> not r.directed)
+                |> List.map (\r -> ( r.from, r.kind ))
+
+        outgoing : List ( Int, Kind )
+        outgoing =
+            IntDict.values context.outgoing
+                |> List.map (\r -> ( r.to, r.kind ))
+
+        relations =
+            List.sortBy Tuple.first (( context.node.label.id, Secret ) :: incoming ++ outgoing)
+    in
+    List.foldr toCharacter "" relations :: acc
 
 
 {-| Given a list of agents and a list of knowledge strings, return a list of
@@ -133,7 +208,6 @@ toRelations kind tuples =
 
                     else
                         toRelationsAcc xs ({ from = from, to = to, directed = True, kind = kind } :: relations)
-
 
         removeDuplicates : List Relation -> List Relation
         removeDuplicates relations =
