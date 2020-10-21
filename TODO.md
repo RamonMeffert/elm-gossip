@@ -69,6 +69,7 @@ This file will act as both a to-do list and a log of finished features.
 - [ ] Make code [citable](https://guides.github.com/activities/citable-code/) when a release version is done
 - [ ] Figure out fitting license
 - [ ] Clean up code and make sure documentation is complete
+- [ ] Integrate `gulp` or something similar to streamline building
 
 <!-- Footnotes -->
 

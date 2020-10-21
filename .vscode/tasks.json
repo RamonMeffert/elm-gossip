@@ -6,12 +6,12 @@
         {
             "label": "Development build",
             "type": "shell",
-            "command": "elm make src/Main.elm --debug --output elm.js"
+            "command": "elm make src/elm/Main.elm --debug --output elm.js"
         },
         {
             "label": "Production build",
             "type": "shell",
-            "command": "./optimize.sh src/Main.elm",
+            "command": "./optimize.sh src/elm/Main.elm",
             "problemMatcher": [],
             "group": {
                 "kind": "build",

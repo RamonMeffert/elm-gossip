@@ -1,0 +1,17 @@
+{
+  "name": "tools-for-gossip",
+  "scripts": {
+    "build": "yarn run elm-compile & yarn run sass-compile",
+    "start": "yarn run elm-live & yarn run sass-watch",
+    "start-dev": "yarn run elm-live-dev & yarn run sass-watch",
+    "elm-compile": "./optimize.sh",
+    "elm-live-dev": "elm-live src/elm/Main.elm --dir=./dist -- --debug --output=./dist/elm.min.js",
+    "elm-live": "elm-live src/elm/Main.elm --dir=./dist -- --optimize --output=./dist/elm.min.js",
+    "sass-watch": "sass --watch src/styles/main.scss dist/css/styles.css",
+    "sass-compile": "sass src/styles/main.scss dist/css/styles.css"
+  },
+  "dependencies": {
+    "elm-live": "^4.0.2",
+    "global": "^4.4.0"
+  }
+}

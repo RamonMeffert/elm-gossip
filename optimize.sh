@@ -1,11 +1,12 @@
 #!/bin/sh
 
 set -e
-dir="./dist/"
-js=$dir"elm.js"
-min=$dir"elm.min.js"
+outdir="./dist"
+srcdir="./src/elm"
+js=$outdir/"elm.js"
+min=$outdir/"elm.min.js"
 
-elm make --optimize --output=$js $@
+elm make $srcdir/Main.elm --optimize --output=$js $@
 
 uglifyjs $js --compress "pure_funcs=[F2,F3,F4,F5,F6,F7,F8,F9,A2,A3,A4,A5,A6,A7,A8,A9],pure_getters,keep_fargs=false,unsafe_comps,unsafe" | uglifyjs --mangle --output=$min
 
