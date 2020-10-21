@@ -3,6 +3,21 @@
 This is a place where I collect notes on things (problems, ideas, ...) I come
 accross while working on this project.
 
+## Papers on gossip
+
+October 21, 2020
+
+While working on this project, I'm also reading up on gossip literature. I found a paper talking about gossip protocols
+in distributed databases that I thought had a pretty neat idea on how to determine stability:
+
+> _Rumor mongering:_ sites are initially "ignorant"; when a site receives a new update it becomes a "hot rumor"; while a site holds a hot rumor, it periodically chooses another site at random and ensurees that the other site has seen the update; when a site has tried to share a hot rumor with too many sites that have already seen it, the site stops treating the rumor as hot and retains the update without propagating it further. [...]
+>
+> —Demers et al., [1988](https://doi.org/10/fmhpvg)
+
+I think the main reason I like it is because it has such a clear real-world equivalent: you can explain this algorithm to anyone, and they will understand it. It might be interesting (if time allows it, and if it is within the scope of the project) to include something like this.
+
+_(Note: I haven't read the full paper yet, only the introduction. So my opinion of this might change)_
+
 ## Rendering graphs
 
 October 17, 2020
