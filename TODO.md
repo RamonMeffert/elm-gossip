@@ -51,6 +51,8 @@ This file will act as both a to-do list and a log of finished features.
       - [ ] **or** reject input when separators are inconsistent
         - 😕 bad ux
         - 😃 easy
+  - [ ] Input should not contain unconnected nodes (?)
+    - [ ] If no one can reach a node, it will never be included in any call sequence. So: warning and remove, or error?
 - [ ] Graph analysis
   - [ ] Connectedness
   - [ ] Sun graph Y/N
@@ -60,11 +62,11 @@ This file will act as both a to-do list and a log of finished features.
   - [x] [17-10-2020] ~~Pick graph rendering library.~~ ([rationale](./NOTES.md#rendering-graphs))
 - [ ] ![low] UI/UX
   - [x] [10-10-2020] ~~Currently a bidirectional relation is visualised as two arrows. While technically correct, this should really be one arrow with two heads.~~
-  - [ ] Allow multiple text representations[^1] of graphs as input[^3]
+  - [ ] Allow multiple text representations[^1] of graphs as input
     - [ ] Automatic detection or toggle switch?
     - [ ] Numeric input (`03-12-013 0-1-2-3`)
     - [ ] Shortcuts e.g. `I4` is identity for four agents, s.t. `I4` === `0-1-2-3`
-    - [ ] DOT code as input ![maybe]
+    - [ ] DOT code as input[^3] ![maybe]
     - [x] ~~Letter input (`Abc aBc abC`)~~
   - [ ] ![maybe] WYSIWYG graph editing[^4]
   - [ ] ![maybe] Configurability, e.g. show identity relations
@@ -74,6 +76,9 @@ This file will act as both a to-do list and a log of finished features.
 - [ ] Tree w/ simplified visualisation (e.g. using letter representations in the appendix of [^2])
   - [ ] Tree rendering
   - [ ] Show gossip graph on-click (popup?)
+  - [ ] For efficiency: consider using some kind of `diff` tree instead of a tree of full graphs.
+        Maybe save the updating functions in the tree nodes instead of the graph?
+        This might have some consequences for rendering, though.
   - [x] [21-10-2020] ~~Graph to letter representation~~
 - [ ] Find possible calls in current state
 - [ ] Data model for representing protocols
@@ -86,8 +91,8 @@ This file will act as both a to-do list and a log of finished features.
 
 - [ ] ![low] Make the app look good
 - [ ] Make code [citable](https://guides.github.com/activities/citable-code/) when a release version is done
+- [ ] Set up release on github pages when project is presentable
 - [ ] Figure out fitting license
-- [ ] Clean up code and make sure documentation is complete
 - [x] [21-10-2020] ~~Integrate `gulp` or something similar to streamline building~~ (using yarn scripts for now)
 
 <!-- Footnotes -->
