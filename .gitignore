@@ -4,3 +4,5 @@ elm-stuff
 repl-temp-*
 # node_modules
 node_modules/
+# vs code dir
+.vscode

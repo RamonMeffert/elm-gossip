@@ -15,3 +15,7 @@ Run a development server: `yarn start-dev`
 ## Progress
 
 You can track my progress and ideas in my [To Do list](./TODO.md).
+
+## Notes
+
+I keep some notes on what I'm doing and things I discover [here](./NOTES.md).
