@@ -11,12 +11,12 @@ import Types.Relation exposing (knows)
 import Utils.List
 
 
-any : Condition
+any : ProtocolCondition
 any _ _ _ =
     True
 
 
-tok : Condition
+tok : ProtocolCondition
 tok ( x, _ ) _ sequence =
     let
         sigma_x =
@@ -25,7 +25,7 @@ tok ( x, _ ) _ sequence =
     empty sigma_x || lastTo x sigma_x
 
 
-spi : Condition
+spi : ProtocolCondition
 spi ( x, _ ) _ sequence =
     let
         sigma_x =
@@ -34,7 +34,7 @@ spi ( x, _ ) _ sequence =
     empty sigma_x || lastFrom x sigma_x
 
 
-co : Condition
+co : ProtocolCondition
 co ( x, y ) _ sequence =
     let
         sigma_x =
@@ -43,7 +43,7 @@ co ( x, y ) _ sequence =
     not (hasCalled x y sigma_x) && not (wasCalledBy x y sigma_x)
 
 
-wco : Condition
+wco : ProtocolCondition
 wco ( x, y ) _ sequence =
     let
         sigma_x =
@@ -52,6 +52,6 @@ wco ( x, y ) _ sequence =
     not (hasCalled x y sigma_x)
 
 
-lns : Condition
+lns : ProtocolCondition
 lns ( x, y ) relations sequence =
     not (knowsSecret x y relations)

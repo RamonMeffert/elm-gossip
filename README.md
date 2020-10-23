@@ -4,13 +4,13 @@ BSc Project
 
 ## Building
 
-Build a release: `yarn build`
+Build a release: `yarn build` or `npm build`
 
 ## Running the application
 
-Run the application: `yarn start`
+Run the application: `yarn start` or `npm start`
 
-Run a development server: `yarn start-dev`
+Run a development server: `yarn start-dev` or `npm start-dev`
 
 ## Progress
 

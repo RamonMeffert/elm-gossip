@@ -1,8 +1,10 @@
 module Types.CallSequence exposing (..)
-import Types.Call exposing (Call, includes)
-import Task exposing (sequence)
-import Types.Agent exposing (Agent)
+
 import List exposing (head)
+import Task exposing (sequence)
+import Types.Agent exposing (Agent, AgentId)
+import Types.Call exposing (Call, includes)
+
 
 {-| A list of consecutive calls.
 -}
@@ -10,10 +12,9 @@ type alias CallSequence =
     List Call
 
 
-
-{-| σ_x
+{-| σ\_x
 -}
-containing : CallSequence -> Agent -> CallSequence
+containing : CallSequence -> AgentId -> CallSequence
 containing sequence agent =
     case sequence of
         [] ->
@@ -30,5 +31,5 @@ containing sequence agent =
 
 
 last : CallSequence -> Maybe Call
-last sequence = 
+last sequence =
     head <| List.reverse sequence

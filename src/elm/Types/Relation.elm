@@ -15,9 +15,10 @@ module Types.Relation exposing (..)
 -}
 
 import Dict exposing (Dict)
-import Graph exposing (Edge)
+import Graph exposing (Edge, NodeContext)
 import Html.Attributes exposing (rel)
-import Types.Agent exposing (Agent)
+import IntDict exposing (IntDict)
+import Types.Agent exposing (Agent, AgentId)
 
 
 {-| A relation in a gossip graph.
@@ -61,12 +62,48 @@ getDotAttrs e =
         ( Secret, False ) ->
             Dict.singleton "dir" "both"
 
+
 {-| Given a relation of some kind, check whether x knows y in that relation
 -}
-knows : Agent -> Agent -> Kind -> Relation -> Bool
+knows : AgentId -> AgentId -> Kind -> Relation -> Bool
 knows x y kind relation =
     if relation.directed then
-        relation.from == x.id && relation.to == y.id && relation.kind == kind
+        relation.from == x && relation.to == y && relation.kind == kind
+
     else
-        ((relation.from == x.id && relation.to == y.id) ||
-        (relation.from == y.id && relation.to == x.id)) && relation.kind == kind
+        ((relation.from == x && relation.to == y)
+            || (relation.from == y && relation.to == x)
+        )
+            && relation.kind
+            == kind
+
+
+{-| Takes a relation and produces its inverse
+-}
+inverse : Relation -> Relation
+inverse relation =
+    { relation
+        | from = relation.to
+        , to = relation.from
+    }
+
+
+{-| Transforms a node context into a list of relations.
+
+Bidirectional relations are represented by a regular relation with the `directed` flag set to false.
+as such, to find all relations for an agent, we need to take all the outgoing relations combined with
+the inverse relation of all bidirectional incoming relations.
+
+-}
+fromNodeContext : NodeContext Agent Relation -> List Relation
+fromNodeContext context =
+    let
+        incoming =
+            IntDict.values context.incoming
+                |> List.filter (not << .directed)
+                |> List.map inverse
+
+        outgoing =
+            IntDict.values context.outgoing
+    in
+    incoming ++ outgoing

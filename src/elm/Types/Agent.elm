@@ -19,10 +19,14 @@ import Graph exposing (Node)
 import Utils.List
 
 
+type alias AgentId =
+    Int
+
+
 {-| An agent in a gossip graph.
 -}
 type alias Agent =
-    { id : Int
+    { id : AgentId
     , name : Char
     }
 

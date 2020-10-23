@@ -55,7 +55,7 @@ This file will act as both a to-do list and a log of finished features.
     - [ ] If no one can reach a node, it will never be included in any call sequence. So: warning and remove, or error?
 - [ ] Graph analysis
   - [ ] Connectedness
-  - [ ] Sun graph Y/N
+  - [ ] Sun graph Y/N (might actually be easy; `elm-community/graph` has a cyclicity checker, that's at least 50% of the work done already)
 - [x] [20-10-2020] ~~Visualize gossip graph~~ ![eval1]
   - [x] [29-09-2020] ~~Write parser for short[^2] gossip graph representation~~
   - [x] [09-10-2020] ~~Integrate [elm-community/graph](https://package.elm-lang.org/packages/elm-community/graph/latest/)~~
@@ -94,7 +94,7 @@ This file will act as both a to-do list and a log of finished features.
 - [ ] Set up release on github pages when project is presentable
 - [ ] Figure out fitting license
 - [ ] Rethink application structure. Maybe take the types in the `Types` folder and create folders for them instead of having them separated like this? Then they could have separate modules if needed. Then also separate things that now contain types to their own directory, so we can have `GossipGraph.Renderer` instead of `Renderers.GossipGraph`. Maybe.
-- [x] [21-10-2020] ~~Integrate `gulp` or something similar to streamline building~~ (using yarn scripts for now)
+- [x] [21-10-2020] ~~Integrate `gulp` or something similar to streamline building~~ (using yarn/npm scripts for now)
 
 <!-- Footnotes -->
 

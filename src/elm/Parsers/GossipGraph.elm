@@ -1,6 +1,6 @@
 module Parsers.GossipGraph exposing
     ( parse, fromAgentsAndRelations
-    , toString, fromString
+    , fromString, toString
     )
 
 {-| This module is responsible for recognizing agents and relations from an input string.
@@ -125,21 +125,13 @@ adjacencyToString agents context acc =
                    )
                 |> (\c -> String.fromChar c ++ acc2)
 
-        -- get ids of relevant incoming nodes, i.e. only those for which
-        -- the relation is bidirectional
-        incoming : List ( Int, Kind )
-        incoming =
-            IntDict.values context.incoming
-                |> List.filter (\r -> not r.directed)
-                |> List.map (\r -> ( r.from, r.kind ))
-
-        outgoing : List ( Int, Kind )
-        outgoing =
-            IntDict.values context.outgoing
+        nonIdRelations =
+            Relation.fromNodeContext context
                 |> List.map (\r -> ( r.to, r.kind ))
 
+        -- Also include identity relation. we need to manually add it because it is implied in the rest of the data model
         relations =
-            List.sortBy Tuple.first (( context.node.label.id, Secret ) :: incoming ++ outgoing)
+            List.sortBy Tuple.first (( context.node.label.id, Secret ) :: nonIdRelations)
     in
     List.foldr toCharacter "" relations :: acc
 
