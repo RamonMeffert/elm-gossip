@@ -6,6 +6,7 @@ module Parsers.CallSequence exposing (parse)
 import Types.Agent as Agent exposing (..)
 import Types.Call as Call exposing (..)
 import Types.CallSequence exposing (CallSequence)
+import Types.Protocol exposing (ProtocolCondition)
 import Utils.List exposing (dropWhile, takeWhile)
 
 

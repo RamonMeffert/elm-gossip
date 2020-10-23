@@ -24,11 +24,13 @@ This file will act as both a to-do list and a log of finished features.
 
 ### Call sequence analysis (depends on protocol implementation)
 
-- [ ] Possibility
+- [ ] Consider saving call sequences in reverse: changes lookup time of the last call from O(n) to (1)
+  - It seems like the last call is needed (way) more frequently than the first call. Makes sense.
 - [ ] Permissibility
 - [ ] UI/UX ![low]
   - [ ] Make calls draggable elements (for easy call reordering)
   - [ ] Timeline navigation (previous/next call buttons / changing zoom focus?)
+- [x] [16-10-2020] ~~Possibility~~ (Parsing checks for possibility)
 - [x] [16-10-2020] ~~Call sequence parsing~~ ![eval1]
 
 ### Gossip graph representation
@@ -89,11 +91,13 @@ This file will act as both a to-do list and a log of finished features.
 
 ### Miscellaneous
 
+- [ ] ![hi] Rethink application structure. Maybe take the types in the `Types` folder and create folders for them instead of having them separated like this? Then they could have separate modules if needed. Then also separate things that now contain types to their own directory, so we can have `GossipGraph.Renderer` instead of `Renderers.GossipGraph`. 
 - [ ] ![low] Make the app look good
 - [ ] Make code [citable](https://guides.github.com/activities/citable-code/) when a release version is done
 - [ ] Set up release on github pages when project is presentable
 - [ ] Figure out fitting license
-- [ ] Rethink application structure. Maybe take the types in the `Types` folder and create folders for them instead of having them separated like this? Then they could have separate modules if needed. Then also separate things that now contain types to their own directory, so we can have `GossipGraph.Renderer` instead of `Renderers.GossipGraph`. Maybe.
+- [ ] Check consistency of argument order / figure out rationale behind argument order for consistency
+  - possibly: if a function f works on two related arguments, these arguments should be the first arguments. Act as if the function _could_ be written using infix notation, e.g. a check if agents are equal in a graph: `equals x y graph` => ``x `equals` y graph`` (actually, is this a thing you can do in haskell? I'm not 100% sure)
 - [x] [21-10-2020] ~~Integrate `gulp` or something similar to streamline building~~ (using yarn/npm scripts for now)
 
 <!-- Footnotes -->

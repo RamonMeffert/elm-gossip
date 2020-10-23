@@ -7,7 +7,7 @@ import Types.CallSequence exposing (CallSequence)
 import Types.Relation exposing (Kind(..), Relation, fromNodeContext)
 
 
-{-| Protocol conditions 
+{-| Protocol conditions
 -}
 type alias ProtocolCondition =
     ( AgentId, AgentId ) -> List Relation -> CallSequence -> Bool
@@ -16,6 +16,7 @@ type alias ProtocolCondition =
 {-| Selects the calls to be executed based on some protocol condition.
 
 Select x, y ∈ A, such that x ≠ y, Nxy, and π(x, y)
+
 -}
 select : Graph Agent Relation -> ProtocolCondition -> CallSequence -> List Call
 select graph condition sequence =
@@ -26,7 +27,7 @@ select graph condition sequence =
                 -- since identity relations are implied, they aren't modeled so we do not need to filter them out
                 -- that is, x /= y is inherently satisfied
                 -- also, because S ⊆ N ⊆ A², we know for sure that Nxy: fromNodeContext returns all relations for an agent,
-                -- so any relation is definitely a number relation 
+                -- so any relation is definitely a number relation
                 localRelations =
                     fromNodeContext context
 

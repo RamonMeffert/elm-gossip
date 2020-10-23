@@ -4,6 +4,7 @@ import List exposing (head)
 import Task exposing (sequence)
 import Types.Agent exposing (Agent, AgentId)
 import Types.Call exposing (Call, includes)
+import Types.Relation exposing (Kind(..), knows)
 
 
 {-| A list of consecutive calls.
