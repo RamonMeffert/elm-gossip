@@ -6,3 +6,6 @@ repl-temp-*
 node_modules/
 # vs code dir
 .vscode
+# dist folder except the html file(s) (they're not generated)
+dist/
+!dist/**/*.html
