@@ -93,6 +93,7 @@ This file will act as both a to-do list and a log of finished features.
 - [ ] Make code [citable](https://guides.github.com/activities/citable-code/) when a release version is done
 - [ ] Set up release on github pages when project is presentable
 - [ ] Figure out fitting license
+- [ ] Rethink application structure. Maybe take the types in the `Types` folder and create folders for them instead of having them separated like this? Then they could have separate modules if needed. Then also separate things that now contain types to their own directory, so we can have `GossipGraph.Renderer` instead of `Renderers.GossipGraph`. Maybe.
 - [x] [21-10-2020] ~~Integrate `gulp` or something similar to streamline building~~ (using yarn scripts for now)
 
 <!-- Footnotes -->

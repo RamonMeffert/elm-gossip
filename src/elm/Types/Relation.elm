@@ -16,6 +16,8 @@ module Types.Relation exposing (..)
 
 import Dict exposing (Dict)
 import Graph exposing (Edge)
+import Html.Attributes exposing (rel)
+import Types.Agent exposing (Agent)
 
 
 {-| A relation in a gossip graph.
@@ -58,3 +60,13 @@ getDotAttrs e =
 
         ( Secret, False ) ->
             Dict.singleton "dir" "both"
+
+{-| Given a relation of some kind, check whether x knows y in that relation
+-}
+knows : Agent -> Agent -> Kind -> Relation -> Bool
+knows x y kind relation =
+    if relation.directed then
+        relation.from == x.id && relation.to == y.id && relation.kind == kind
+    else
+        ((relation.from == x.id && relation.to == y.id) ||
+        (relation.from == y.id && relation.to == x.id)) && relation.kind == kind

@@ -46,3 +46,10 @@ fromList agents =
 
             _ ->
                 Err "Could not retrieve one or more agents from the input list. Make sure the list contains exactly two agents."
+
+
+{-| Returns whether an agent is in a call
+-}
+includes : Call -> Agent ->  Bool
+includes call agent =
+    call.from == agent || call.to == agent
