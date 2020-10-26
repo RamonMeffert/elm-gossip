@@ -17,6 +17,7 @@ module Types.Relation exposing (..)
 import Dict exposing (Dict)
 import Graph exposing (Edge, NodeContext)
 import Types.Agent exposing (Agent, AgentId)
+import IntDict
 
 
 {-| A relation in a gossip graph.
