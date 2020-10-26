@@ -4,11 +4,8 @@ module Conditions.Predefined exposing (..)
 -}
 
 import Conditions.Constituents exposing (..)
-import Task exposing (sequence)
-import Types.CallSequence exposing (CallSequence, containing, last)
-import Types.Protocol exposing (..)
-import Types.Relation exposing (knows)
-import Utils.List
+import Types.CallSequence exposing (containing)
+import Types.Protocol exposing (ProtocolCondition)
 
 
 any : ProtocolCondition
@@ -53,5 +50,5 @@ wco ( x, y ) _ sequence =
 
 
 lns : ProtocolCondition
-lns ( x, y ) relations sequence =
+lns ( x, y ) relations _ =
     not (knowsSecret x y relations)

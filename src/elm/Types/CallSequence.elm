@@ -1,10 +1,9 @@
 module Types.CallSequence exposing (..)
 
 import List exposing (head)
-import Task exposing (sequence)
-import Types.Agent exposing (Agent, AgentId)
+import Types.Agent exposing (AgentId)
 import Types.Call exposing (Call, includes)
-import Types.Relation exposing (Kind(..), knows)
+import Types.Relation exposing (Kind(..))
 
 
 {-| A list of consecutive calls.

@@ -23,6 +23,7 @@ select graph condition sequence =
     let
         calls : NodeContext Agent Relation -> List Call -> List Call
         calls context acc =
+            -- TODO: acc is not used
             let
                 -- since identity relations are implied, they aren't modeled so we do not need to filter them out
                 -- that is, x /= y is inherently satisfied

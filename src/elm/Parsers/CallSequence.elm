@@ -3,10 +3,9 @@ module Parsers.CallSequence exposing (parse)
 {-| LL(1) parser for call sequences.
 -}
 
-import Types.Agent as Agent exposing (..)
-import Types.Call as Call exposing (..)
+import Types.Agent as Agent exposing (Agent)
+import Types.Call as Call exposing (Call)
 import Types.CallSequence exposing (CallSequence)
-import Types.Protocol exposing (ProtocolCondition)
 import Utils.List exposing (dropWhile, takeWhile)
 
 

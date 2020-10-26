@@ -1,16 +1,14 @@
 module Main exposing (..)
 
-import Array exposing (Array)
 import Browser
 import Graph exposing (Graph)
-import Graph.DOT exposing (defaultStyles)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Parsers.GossipGraph as GossipGraph
 import Renderers.GossipGraph
-import Types.Agent as Agent exposing (Agent)
-import Types.Relation as Relation exposing (Relation)
+import Types.Agent exposing (Agent)
+import Types.Relation exposing (Relation)
 
 
 
@@ -82,8 +80,8 @@ update msg model =
 
 view : Model -> Html Message
 view model =
-    main_ [] 
+    main_ []
         [ h1 [] [ text "Tools for Gossip" ]
         , input [ id "gossip-graph-input", value model.input, onInput Change, placeholder "Gossip graph representation" ] []
         , Renderers.GossipGraph.render model.graph model.graphSettings
-        ] 
+        ]

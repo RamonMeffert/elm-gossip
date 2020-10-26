@@ -23,15 +23,12 @@ It also provides a utility to create a Graph for use with the `elm-community/gra
 
 -}
 
-import Force exposing (Entity)
-import Graph exposing (..)
-import IntDict
-import List exposing (..)
-import Types.Agent as Agent exposing (..)
-import Types.Relation as Relation exposing (..)
+import Graph exposing (Edge, Graph, Node, NodeContext)
+import List exposing (append)
+import Types.Agent as Agent exposing (Agent)
+import Types.Relation as Relation exposing (Kind(..), Relation)
 import Utils.General exposing (uncurry)
 import Utils.List exposing (distinct)
-import Utils.Tuple exposing (swap)
 
 
 {-| The `Knowledge` type alias is a string representation of the knowledge of one agent.

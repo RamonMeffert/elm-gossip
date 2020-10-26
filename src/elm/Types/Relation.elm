@@ -16,8 +16,6 @@ module Types.Relation exposing (..)
 
 import Dict exposing (Dict)
 import Graph exposing (Edge, NodeContext)
-import Html.Attributes exposing (rel)
-import IntDict exposing (IntDict)
 import Types.Agent exposing (Agent, AgentId)
 
 

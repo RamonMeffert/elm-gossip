@@ -3,9 +3,7 @@ module Conditions.Constituents exposing (..)
 {-| All possible constituents of a protocol condition. Based on definition 4 in _Van Ditmarsch (2018)_
 -}
 
-import Task exposing (sequence)
-import Types.Agent exposing (Agent, AgentId)
-import Types.Call exposing (Call)
+import Types.Agent exposing (AgentId)
 import Types.CallSequence exposing (CallSequence, last)
 import Types.Relation exposing (Kind(..), Relation, knows)
 
@@ -29,7 +27,7 @@ lastTo : AgentId -> CallSequence -> Bool
 lastTo agent sequence =
     case last sequence of
         Just call ->
-            call.to.id == agent
+            call.to == agent
 
         Nothing ->
             False
@@ -44,7 +42,7 @@ lastFrom : AgentId -> CallSequence -> Bool
 lastFrom agent sequence =
     case last sequence of
         Just call ->
-            call.from.id == agent
+            call.from == agent
 
         Nothing ->
             False
@@ -57,7 +55,7 @@ Returns whether x has called y in a sequence. `sequence` should be the subsequen
 -}
 hasCalled : AgentId -> AgentId -> CallSequence -> Bool
 hasCalled x y sequence =
-    List.any (\c -> c.from.id == x && c.to.id == y) sequence
+    List.any (\c -> c.from == x && c.to == y) sequence
 
 
 {-| yx ∈ σₓ
@@ -67,7 +65,7 @@ Returns whether x was called by y in a sequence. `sequence` should be the subseq
 -}
 wasCalledBy : AgentId -> AgentId -> CallSequence -> Bool
 wasCalledBy x y sequence =
-    List.any (\c -> c.from.id == y && c.to.id == x) sequence
+    List.any (\c -> c.from == y && c.to == x) sequence
 
 
 {-| S^σ xy

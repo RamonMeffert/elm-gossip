@@ -13,16 +13,12 @@ import Force exposing (Entity, State, entity)
 import Graph exposing (Edge, Graph, Node, NodeContext, NodeId)
 import Parsers.GossipGraph
 import TypedSvg exposing (circle, defs, g, line, marker, polygon, svg, text_, title)
-import TypedSvg.Attributes exposing (class, cx, cy, dy, fill, id, markerEnd, markerHeight, markerStart, markerWidth, orient, points, r, refX, refY, stroke, strokeDasharray, strokeWidth, textAnchor, viewBox, x, x1, x2, y, y1, y2)
+import TypedSvg.Attributes exposing (class, cx, cy, dy, fill, id, markerEnd, markerHeight, markerStart, markerWidth, orient, points, preserveAspectRatio, r, refX, refY, stroke, strokeDasharray, strokeWidth, textAnchor, viewBox, x, x1, x2, y, y1, y2)
 import TypedSvg.Core exposing (Attribute, Svg, text)
-import TypedSvg.Types exposing (AnchorAlignment(..), Length(..), Paint(..), px)
+import TypedSvg.Types exposing (Align(..), AnchorAlignment(..), Length(..), MeetOrSlice(..), Paint(..), Scale(..), px)
 import Types.Agent exposing (Agent)
 import Types.Relation exposing (Kind(..), Relation)
 import Utils.General exposing (uncurry)
-import TypedSvg.Attributes exposing (preserveAspectRatio)
-import TypedSvg.Types exposing (MeetOrSlice(..))
-import TypedSvg.Types exposing (Scale(..))
-import TypedSvg.Types exposing (Align(..))
 
 
 
@@ -117,12 +113,15 @@ agentToEntity agent =
 
 {-| Get a list of tuples representing directed relations from a graph
 -}
-getLinks : Graph Entity Relation -> List
-           { source : Int
-           , target : Int
-           , distance : Float
-           , strength : Maybe Float
-           }
+getLinks :
+    Graph Entity Relation
+    ->
+        List
+            { source : Int
+            , target : Int
+            , distance : Float
+            , strength : Maybe Float
+            }
 getLinks graph =
     List.map (\edge -> { source = edge.from, target = edge.to, distance = 100, strength = Just 1 }) (Graph.edges graph)
 
