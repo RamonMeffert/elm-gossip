@@ -9,3 +9,5 @@ node_modules/
 # dist folder except the html file(s) (they're not generated)
 dist/
 !dist/**/*.html
+# mac files
+.DS_Store

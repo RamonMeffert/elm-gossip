@@ -42,9 +42,9 @@ init =
     , agents = []
     , relations = []
     , graphSettings =
-        { nodeRadius = 10
-        , edgeWidth = 1
-        , arrowLength = 4
+        { nodeRadius = 20
+        , edgeWidth = 2
+        , arrowLength = 6
         }
     }
 
@@ -82,7 +82,8 @@ update msg model =
 
 view : Model -> Html Message
 view model =
-    div []
-        [ input [ value model.input, onInput Change, style "width" "400px", placeholder "Gossip graph representation" ] []
+    main_ [] 
+        [ h1 [] [ text "Tools for Gossip" ]
+        , input [ id "gossip-graph-input", value model.input, onInput Change, placeholder "Gossip graph representation" ] []
         , Renderers.GossipGraph.render model.graph model.graphSettings
-        ]
+        ] 

@@ -19,6 +19,10 @@ import TypedSvg.Types exposing (AnchorAlignment(..), Length(..), Paint(..), px)
 import Types.Agent exposing (Agent)
 import Types.Relation exposing (Kind(..), Relation)
 import Utils.General exposing (uncurry)
+import TypedSvg.Attributes exposing (preserveAspectRatio)
+import TypedSvg.Types exposing (MeetOrSlice(..))
+import TypedSvg.Types exposing (Scale(..))
+import TypedSvg.Types exposing (Align(..))
 
 
 
@@ -59,18 +63,18 @@ render graph settings =
             Graph.mapNodes agentToEntity graph
 
         forces =
-            [ Force.links (getLinks entityGraph)
-            , Force.manyBodyStrength -200 <|
+            [ Force.customLinks 1 (getLinks entityGraph)
+            , Force.manyBodyStrength 100 <|
                 List.map .id <|
                     Graph.nodes entityGraph
-            , Force.center 200 200
+            , Force.center 400 200
             ]
 
         computedGraph =
             Force.computeSimulation (Force.simulation forces) (List.map (\n -> n.label) (Graph.nodes entityGraph))
                 |> updateGraphWithList entityGraph
     in
-    svg [ viewBox 0 0 400 400 ]
+    svg [ viewBox 0 0 800 400, id "gossip-graph", preserveAspectRatio (Align ScaleMid ScaleMid) Meet ]
         [ defs []
             (arrowHeads settings)
         , g [ class [ "links" ] ] <| List.map (renderEdge computedGraph settings) <| Graph.edges computedGraph
@@ -113,9 +117,14 @@ agentToEntity agent =
 
 {-| Get a list of tuples representing directed relations from a graph
 -}
-getLinks : Graph Entity Relation -> List ( Int, Int )
+getLinks : Graph Entity Relation -> List
+           { source : Int
+           , target : Int
+           , distance : Float
+           , strength : Maybe Float
+           }
 getLinks graph =
-    List.map (\edge -> ( edge.from, edge.to )) (Graph.edges graph)
+    List.map (\edge -> { source = edge.from, target = edge.to, distance = 100, strength = Just 1 }) (Graph.edges graph)
 
 
 {-| Code for rendering a node.
@@ -136,7 +145,7 @@ renderNode settings node =
             [ textAnchor AnchorMiddle
             , x (px node.label.x)
             , y (px node.label.y)
-            , dy (px (settings.nodeRadius / 2))
+            , dy (px (settings.nodeRadius / 3))
             ]
             [ text (String.fromChar node.label.value.name) ]
         ]
@@ -158,7 +167,7 @@ renderEdgeOffset settings extraAttributes source target =
             settings.nodeRadius
 
         r2 =
-            settings.nodeRadius + settings.arrowLength
+            settings.nodeRadius + (2 * settings.arrowLength)
 
         ( newSource, newTarget ) =
             radialOffset source target r1 r2
@@ -189,7 +198,7 @@ renderEdgeUndirected : GraphSettings -> List (Attribute msg) -> Entity -> Entity
 renderEdgeUndirected settings extraAttributes source target =
     let
         r =
-            settings.nodeRadius + settings.arrowLength
+            settings.nodeRadius + (2 * settings.arrowLength)
 
         ( src, tgt ) =
             radialOffset source target r r
@@ -218,7 +227,7 @@ renderEdgeDirected settings extraAttributes source target =
             settings.nodeRadius
 
         r2 =
-            settings.nodeRadius + settings.arrowLength
+            settings.nodeRadius + (2 * settings.arrowLength)
 
         ( src, tgt ) =
             radialOffset source target r1 r2
@@ -251,7 +260,7 @@ renderEdge graph settings edge =
 
         dashed =
             if edge.label.kind == Number then
-                [ strokeDasharray "2" ]
+                [ strokeDasharray (String.fromFloat (settings.edgeWidth * 2)) ]
 
             else
                 []
