@@ -13,8 +13,10 @@ This file will act as both a to-do list and a log of finished features.
 
 ### Protocol representation
 
-- [ ] Representation of constituents
-- [ ] Default protocols
+- [x] Representation of constituents
+- [x] Default protocols
+- [ ] Way to run protocols
+- [ ] Building protocols dynamically by combining constituents in the ui
 - [ ] UI/UX ![low]
   - [ ] Nesting
   - [ ] Drag to reorder
@@ -24,6 +26,7 @@ This file will act as both a to-do list and a log of finished features.
 
 ### Call sequence analysis (depends on protocol implementation)
 
+- [ ] Consider using `elm/parser` instead of "homemade" parsing
 - [ ] Consider saving call sequences in reverse: changes lookup time of the last call from O(n) to (1)
   - It seems like the last call is needed (way) more frequently than the first call. Makes sense.
 - [ ] Permissibility
@@ -35,6 +38,8 @@ This file will act as both a to-do list and a log of finished features.
 
 ### Gossip graph representation
 
+- [ ] Consider using `elm/parser` instead of "homemade" parsing
+  - Can `elm/parser` deal with indexed input?
 - [ ] Accept numbers _and_ letters as agent representation
 - [ ] Input validation
   - [ ] The identity relation for N and S should always be satisfied
@@ -75,7 +80,7 @@ This file will act as both a to-do list and a log of finished features.
 
 ### Execution tree visualisation ![eval1]
 
-- [ ] Tree w/ simplified visualisation (e.g. using letter representations in the appendix of [^2])
+- [ ] Tree w/ simplified visualisation (e.g. using letter representations as in the appendix of [^2])
   - [ ] Tree rendering
   - [ ] Show gossip graph on-click (popup?)
   - [ ] For efficiency: consider using some kind of `diff` tree instead of a tree of full graphs.
@@ -87,7 +92,6 @@ This file will act as both a to-do list and a log of finished features.
   - [ ] Implementation of at least 1 protocol
 - [ ] Infinite loop check (e.g. for ANY)
 - [ ] Limitation on n. of agents (trees get big fast)
-- [ ] (More items T.B.D.)
 
 ### Miscellaneous
 
