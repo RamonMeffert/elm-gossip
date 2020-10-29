@@ -7,7 +7,7 @@ This file will act as both a to-do list and a log of finished features.
 | ![hi]    | Implement ASAP, as this will help with the rest of the feature/project   |
 | ![low]   | Implement when the main feature is done                                  |
 | ![maybe] | Would be nice, but is probably a lot of work and is not really necessary |
-| ![eval1] | Should be finished for the first evaluation                              |
+| ![next]  | Should be finished for the next meeting                                  |
 
 ## Features
 
@@ -102,7 +102,7 @@ This file will act as both a to-do list and a log of finished features.
 
 ### Miscellaneous
 
-- [ ] ![hi] Rethink application structure. Maybe take the types in the `Types` folder and create folders for them instead of having them separated like this? Then they could have separate modules if needed. Then also separate things that now contain types to their own directory, so we can have `GossipGraph.Renderer` instead of `Renderers.GossipGraph`.
+- [ ] ![hi] ![next] Rethink application structure. Maybe take the types in the `Types` folder and create folders for them instead of having them separated like this? Then they could have separate modules if needed. Then also separate things that now contain types to their own directory, so we can have `GossipGraph.Renderer` instead of `Renderers.GossipGraph`.
 - [ ] Show more output in the UI, even if not fully finished ![next]
   - Call Sequence rendering + error messages
   - Creating gossip graph string from graph representation (normalized?)
