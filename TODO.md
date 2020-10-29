@@ -43,6 +43,10 @@ This file will act as both a to-do list and a log of finished features.
   - [ ] Sun graph Y/N (might actually be easy; `elm-community/graph` has a cyclicity checker, that's at least 50% of the work done already)
 - [ ] Normalized agent string (fully alphabetical or fully numerical)
   - i.e. even if the input is `Fxl fEXl fL`, generate a string like `Acd aBCd aCD D` (or its numerical equivalent)
+- [ ] Improve/fix graph rendering
+  - Consider rendering the first N agents in a circle to improve quality of rendered graph
+  - Look at how GraphViz renders graph (probably very hard)
+  - At the very least, make sure nodes do not overlap
 - [ ] Consider using `elm/parser` instead of "homemade" parsing
   - Iff `elm/parser` can deal with indexed input.
 - [ ] Accept numbers _and_ letters as agent representation
