@@ -26,20 +26,25 @@ This file will act as both a to-do list and a log of finished features.
 
 ### Call sequence analysis (depends on protocol implementation)
 
+- [ ] Permissibility ![next]
 - [ ] Consider using `elm/parser` instead of "homemade" parsing
 - [ ] Consider saving call sequences in reverse: changes lookup time of the last call from O(n) to (1)
   - It seems like the last call is needed (way) more frequently than the first call. Makes sense.
-- [ ] Permissibility
 - [ ] UI/UX ![low]
   - [ ] Make calls draggable elements (for easy call reordering)
   - [ ] Timeline navigation (previous/next call buttons / changing zoom focus?)
 - [x] [16-10-2020] ~~Possibility~~ (Parsing checks for possibility)
-- [x] [16-10-2020] ~~Call sequence parsing~~ ![eval1]
+- [x] [16-10-2020] ~~Call sequence parsing~~
 
 ### Gossip graph representation
 
+- [ ] Graph analysis ![next]
+  - [ ] Connectedness
+  - [ ] Sun graph Y/N (might actually be easy; `elm-community/graph` has a cyclicity checker, that's at least 50% of the work done already)
+- [ ] Normalized agent string (fully alphabetical or fully numerical)
+  - i.e. even if the input is `Fxl fEXl fL`, generate a string like `Acd aBCd aCD D` (or its numerical equivalent)
 - [ ] Consider using `elm/parser` instead of "homemade" parsing
-  - Can `elm/parser` deal with indexed input?
+  - Iff `elm/parser` can deal with indexed input.
 - [ ] Accept numbers _and_ letters as agent representation
 - [ ] Input validation
   - [ ] The identity relation for N and S should always be satisfied
@@ -60,10 +65,8 @@ This file will act as both a to-do list and a log of finished features.
         - 😃 easy
   - [ ] Input should not contain unconnected nodes (?)
     - [ ] If no one can reach a node, it will never be included in any call sequence. So: warning and remove, or error?
-- [ ] Graph analysis
-  - [ ] Connectedness
-  - [ ] Sun graph Y/N (might actually be easy; `elm-community/graph` has a cyclicity checker, that's at least 50% of the work done already)
-- [x] [20-10-2020] ~~Visualize gossip graph~~ ![eval1]
+- [ ] Fix gossip graph rendering
+- [x] [20-10-2020] ~~Visualize gossip graph~~
   - [x] [29-09-2020] ~~Write parser for short[^2] gossip graph representation~~
   - [x] [09-10-2020] ~~Integrate [elm-community/graph](https://package.elm-lang.org/packages/elm-community/graph/latest/)~~
   - [x] [17-10-2020] ~~Pick graph rendering library.~~ ([rationale](./NOTES.md#rendering-graphs))
@@ -78,8 +81,9 @@ This file will act as both a to-do list and a log of finished features.
   - [ ] ![maybe] WYSIWYG graph editing[^4]
   - [ ] ![maybe] Configurability, e.g. show identity relations
 
-### Execution tree visualisation ![eval1]
+### Execution tree visualisation
 
+- [ ] Find possible calls in current state ![next]
 - [ ] Tree w/ simplified visualisation (e.g. using letter representations as in the appendix of [^2])
   - [ ] Tree rendering
   - [ ] Show gossip graph on-click (popup?)
@@ -87,7 +91,6 @@ This file will act as both a to-do list and a log of finished features.
         Maybe save the updating functions in the tree nodes instead of the graph?
         This might have some consequences for rendering, though.
   - [x] [21-10-2020] ~~Graph to letter representation~~
-- [ ] Find possible calls in current state
 - [ ] Data model for representing protocols
   - [ ] Implementation of at least 1 protocol
 - [ ] Infinite loop check (e.g. for ANY)
@@ -95,7 +98,10 @@ This file will act as both a to-do list and a log of finished features.
 
 ### Miscellaneous
 
-- [ ] ![hi] Rethink application structure. Maybe take the types in the `Types` folder and create folders for them instead of having them separated like this? Then they could have separate modules if needed. Then also separate things that now contain types to their own directory, so we can have `GossipGraph.Renderer` instead of `Renderers.GossipGraph`. 
+- [ ] ![hi] Rethink application structure. Maybe take the types in the `Types` folder and create folders for them instead of having them separated like this? Then they could have separate modules if needed. Then also separate things that now contain types to their own directory, so we can have `GossipGraph.Renderer` instead of `Renderers.GossipGraph`.
+- [ ] Show more output in the UI, even if not fully finished ![next]
+  - Call Sequence rendering + error messages
+  - Creating gossip graph string from graph representation (normalized?)
 - [ ] ![low] Make the app look good
 - [ ] Make code [citable](https://guides.github.com/activities/citable-code/) when a release version is done
 - [ ] Set up release on github pages when project is presentable
@@ -122,3 +128,4 @@ This file will act as both a to-do list and a log of finished features.
 [hi]: https://img.shields.io/badge/-high%20prio-red
 [maybe]: https://img.shields.io/badge/-optional-%23eee
 [eval1]: https://img.shields.io/badge/-1st%20evaluation-blue
+[next]: https://img.shields.io/badge/-next%20meeting-blue
