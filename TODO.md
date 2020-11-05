@@ -112,6 +112,7 @@ This file will act as both a to-do list and a log of finished features.
 - [ ] Figure out fitting license
 - [ ] Check consistency of argument order / figure out rationale behind argument order for consistency
   - possibly: if a function f works on two related arguments, these arguments should be the first arguments. Act as if the function _could_ be written using infix notation, e.g. a check if agents are equal in a graph: `equals x y graph` => ``x `equals` y graph`` (actually, is this a thing you can do in haskell? I'm not 100% sure)
+- [ ] Check if a third-party notices file is necessary (i.e. a file containing licenses that need to be redistributed)
 - [x] [21-10-2020] ~~Integrate `gulp` or something similar to streamline building~~ (using yarn/npm scripts for now)
 
 <!-- Footnotes -->

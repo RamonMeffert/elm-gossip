@@ -4,11 +4,19 @@ BSc Project
 
 ## Installing
 
-If you want to build this project yourself, you'll need [Sass][1] and [`yarn`][3] or [`npm`][4]. Optionally, you can also install [`elm-live`][2] if you want to run a development server with live-reload. If you just want to use the project, you can just build it and navigate to `./dist/index.html`.
+If you want to build this project yourself, you'll need [`yarn`][3] or [`npm`][4]. Optionally, you can also install [`elm-live`][2] if you want to run a development server with live-reload. If you just want to use the project, you can just build it and navigate to `./dist/index.html`.
+
+To install:
+
+```sh
+yarn install
+# or
+npm install
+```
 
 ## Building and running
 
-Build a release: 
+Build a release:
 
 ```sh
 yarn build

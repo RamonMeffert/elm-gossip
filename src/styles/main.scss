@@ -1,35 +1,21 @@
 @use 'normalize';
+@use 'typography';
 
-$header-font: sans-serif;
-$body-font: sans-serif;
 $pad-v: 1rem;
 $pad-h: 2rem;
 $r: 1rem;
 
-body {
-    background-color: darken(white, 10%);
-    font-family: $body-font;
-}
-
-h1, h2, h3, h4, h5, h6 {
-    font-family: $header-font;
-}
-
 main {
     width: 1000px;
-    margin: 5rem auto 0 auto;
+    margin: 2rem auto 0 auto;
     padding: $pad-v $pad-h;
     background-color: white;
-    border: 2px solid darken(white, 25%);
-    border-radius: $r;
 }
 
 #gossip-graph-input {
     width: 100%;
     box-sizing: border-box;
-    font-size: 150%;
-    padding: $pad-v / 2 $pad-h / 2;
-    border-radius: $r / 2;
+    padding: $pad-v / 2 $pad-h / 2 $pad-v / (3/2) $pad-h / 2;
     border: 2px solid darken(white, 25%);
 }
 

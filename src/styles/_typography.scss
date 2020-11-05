@@ -1,0 +1,44 @@
+@use 'sass:math';
+
+$-header: 'Space Grotesk', Helvetica, Arial, sans-serif;
+$-body: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+$-base-size: 18px;
+$-type-scale: 1.2;
+
+// for older browsers
+@font-face {
+    font-family: 'Space Grotesk';
+    src: url('../fonts/SpaceGrotesk-Medium.woff2');
+    font-weight: 500;
+}
+
+// for browsers that support variable fonts
+@supports (font-variation-settings: normal) {
+    @font-face {
+        font-family: 'Space Grotesk';
+        src: url('../fonts/SpaceGrotesk[wght].woff2') format('woff2 supports variations'),
+             url('../fonts/SpaceGrotesk[wght].woff2') format('woff2-variations');
+        font-weight: 300 700;
+    }
+}
+
+body {
+    font-size: $-base-size;
+    font-family: $-body;
+    line-height: $-base-size * 1.5;
+}
+
+@for $level from 1 through 6 {
+    $size: $-base-size * math.pow($-type-scale, 7-$level);
+
+    h#{$level} {
+        font-size: $size;
+        font-family: $-header;
+        font-weight: 500;
+        letter-spacing: -1px;
+    }
+
+    h#{$level} + p.subtitle {
+        font-size: $size / $-type-scale;
+    }
+}
