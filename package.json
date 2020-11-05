@@ -18,5 +18,8 @@
   },
   "devDependencies": {
     "elm-live": "^4.0.2"
+  },
+  "resolutions": {
+    "http-proxy": "^1.18.1"
   }
 }
