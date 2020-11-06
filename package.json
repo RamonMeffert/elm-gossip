@@ -1,7 +1,7 @@
 {
   "name": "tools-for-gossip",
   "scripts": {
-    "build": "yarn run elm-compile & yarn run sass-compile",
+    "build": "yarn run sass-compile & yarn run elm-compile",
     "start": "yarn run elm-live & yarn run sass-watch",
     "start-dev": "yarn run elm-live-dev & yarn run sass-watch",
     "elm-compile": "./optimize.sh",

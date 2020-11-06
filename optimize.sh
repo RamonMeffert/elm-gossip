@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
 outdir="./dist"
@@ -9,7 +9,7 @@ elm="./node_modules/elm/bin/elm"
 uglify="./node_modules/uglify-js/bin/uglifyjs"
 
 # Build the Elm app
-$elm make $srcdir/Main.elm --quiet --optimize --output=$js
+$elm make $srcdir/Main.elm --optimize --output=$js
 
 echo "Minifying..."
 
@@ -35,7 +35,7 @@ tot_perc=`echo "100 - ($gz_B * 100 / $fs_B)" | bc`
 
 echo
 echo "Succes! Minifying the file yielded a $perc% reduction in file size."
-echo "Gzipping would yield a further $gz_perc% reduction, for a total of $tot_perc%."
+echo "Gzipping would yield a further $gz_perc% reduction, for a total reduction of $tot_perc%."
 echo
 echo "    Original:    $fs_kB kB"
 echo "    Minified:    $min_kB kB"

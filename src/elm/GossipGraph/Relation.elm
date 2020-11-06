@@ -1,4 +1,4 @@
-module Types.Relation exposing (..)
+module GossipGraph.Relation exposing (..)
 
 {-| The `Relation` type is used to model the relations in a gossip graph.
 
@@ -16,7 +16,7 @@ module Types.Relation exposing (..)
 
 import Dict exposing (Dict)
 import Graph exposing (Edge, NodeContext)
-import Types.Agent exposing (Agent, AgentId)
+import GossipGraph.Agent exposing (Agent, AgentId)
 import IntDict
 
 

@@ -1,11 +1,11 @@
-module Conditions.Predefined exposing (..)
+module GossipProtocol.Conditions.Predefined exposing (..)
 
 {-| This file contains several predefined protocol conditions. Based on Van Ditmarsch (2018)
 -}
 
-import Conditions.Constituents exposing (..)
-import Types.CallSequence exposing (containing)
-import Types.Protocol exposing (ProtocolCondition)
+import GossipProtocol.Conditions.Constituents exposing (..)
+import CallSequence.CallSequence exposing (containing)
+import GossipProtocol.GossipProtocol exposing (ProtocolCondition)
 
 
 any : ProtocolCondition

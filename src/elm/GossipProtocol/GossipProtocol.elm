@@ -1,10 +1,10 @@
-module Types.Protocol exposing (..)
+module GossipProtocol.GossipProtocol exposing (..)
 
 import Graph exposing (Graph, NodeContext, fold)
-import Types.Agent exposing (Agent, AgentId)
-import Types.Call exposing (Call)
-import Types.CallSequence exposing (CallSequence)
-import Types.Relation exposing (Kind(..), Relation, fromNodeContext)
+import GossipGraph.Agent exposing (Agent, AgentId)
+import GossipGraph.Call exposing (Call)
+import CallSequence.CallSequence exposing (CallSequence)
+import GossipGraph.Relation exposing (Kind(..), Relation, fromNodeContext)
 
 
 {-| Protocol conditions
@@ -40,6 +40,6 @@ select graph condition sequence =
             -- select x, y ∈ A, such that x /= y, Nxy, and π(x, y)
             -- the resulting list of calls is the list of calls that can be executed on G given the call history
             List.filter (\x -> condition x localRelations sequence) relationPairs
-                |> List.map Types.Call.fromTuple
+                |> List.map GossipGraph.Call.fromTuple
     in
     Graph.fold calls [] graph

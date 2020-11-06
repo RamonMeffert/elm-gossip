@@ -1,9 +1,9 @@
-module Types.CallSequence exposing (..)
+module CallSequence.CallSequence exposing (..)
 
 import List exposing (head)
-import Types.Agent exposing (AgentId)
-import Types.Call exposing (Call, includes)
-import Types.Relation exposing (Kind(..))
+import GossipGraph.Agent exposing (AgentId)
+import GossipGraph.Call exposing (Call, includes)
+import GossipGraph.Relation exposing (Kind(..))
 
 
 {-| A list of consecutive calls.
