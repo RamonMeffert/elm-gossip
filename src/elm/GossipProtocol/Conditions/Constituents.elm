@@ -1,11 +1,11 @@
-module Conditions.Constituents exposing (..)
+module GossipProtocol.Conditions.Constituents exposing (..)
 
 {-| All possible constituents of a protocol condition. Based on definition 4 in _Van Ditmarsch (2018)_
 -}
 
-import Types.Agent exposing (AgentId)
-import Types.CallSequence exposing (CallSequence, last)
-import Types.Relation exposing (Kind(..), Relation, knows)
+import GossipGraph.Agent exposing (AgentId)
+import CallSequence.CallSequence exposing (CallSequence, last)
+import GossipGraph.Relation exposing (Kind(..), Relation, knows)
 
 
 {-| σₓ == ϵ

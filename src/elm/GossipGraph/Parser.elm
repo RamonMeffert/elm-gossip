@@ -1,4 +1,4 @@
-module Parsers.GossipGraph exposing
+module GossipGraph.Parser exposing
     ( parse, fromAgentsAndRelations
     , fromString, toString
     )
@@ -25,8 +25,8 @@ It also provides a utility to create a Graph for use with the `elm-community/gra
 
 import Graph exposing (Edge, Graph, Node, NodeContext)
 import List exposing (append)
-import Types.Agent as Agent exposing (Agent)
-import Types.Relation as Relation exposing (Kind(..), Relation)
+import GossipGraph.Agent as Agent exposing (Agent)
+import GossipGraph.Relation as Relation exposing (Kind(..), Relation)
 import Utils.General exposing (uncurry)
 import Utils.List exposing (distinct)
 

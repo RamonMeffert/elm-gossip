@@ -1,4 +1,4 @@
-module Types.Agent exposing (..)
+module GossipGraph.Agent exposing (..)
 
 {-| The `Agent` type is used to model the agents in a gossip graph.
 

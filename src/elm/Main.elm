@@ -5,10 +5,10 @@ import Graph exposing (Graph)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Parsers.GossipGraph as GossipGraph
-import Renderers.GossipGraph
-import Types.Agent exposing (Agent)
-import Types.Relation exposing (Relation)
+import GossipGraph.Parser
+import GossipGraph.Renderer
+import GossipGraph.Agent exposing (Agent)
+import GossipGraph.Relation exposing (Relation)
 
 
 
@@ -29,7 +29,7 @@ type alias Model =
     , graph : Graph Agent Relation
     , agents : List Agent
     , relations : List Relation
-    , graphSettings : Renderers.GossipGraph.GraphSettings
+    , graphSettings : GossipGraph.Renderer.GraphSettings
     }
 
 
@@ -61,10 +61,10 @@ update msg model =
         Change input ->
             let
                 ( agents, relations ) =
-                    GossipGraph.parse input
+                    GossipGraph.Parser.parse input
 
                 graph =
-                    GossipGraph.fromAgentsAndRelations agents relations
+                    GossipGraph.Parser.fromAgentsAndRelations agents relations
             in
             { model
                 | input = input
@@ -83,5 +83,5 @@ view model =
     main_ []
         [ h1 [] [ text "Tools for Gossip" ]
         , input [ id "gossip-graph-input", value model.input, onInput Change, placeholder "Gossip graph representation" ] []
-        , Renderers.GossipGraph.render model.graph model.graphSettings
+        , GossipGraph.Renderer.render model.graph model.graphSettings
         ]

@@ -1,4 +1,4 @@
-module Renderers.GossipGraph exposing (GraphSettings, render)
+module GossipGraph.Renderer exposing (GraphSettings, render)
 
 {-| This module is for rendering gossip graphs.
 
@@ -11,13 +11,13 @@ import Browser
 import Color exposing (Color)
 import Force exposing (Entity, State, entity)
 import Graph exposing (Edge, Graph, Node, NodeContext, NodeId)
-import Parsers.GossipGraph
+import GossipGraph.Parser
 import TypedSvg exposing (circle, defs, g, line, marker, polygon, svg, text_, title)
 import TypedSvg.Attributes exposing (class, cx, cy, dy, fill, id, markerEnd, markerHeight, markerStart, markerWidth, orient, points, preserveAspectRatio, r, refX, refY, stroke, strokeDasharray, strokeWidth, textAnchor, viewBox, x, x1, x2, y, y1, y2)
 import TypedSvg.Core exposing (Attribute, Svg, text)
 import TypedSvg.Types exposing (Align(..), AnchorAlignment(..), Length(..), MeetOrSlice(..), Paint(..), Scale(..), px)
-import Types.Agent exposing (Agent)
-import Types.Relation exposing (Kind(..), Relation)
+import GossipGraph.Agent exposing (Agent)
+import GossipGraph.Relation exposing (Kind(..), Relation)
 import Utils.General exposing (uncurry)
 
 

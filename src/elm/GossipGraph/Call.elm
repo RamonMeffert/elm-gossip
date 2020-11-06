@@ -1,6 +1,6 @@
-module Types.Call exposing (..)
+module GossipGraph.Call exposing (..)
 
-import Types.Agent exposing (Agent, AgentId)
+import GossipGraph.Agent exposing (Agent, AgentId)
 import Utils.List exposing (get)
 
 
