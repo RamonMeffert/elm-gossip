@@ -46,7 +46,7 @@ fromList agents =
                     Ok { from = f.id, to = t.id }
 
             _ ->
-                Err "There is no one to call. Make sure the "
+                Err "There is no one to call. Make sure a call looks like “xy”."
 
 
 {-| Returns whether an agent is in a call
