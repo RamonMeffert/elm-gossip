@@ -1,5 +1,11 @@
 # To do
 
+**DEPRECATED** 
+
+This file is no longer in use. I am now tracking my progress using GitHub's [Issues](https://github.com/RamonMeffert/tools-for-gossip/issues) and [Projects](https://github.com/RamonMeffert/tools-for-gossip/projects/1) features.
+
+---
+
 This file will act as both a to-do list and a log of finished features.
 
 | Label    | Explanation                                                              |

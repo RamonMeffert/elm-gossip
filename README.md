@@ -42,7 +42,9 @@ npm start-dev
 
 ## Progress
 
-You can track my progress and ideas in my [To Do list](./TODO.md). I keep some notes on what I'm doing and things I discover [here](./NOTES.md).
+I am using GitHub's [Issues](https://github.com/RamonMeffert/tools-for-gossip/issues) feature as a To-Do list.
+
+I keep some notes on what I'm doing and things I discover [here](./NOTES.md).
 
 <!--Urls-->
 
