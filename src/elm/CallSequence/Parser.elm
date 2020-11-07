@@ -47,7 +47,7 @@ parse input agents =
                                     Ok (call :: seq)
 
                                 ( Err e, _ ) ->
-                                    Err e
+                                    Err ("I ran into an error parsing the call “" ++ s ++ "”: " ++ e)
 
                                 ( _, Err e ) ->
                                     Err e

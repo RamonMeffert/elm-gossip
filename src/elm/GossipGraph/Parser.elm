@@ -1,6 +1,6 @@
 module GossipGraph.Parser exposing
     ( parse, fromAgentsAndRelations
-    , fromString, toString
+    , fromString, toString, toCanonicalString
     )
 
 {-| This module is responsible for recognizing agents and relations from an input string.
@@ -101,7 +101,18 @@ toString graph =
         |> List.foldr (++) ""
 
 
-{-| Converts and adjacency, i.e. a node and its incoming and outgoing edges, to
+toCanonicalString : Graph Agent Relation -> String
+toCanonicalString graph =
+    Graph.fold (adjacencyToCanonicalString) [] graph
+        |> List.reverse
+        -- include separator
+        -- TODO: make separator configurable
+        |> List.intersperse " "
+        -- concatenate list of strings into string
+        |> List.foldr (++) ""
+
+
+{-| Converts an adjacency, i.e. a node and its incoming and outgoing edges, to
 a string
 -}
 adjacencyToString : List (Node Agent) -> NodeContext Agent Relation -> List String -> List String
@@ -132,6 +143,37 @@ adjacencyToString agents context acc =
     in
     List.foldr toCharacter "" relations :: acc
 
+
+
+{-| Converts an adjacency, i.e. a node and its incoming and outgoing edges, to
+a string
+-}
+adjacencyToCanonicalString : NodeContext Agent Relation -> List String -> List String
+adjacencyToCanonicalString context acc =
+    let
+        -- Accumulating function that takes a partially completed knowledge
+        -- string and adds a new character based on an AgentId and a RelationType
+        toCharacter : ( Int, Kind ) -> String -> String
+        toCharacter ( id, kind ) acc2 =
+            -- 65 is the unicode code for 'A', so we're mapping 0 to 'A' here
+            Char.fromCode (id + 65)
+                |> (if kind == Number then
+                        Char.toLower
+
+                    else
+                        Char.toUpper
+                   )
+                |> (\c -> String.fromChar c ++ acc2)
+
+        nonIdRelations =
+            Relation.fromNodeContext context
+                |> List.map (\r -> ( r.to, r.kind ))
+
+        -- Also include identity relation. we need to manually add it because it is implied in the rest of the data model
+        relations =
+            List.sortBy Tuple.first (( context.node.label.id, Secret ) :: nonIdRelations)
+    in
+    List.foldr toCharacter "" relations :: acc
 
 {-| Given a list of agents and a list of knowledge strings, return a list of
 tuples indicating the relations between agents.
