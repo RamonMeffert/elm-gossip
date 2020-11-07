@@ -34,7 +34,7 @@ fromList agents =
             get agents 1
     in
     if List.length agents > 2 then
-        Err "List contains too many agents to construct a call. Make sure the list contains exactly two agents."
+        Err "No group calls allowed."
 
     else
         case ( from, to ) of
@@ -46,7 +46,7 @@ fromList agents =
                     Ok { from = f.id, to = t.id }
 
             _ ->
-                Err "Could not retrieve one or more agents from the input list. Make sure the list contains exactly two agents."
+                Err "There is no one to call. Make sure the "
 
 
 {-| Returns whether an agent is in a call

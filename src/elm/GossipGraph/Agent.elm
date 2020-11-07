@@ -58,7 +58,16 @@ fromChar : List Agent -> Char -> Result String Agent
 fromChar agents char =
     agents
         |> Utils.List.find (\agent -> agent.name == Char.toUpper char)
-        |> Result.fromMaybe ("Agent " ++ String.fromChar (Char.toUpper char) ++ " does not exist.")
+        |> Result.fromMaybe ("Agent “" ++ String.fromChar (Char.toUpper char) ++ "” does not exist.")
+
+{-| Given a list of agents and an agent id, return that agent if it exists.
+If it does not exist, return an error.
+-}
+fromId : List Agent -> AgentId -> Result String Agent
+fromId agents id =
+    agents
+        |> Utils.List.find (\agent -> agent.id == id)
+        |> Result.fromMaybe ("An agent with id" ++ (String.fromInt id) ++ " does not exist.")
 
 
 {-| Given a list of agents and a string containing agent names, return a list of agents if all agents exists.

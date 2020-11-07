@@ -70,7 +70,7 @@ render graph settings =
             Force.computeSimulation (Force.simulation forces) (List.map (\n -> n.label) (Graph.nodes entityGraph))
                 |> updateGraphWithList entityGraph
     in
-    svg [ viewBox 0 0 800 400, id "gossip-graph", preserveAspectRatio (Align ScaleMid ScaleMid) Meet ]
+    svg [ viewBox 0 0 800 400, preserveAspectRatio (Align ScaleMid ScaleMid) Meet ]
         [ defs []
             (arrowHeads settings)
         , g [ class [ "links" ] ] <| List.map (renderEdge computedGraph settings) <| Graph.edges computedGraph

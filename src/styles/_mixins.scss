@@ -1,0 +1,8 @@
+@use 'variables' as v;
+
+@mixin box {
+    box-shadow: 0 .2rem 1rem rgba(0,0,0,0.2),
+                0 0 0 .1rem rgba(0,0,0,0.01);
+    border-radius: v.$border-radius;
+    padding: v.$pad-v v.$pad-h;
+}
