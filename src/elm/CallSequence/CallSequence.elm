@@ -6,7 +6,7 @@ import GossipGraph.Call exposing (Call, includes)
 import GossipGraph.Relation exposing (Kind(..))
 
 
-{-| A list of consecutive calls.
+{-| A list of consecutive calls. Ordered latest to first call to improve lookup speed.
 -}
 type alias CallSequence =
     List Call
@@ -28,8 +28,3 @@ containing sequence agent =
 
             else
                 containing calls agent
-
-
-last : CallSequence -> Maybe Call
-last sequence =
-    head <| List.reverse sequence

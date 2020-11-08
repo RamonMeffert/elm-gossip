@@ -34,4 +34,5 @@ render result agents =
                 [ text "No call sequence entered" ]
 
             else
-                List.map renderCall sequence
+                List.reverse sequence
+                |>  List.map renderCall

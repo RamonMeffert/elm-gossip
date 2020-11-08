@@ -39,6 +39,6 @@ body {
     }
 
     h#{$level} + p.subtitle {
-        font-size: $size / $-type-scale;
+        font-size: $size / ($-type-scale * 2);
     }
 }

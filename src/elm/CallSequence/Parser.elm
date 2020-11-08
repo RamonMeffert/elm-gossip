@@ -41,6 +41,8 @@ parse input agents =
                         Separator ->
                             tryParse ts
 
+                        -- recursively parse calls and stop when an error is encountered
+                        -- basically builds a parse tree as tryParse is a recursive call
                         CallToken s ->
                             case ( parseCall s, tryParse ts ) of
                                 ( Ok call, Ok seq ) ->
@@ -53,7 +55,10 @@ parse input agents =
                                     Err e
     in
     lexer input
+        -- only parse if the lexing succeeded, otherwise propagate the errors
         |> Result.andThen tryParse
+        -- reverse the call sequence for faster lookup
+        |> Result.map List.reverse
 
 
 
@@ -130,6 +135,6 @@ lexer s =
 
                     else
                         -- Return an error for unrecognized sequences
-                        Err ("Invalid character '" ++ String.fromChar c ++ "' at position " ++ String.fromInt pos)
+                        Err ("Invalid character ‘" ++ String.fromChar c ++ "’ at position " ++ String.fromInt pos)
     in
     charLexer (String.toList s) 1

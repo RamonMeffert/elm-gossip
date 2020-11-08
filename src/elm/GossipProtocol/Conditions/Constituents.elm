@@ -4,8 +4,9 @@ module GossipProtocol.Conditions.Constituents exposing (..)
 -}
 
 import GossipGraph.Agent exposing (AgentId)
-import CallSequence.CallSequence exposing (CallSequence, last)
+import CallSequence.CallSequence exposing (CallSequence)
 import GossipGraph.Relation exposing (Kind(..), Relation, knows)
+import List exposing (head)
 
 
 {-| σₓ == ϵ
@@ -25,7 +26,7 @@ Returns whether the last call in a sequence was to x. `sequence` should be the s
 -}
 lastTo : AgentId -> CallSequence -> Bool
 lastTo agent sequence =
-    case last sequence of
+    case head sequence of
         Just call ->
             call.to == agent
 
@@ -40,7 +41,7 @@ Returns whether the last call in a sequence was from x. `sequence` should be the
 -}
 lastFrom : AgentId -> CallSequence -> Bool
 lastFrom agent sequence =
-    case last sequence of
+    case head sequence of
         Just call ->
             call.from == agent
 

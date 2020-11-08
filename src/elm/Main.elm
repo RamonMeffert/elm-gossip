@@ -4,6 +4,9 @@ import Browser
 import CallSequence.CallSequence
 import CallSequence.Parser
 import CallSequence.Renderer
+import FontAwesome.Attributes as Icon
+import FontAwesome.Icon as Icon exposing (Icon)
+import FontAwesome.Solid as Icon
 import GossipGraph.Agent exposing (Agent)
 import GossipGraph.Parser
 import GossipGraph.Relation exposing (Relation)
@@ -12,7 +15,6 @@ import Graph exposing (Graph)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import GossipGraph.Parser
 
 
 
@@ -81,7 +83,7 @@ update msg model =
                 callSequence =
                     CallSequence.Parser.parse model.inputCallSequence agents
 
-                canonical = 
+                canonical =
                     GossipGraph.Parser.toCanonicalString graph
             in
             { model
@@ -108,24 +110,50 @@ update msg model =
 -- VIEW
 
 
-view : Model -> Html Message
-view model =
-    main_ []
-        [ h1 [] [ text "Tools for Gossip" ]
-        , hr [] []
-        , h2 [] [ text "Gossip graph" ]
-        , p [] [ text "You can enter a text representation of a gossip graph here." ]
-        , input [ type_ "text", id "gossip-graph-input", value model.inputGossipGraph, onInput ChangeGossipGraph, placeholder "Gossip graph representation" ] []
-        , div [ id "gossip-graph" ] 
+headerView : List (Html msg)
+headerView =
+    [ h1 [] [ text "Tools for Gossip" ]
+    , p [ class "subtitle" ] [ text "Bachelor's Project by R.A. Meffert | Supervisor: B.R.M. Gattinger" ]
+    , hr [] []
+    ]
+
+
+gossipGraphView : Model -> List (Html Message)
+gossipGraphView model =
+    [ h2 [] [ text "Gossip graph" ]
+    , p [] [ text "You can enter a text representation of a gossip graph here." ]
+    , input [ type_ "text", id "gossip-graph-input", value model.inputGossipGraph, onInput ChangeGossipGraph, placeholder "Gossip graph representation" ] []
+    , if String.isEmpty model.inputGossipGraph then
+        div [ id "gossip-graph", class "empty"]
+            [ Icon.chalkboard |> Icon.present |> Icon.styled [ Icon.fa7x ] |> Icon.view
+            , div [] [text "Type something above to see a graph!"]
+            ]
+
+      else
+        div [ id "gossip-graph" ]
             [ GossipGraph.Renderer.render model.graph model.graphSettings
             , text ("Canonical representation: " ++ model.canonicalGossipGraph)
             ]
-        , h2 [] [ text "Call sequence" ]
-        , p [] [ text "You can enter a text representation of a call sequence on the gossip graph above here." ]
-        , input [ type_ "text", id "call-sequence-input", value model.inputCallSequence, onInput ChangeCallSequence, placeholder "Call sequence input" ] []
-        , div [ id "call-sequence" ]
-            (CallSequence.Renderer.render
-                model.callSequence
-                model.agents
-            )
-        ]
+    ]
+
+
+callSequenceView : Model -> List (Html Message)
+callSequenceView model =
+    [ h2 [] [ text "Call sequence" ]
+    , p [] [ text "You can enter a text representation of a call sequence on the gossip graph above here." ]
+    , input [ type_ "text", id "call-sequence-input", value model.inputCallSequence, onInput ChangeCallSequence, placeholder "Call sequence input" ] []
+    , div [ id "call-sequence" ]
+        (CallSequence.Renderer.render
+            model.callSequence
+            model.agents
+        )
+    ]
+
+
+view : Model -> Html Message
+view model =
+    main_ []
+        (headerView
+            ++ gossipGraphView model
+            ++ callSequenceView model
+        )
