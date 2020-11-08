@@ -13,7 +13,7 @@ type alias ProtocolCondition =
     ( AgentId, AgentId ) -> List Relation -> CallSequence -> Bool
 
 
-{-| Selects the calls to be executed based on some protocol condition.
+{-| Selects the calls that can be executed based on some protocol condition.
 
 Select x, y ∈ A, such that x ≠ y, Nxy, and π(x, y)
 
@@ -23,12 +23,11 @@ select graph condition sequence =
     let
         calls : NodeContext Agent Relation -> List Call -> List Call
         calls context acc =
-            -- TODO: acc is not used
             let
                 -- since identity relations are implied, they aren't modeled so we do not need to filter them out
                 -- that is, x /= y is inherently satisfied
-                -- also, because S ⊆ N ⊆ A², we know for sure that Nxy: fromNodeContext returns all relations for an agent,
-                -- so any relation is definitely a number relation
+                -- also, because S ⊆ N ⊆ A², we know for sure that Nxy holds, for `fromNodeContext` returns all relations for an agent,
+                -- so any relation is definitely at least a number relation
                 localRelations =
                     fromNodeContext context
 
@@ -41,5 +40,8 @@ select graph condition sequence =
             -- the resulting list of calls is the list of calls that can be executed on G given the call history
             List.filter (\x -> condition x localRelations sequence) relationPairs
                 |> List.map GossipGraph.Call.fromTuple
+                |> (++) acc
     in
     Graph.fold calls [] graph
+
+

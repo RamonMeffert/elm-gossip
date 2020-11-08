@@ -36,6 +36,8 @@ body {
         font-family: $-header;
         font-weight: 500;
         letter-spacing: -1px;
+        margin-top: 0;
+        margin-bottom: $size / 2;
     }
 
     h#{$level} + p.subtitle {

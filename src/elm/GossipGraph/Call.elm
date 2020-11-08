@@ -1,6 +1,8 @@
 module GossipGraph.Call exposing (..)
 
-import GossipGraph.Agent exposing (Agent, AgentId)
+import GossipGraph.Agent as Agent exposing (Agent, AgentId)
+import Html exposing (Html, div, text)
+import Html.Attributes exposing (class)
 import Utils.List exposing (get)
 
 
@@ -54,3 +56,14 @@ fromList agents =
 includes : Call -> AgentId -> Bool
 includes call agent =
     call.from == agent || call.to == agent
+
+
+render : List Agent -> Call -> Html msg
+render agents call =
+    case ( Agent.fromId agents call.from, Agent.fromId agents call.to ) of
+        ( Ok from, Ok to ) ->
+            div [ class "call" ] [ text (String.fromChar from.name ++ " 📞 " ++ String.fromChar to.name) ]
+
+        _ ->
+            div [ class "call" ]
+                [ text "❌" ]
