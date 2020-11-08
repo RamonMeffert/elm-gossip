@@ -1,18 +1,11 @@
 @use 'sass:color';
 @use 'mixins' as m;
 
-#call-sequence {
+.call-list {
     @include m.box;
     display: flex;
 
     .call {
-        padding: .2rem .4rem;;
-        background-color: color.scale(steelblue, $lightness: 80%);
-        margin: 0 .4rem;
-        border-radius: .2rem;
-
-        :not(:last-of-type)::after {
-            content: "→";
-        }
+        @include m.call;
     }
 }
