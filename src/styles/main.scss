@@ -26,9 +26,28 @@ input[type=text] {
     box-sizing: border-box;
 }
 
+#gossip-graph.empty {
+    padding: v.$pad-v * 4 v.$pad-h;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: darken(white, 30%);
+
+    svg {
+        color: darken(white, 10%);
+        margin-bottom: 2 * v.$pad-v;
+    }
+}
+
 .error {
     background-color: moccasin;
     padding: .5rem 1rem;
     border-radius: v.$border-radius;
     width: 100%;
+}
+
+hr {
+    border: 2px solid darken(white, 25%);
+    width: 75%;
+    margin-left: 0;
 }
