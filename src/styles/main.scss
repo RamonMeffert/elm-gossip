@@ -1,5 +1,5 @@
-@use 'normalize';
-@use 'svg-with-js.min';
+@use 'node_modules/normalize.css/normalize';
+@use 'node_modules/@fortawesome/fontawesome-free/css/svg-with-js.min';
 @use 'typography';
 @use 'callsequence';
 @use 'variables'as v;

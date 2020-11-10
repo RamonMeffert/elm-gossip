@@ -1,24 +1,21 @@
 {
   "name": "tools-for-gossip",
   "scripts": {
-    "build": "yarn run sass-compile & yarn run elm-compile",
-    "start": "yarn run elm-live & yarn run sass-watch",
-    "start-dev": "yarn run elm-live-dev & yarn run sass-watch",
-    "elm-compile": "./optimize.sh",
-    "elm-live": "./node_modules/elm-live/bin/elm-live.js src/elm/Main.elm --dir=./dist -- --optimize --output=./dist/elm.min.js",
-    "elm-live-dev": "./node_modules/elm-live/bin/elm-live.js src/elm/Main.elm --dir=./dist -- --debug --output=./dist/elm.min.js",
-    "sass-watch": "./node_modules/sass/sass.js --load-path=node_modules/normalize.css/ --load-path=node_modules/@fortawesome/fontawesome-free/css/ --watch src/styles/main.scss dist/css/styles.css",
-    "sass-compile": "./node_modules/sass/sass.js --style=compressed --load-path=node_modules/normalize.css/ --load-path=node_modules/@fortawesome/fontawesome-free/css/ src/styles/main.scss dist/css/styles.css"
+    "start": "snowpack dev",
+    "build": "snowpack build",
+    "test": "echo \"This template does not include a test runner by default.\" && exit 1"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.1",
     "elm": "^0.19.1-3",
     "normalize.css": "^8.0.1",
-    "sass": "^1.29.0",
-    "uglify-js": "^3.11.5"
+    "sass": "^1.29.0"
   },
   "devDependencies": {
-    "elm-live": "^4.0.2"
+    "@snowpack/plugin-optimize": "^0.2.8",
+    "@snowpack/plugin-sass": "^1.1.1",
+    "snowpack": "^2.17.0",
+    "snowpack-plugin-elm": "^0.4.0"
   },
   "resolutions": {
     "http-proxy": "^1.18.1"

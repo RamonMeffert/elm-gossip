@@ -8,7 +8,7 @@ $-type-scale: 1.2;
 // for older browsers
 @font-face {
     font-family: 'Space Grotesk';
-    src: url('../fonts/SpaceGrotesk-Medium.woff2');
+    src: url('./fonts/SpaceGrotesk-Medium.woff2');
     font-weight: 500;
 }
 
@@ -16,8 +16,8 @@ $-type-scale: 1.2;
 @supports (font-variation-settings: normal) {
     @font-face {
         font-family: 'Space Grotesk';
-        src: url('../fonts/SpaceGrotesk[wght].woff2') format('woff2 supports variations'),
-             url('../fonts/SpaceGrotesk[wght].woff2') format('woff2-variations');
+        src: url('./fonts/SpaceGrotesk[wght].woff2') format('woff2 supports variations'),
+             url('./fonts/SpaceGrotesk[wght].woff2') format('woff2-variations');
         font-weight: 300 700;
     }
 }

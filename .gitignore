@@ -6,8 +6,7 @@ repl-temp-*
 node_modules/
 # vs code dir
 .vscode
-# ignore generated js and css
-dist/css/**/*
-dist/**/*.js
+# ignore files generated when building
+build/
 # mac files
 .DS_Store
