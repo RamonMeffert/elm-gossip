@@ -7,17 +7,22 @@ and <https://elm-visualization.netlify.app/forcedirectedgraph/>
 
 -}
 
+-- import GossipGraph.Parser
+
 import Browser
 import Color exposing (Color)
+import FontAwesome.Icon as Icon exposing (Icon)
+import FontAwesome.Solid as Icon
 import Force exposing (Entity, State, entity)
+import GossipGraph.Agent exposing (Agent)
+import GossipGraph.Relation exposing (Kind(..), Relation)
 import Graph exposing (Edge, Graph, Node, NodeContext, NodeId)
-import GossipGraph.Parser
+import Html exposing (Html, div)
+import Html.Attributes
 import TypedSvg exposing (circle, defs, g, line, marker, polygon, svg, text_, title)
 import TypedSvg.Attributes exposing (class, cx, cy, dy, fill, id, markerEnd, markerHeight, markerStart, markerWidth, orient, points, preserveAspectRatio, r, refX, refY, stroke, strokeDasharray, strokeWidth, textAnchor, viewBox, x, x1, x2, y, y1, y2)
 import TypedSvg.Core exposing (Attribute, Svg, text)
 import TypedSvg.Types exposing (Align(..), AnchorAlignment(..), Length(..), MeetOrSlice(..), Paint(..), Scale(..), px)
-import GossipGraph.Agent exposing (Agent)
-import GossipGraph.Relation exposing (Kind(..), Relation)
 import Utils.General exposing (uncurry)
 
 
@@ -34,6 +39,8 @@ type alias GraphSettings =
     { nodeRadius : Float
     , edgeWidth : Float
     , arrowLength : Float
+    , canvasWidth : Float
+    , canvasHeight : Float
     }
 
 
@@ -52,25 +59,41 @@ type alias Entity =
 everything is aligned correctly, so ideally changes to this graph are made using
 some update function (has yet to be written)
 -}
-render : Graph Agent Relation -> GraphSettings -> Svg msg
-render graph settings =
+render : Result String (Graph Agent Relation) -> GraphSettings -> Html msg
+render graphResult settings =
+    case graphResult of
+        Ok graph ->
+            renderGraph graph settings
+
+        Err error ->
+            div [ Html.Attributes.class "error" ]
+                [ Icon.viewIcon Icon.exclamationTriangle
+                , text (" " ++ error)
+                ]
+
+
+renderGraph : Graph Agent Relation -> GraphSettings -> Html msg
+renderGraph graph settings =
     let
+        entityGraph : Graph Entity Relation
         entityGraph =
             Graph.mapNodes agentToEntity graph
 
+        forces : List (Force.Force Int)
         forces =
             [ Force.customLinks 1 (getLinks entityGraph)
-            , Force.manyBodyStrength 100 <|
-                List.map .id <|
-                    Graph.nodes entityGraph
-            , Force.center 400 200
+            , Graph.nodes entityGraph 
+                |> List.map .id 
+                |> Force.manyBody
+            , Force.center (settings.canvasWidth / 2) (settings.canvasHeight / 2)
             ]
 
+        computedGraph : Graph Entity Relation
         computedGraph =
             Force.computeSimulation (Force.simulation forces) (List.map (\n -> n.label) (Graph.nodes entityGraph))
                 |> updateGraphWithList entityGraph
     in
-    svg [ viewBox 0 0 800 400, preserveAspectRatio (Align ScaleMid ScaleMid) Meet ]
+    svg [ viewBox 0 0 settings.canvasWidth settings.canvasHeight, preserveAspectRatio (Align ScaleMid ScaleMid) Meet ]
         [ defs []
             (arrowHeads settings)
         , g [ class [ "links" ] ] <| List.map (renderEdge computedGraph settings) <| Graph.edges computedGraph
@@ -266,9 +289,8 @@ renderEdge graph settings edge =
     in
     if List.any (\e -> edge.from == e.to && edge.to == e.from) (Graph.edges graph) then
         renderEdgeOffset settings dashed source target
-
-    else if not edge.label.directed then
-        renderEdgeUndirected settings dashed source target
+        -- else if not edge.label.directed then
+        --     renderEdgeUndirected settings dashed source target
 
     else
         renderEdgeDirected settings dashed source target

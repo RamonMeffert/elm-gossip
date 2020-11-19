@@ -4,7 +4,7 @@ import Graph exposing (Graph, NodeContext, fold)
 import GossipGraph.Agent exposing (Agent, AgentId)
 import GossipGraph.Call exposing (Call)
 import CallSequence.CallSequence exposing (CallSequence)
-import GossipGraph.Relation exposing (Kind(..), Relation, fromNodeContext)
+import GossipGraph.Relation as Relation exposing (Kind(..), Relation)
 
 
 {-| Protocol conditions
@@ -29,7 +29,7 @@ select graph condition sequence =
                 -- also, because S ⊆ N ⊆ A², we know for sure that Nxy holds, for `fromNodeContext` returns all relations for an agent,
                 -- so any relation is definitely at least a number relation
                 localRelations =
-                    fromNodeContext context
+                    Relation.fromNodeContext context
 
                 -- the protocol condition needs a pair (x,y)
                 relationPairs =

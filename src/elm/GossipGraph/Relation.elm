@@ -15,8 +15,8 @@ module GossipGraph.Relation exposing (..)
 -}
 
 import Dict exposing (Dict)
-import Graph exposing (Edge, NodeContext)
 import GossipGraph.Agent exposing (Agent, AgentId)
+import Graph exposing (Edge, NodeContext)
 import IntDict
 
 
@@ -25,7 +25,6 @@ import IntDict
 type alias Relation =
     { from : Int
     , to : Int
-    , directed : Bool
     , kind : Kind
     }
 
@@ -44,37 +43,27 @@ toEdge rel =
     { from = rel.from, to = rel.to, label = rel }
 
 
-{-| Gets the style attributes for rendering the current relation in a GraphViz graph.
--}
-getDotAttrs : Relation -> Dict String String
-getDotAttrs e =
-    case ( e.kind, e.directed ) of
-        ( Number, True ) ->
-            Dict.singleton "style" "dashed"
 
-        ( Number, False ) ->
-            Dict.fromList [ ( "style", "dashed" ), ( "dir", "both" ) ]
-
-        ( Secret, True ) ->
-            Dict.empty
-
-        ( Secret, False ) ->
-            Dict.singleton "dir" "both"
+-- {-| Gets the style attributes for rendering the current relation in a GraphViz graph.
+-- -}
+-- getDotAttrs : Relation -> Dict String String
+-- getDotAttrs e =
+--     case ( e.kind, e.directed ) of
+--         ( Number, True ) ->
+--             Dict.singleton "style" "dashed"
+--         ( Number, False ) ->
+--             Dict.fromList [ ( "style", "dashed" ), ( "dir", "both" ) ]
+--         ( Secret, True ) ->
+--             Dict.empty
+--         ( Secret, False ) ->
+--             Dict.singleton "dir" "both"
 
 
 {-| Given a relation of some kind, check whether x knows y in that relation
 -}
 knows : AgentId -> AgentId -> Kind -> Relation -> Bool
 knows x y kind relation =
-    if relation.directed then
-        relation.from == x && relation.to == y && relation.kind == kind
-
-    else
-        ((relation.from == x && relation.to == y)
-            || (relation.from == y && relation.to == x)
-        )
-            && relation.kind
-            == kind
+    relation.from == x && relation.to == y && relation.kind == kind
 
 
 {-| Takes a relation and produces its inverse
@@ -87,22 +76,11 @@ inverse relation =
     }
 
 
-{-| Transforms a node context into a list of relations.
 
+{-| Transforms a node context into a list of relations.
 Bidirectional relations are represented by a regular relation with the `directed` flag set to false.
 as such, to find all relations for an agent, we need to take all the outgoing relations combined with
 the inverse relation of all bidirectional incoming relations.
-
 -}
 fromNodeContext : NodeContext Agent Relation -> List Relation
-fromNodeContext context =
-    let
-        incoming =
-            IntDict.values context.incoming
-                |> List.filter (not << .directed)
-                |> List.map inverse
-
-        outgoing =
-            IntDict.values context.outgoing
-    in
-    incoming ++ outgoing
+fromNodeContext context = IntDict.values context.outgoing

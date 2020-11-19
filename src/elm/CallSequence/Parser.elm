@@ -1,4 +1,4 @@
-module CallSequence.Parser exposing (..)
+module CallSequence.Parser exposing (parse, Error)
 
 
 {-| LL(1) parser for call sequences.

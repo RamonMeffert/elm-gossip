@@ -1,307 +1,249 @@
-module GossipGraph.Parser exposing
-    ( parse, fromAgentsAndRelations
-    , fromString, toString, toCanonicalString
-    )
+module GossipGraph.Parser exposing (..)
 
-{-| This module is responsible for recognizing agents and relations from an input string.
-It also provides a utility to create a Graph for use with the `elm-community/graph` library.
-
-
-# Main functions
-
-@docs parse, fromAgentsAndRelations
-
-
-## Converting between strings and graphs
-
-@docs fromString, toString
-
-
-# Internal parsing functions
-
-@docs parseAgents, parseRelations, toRelations, knowledgeToIndices
-
--}
-
-import Graph exposing (Edge, Graph, Node, NodeContext)
-import List exposing (append)
 import GossipGraph.Agent as Agent exposing (Agent)
-import GossipGraph.Relation as Relation exposing (Kind(..), Relation)
-import Utils.General exposing (uncurry)
-import Utils.List exposing (distinct)
+import GossipGraph.Relation exposing (Kind(..))
+import Utils.List exposing (distinct, dropWhile, takeWhile)
+import Set
+import Utils.General exposing (pluralize)
+import Html exposing (i)
+import GossipGraph.Relation as Relation exposing (Relation)
+import Graph exposing (Graph)
 
 
-{-| The `Knowledge` type alias is a string representation of the knowledge of one agent.
--}
-type alias Knowledge =
-    String
+type alias ParseOptions =
+    { separator : String
+    }
 
 
-{-| Shorthand function combining `parse` and `fromAgentsAndRelations`. Takes an
-input string and returns a gossip graph.
--}
-fromString : String -> Graph Agent Relation
-fromString =
-    parse >> uncurry fromAgentsAndRelations
+type LexToken
+    = Token Kind Char Int
+    | Separator
 
 
-{-| Converts an input string to a list of `Agent`s and their corresponding `Relation`s
--}
-parse : String -> ( List Agent, List Relation )
-parse input =
-    let
-        -- TODO: Add validation:
-        --  - I_S should always be true -> Warning if not, correct automatically (i.e. "ab ab" is read as "Ab aB")
-        --  - Check separator character -> Error if incorrect, suggestion to use different sep. char
-        --  - Check input characters    -> Error if unsupported, if of different type -> suggest setting change
-        agents : List Agent
-        agents =
-            parseAgents input
-
-        relations : List Relation
-        relations =
-            parseRelations input agents
-    in
-    ( agents, relations )
+-- PARSING
 
 
-{-| Converts a list of `Agent`s and `Relation`s to a `Graph` for use with the `elm-community/graph` library
--}
 fromAgentsAndRelations : List Agent -> List Relation -> Graph Agent Relation
-fromAgentsAndRelations agents relations =
+fromAgentsAndRelations agents relations = 
     let
-        nodes : List (Node Agent)
-        nodes =
-            List.map Agent.toNode agents
+        nodes = List.map Agent.toNode agents
 
-        edges : List (Edge Relation)
-        edges =
-            List.map Relation.toEdge relations
+        edges = List.map Relation.toEdge relations
     in
+    
     Graph.fromNodesAndEdges nodes edges
 
 
-{-| Converts a gossip graph to its string representation.
-
-    graph = parse "Abc ABC abC"
-        |> uncurry fromAgentsAndRelations
-
-
-    toString graph == "Abc ABC abC"
-
--}
-toString : Graph Agent Relation -> String
-toString graph =
-    Graph.fold (adjacencyToString (Graph.nodes graph)) [] graph
-        |> List.reverse
-        -- include separator
-        -- TODO: make separator configurable
-        |> List.intersperse " "
-        -- concatenate list of strings into string
-        |> List.foldr (++) ""
-
-
-toCanonicalString : Graph Agent Relation -> String
-toCanonicalString graph =
-    Graph.fold (adjacencyToCanonicalString) [] graph
-        |> List.reverse
-        -- include separator
-        -- TODO: make separator configurable
-        |> List.intersperse " "
-        -- concatenate list of strings into string
-        |> List.foldr (++) ""
-
-
-{-| Converts an adjacency, i.e. a node and its incoming and outgoing edges, to
-a string
--}
-adjacencyToString : List (Node Agent) -> NodeContext Agent Relation -> List String -> List String
-adjacencyToString agents context acc =
+parseRelations : List Agent -> List LexToken -> Result String (List Relation)
+parseRelations agents tokens = 
     let
-        -- Accumulating function that takes a partially completed knowledge
-        -- string and adds a new character based on an AgentId and a RelationType
-        toCharacter : ( Int, Kind ) -> String -> String
-        toCharacter ( id, kind ) acc2 =
-            Utils.List.find (\node -> node.label.id == id) agents
-                |> Maybe.map (.label >> .name)
-                |> Maybe.withDefault '?'
-                |> (if kind == Number then
-                        Char.toLower
-
-                    else
-                        Char.toUpper
-                   )
-                |> (\c -> String.fromChar c ++ acc2)
-
-        nonIdRelations =
-            Relation.fromNodeContext context
-                |> List.map (\r -> ( r.to, r.kind ))
-
-        -- Also include identity relation. we need to manually add it because it is implied in the rest of the data model
-        relations =
-            List.sortBy Tuple.first (( context.node.label.id, Secret ) :: nonIdRelations)
-    in
-    List.foldr toCharacter "" relations :: acc
-
-
-
-{-| Converts an adjacency, i.e. a node and its incoming and outgoing edges, to
-a string
--}
-adjacencyToCanonicalString : NodeContext Agent Relation -> List String -> List String
-adjacencyToCanonicalString context acc =
-    let
-        -- Accumulating function that takes a partially completed knowledge
-        -- string and adds a new character based on an AgentId and a RelationType
-        toCharacter : ( Int, Kind ) -> String -> String
-        toCharacter ( id, kind ) acc2 =
-            -- 65 is the unicode code for 'A', so we're mapping 0 to 'A' here
-            Char.fromCode (id + 65)
-                |> (if kind == Number then
-                        Char.toLower
-
-                    else
-                        Char.toUpper
-                   )
-                |> (\c -> String.fromChar c ++ acc2)
-
-        nonIdRelations =
-            Relation.fromNodeContext context
-                |> List.map (\r -> ( r.to, r.kind ))
-
-        -- Also include identity relation. we need to manually add it because it is implied in the rest of the data model
-        relations =
-            List.sortBy Tuple.first (( context.node.label.id, Secret ) :: nonIdRelations)
-    in
-    List.foldr toCharacter "" relations :: acc
-
-{-| Given a list of agents and a list of knowledge strings, return a list of
-tuples indicating the relations between agents.
-
-    findRelationTuples
-        [ { id = 0, name = 'A' }
-        , { id = 1, name = 'B' }
-        ]
-        "B A"
-        == [ ( 0, 1 ), ( 1, 0 ) ]
-
--}
-findRelationTuples : List Agent -> List Knowledge -> List ( Int, Int )
-findRelationTuples agents knowledge =
-    knowledge
-        |> List.map (knowledgeToIndices agents)
-        |> List.indexedMap (\i list -> List.map (\item -> ( i, item )) list)
-        |> List.concat
-        |> List.filter (\( a, b ) -> a /= b)
-
-
-{-| Converts a knowledge string to a list of agent ids given a list of agents.
-
-    knowledgeToIndices
-        [ { id = 0, name = 'a' }
-        , { id = 1, name = 'b' }
-        ]
-        "ab"
-        == [ 0, 1 ]
-
--}
-knowledgeToIndices : List Agent -> Knowledge -> List Int
-knowledgeToIndices agents input =
-    agents
-        |> List.filter (\agent -> List.member agent.name (String.toList <| String.toUpper input))
-        |> List.map .id
-
-
-{-| Converts a list of tuples into a list of directed relations of a specified kind.
-
-    toNumberRelations Number
-        [ ( 0, 1 )
-        , ( 1, 0 )
-        , ( 0, 2 )
-        ]
-        == [ { from = 0, to = 1, directed = False, kind = Number }
-           , { from = 0, to = 2, directed = True, kind = Number }
-           ]
-
--}
-toRelations : Kind -> List ( Int, Int ) -> List Relation
-toRelations kind tuples =
-    let
-        toRelationsAcc : List ( Int, Int ) -> List Relation -> List Relation
-        toRelationsAcc tups relations =
-            case tups of
+        parser pos ts =
+            case ts of
                 [] ->
-                    removeDuplicates relations
+                    Ok []
 
-                ( from, to ) :: xs ->
-                    if List.any (\r -> r.directed && r.from == to && r.to == from) relations then
-                        toRelationsAcc xs ({ from = to, to = from, directed = False, kind = kind } :: relations)
+                Separator :: rest ->
+                    parseRelations agents rest
+
+                Token kind name id :: rest ->
+                    case parseRelations agents rest of
+                        Ok relations ->
+                            Agent.fromChar agents name 
+                                |> Result.map (\agent -> { from = id, to = agent.id, kind = kind } :: relations)
+                        Err e ->
+                            Err e
+    in
+    parser 1 tokens
+
+parseAgents : List LexToken -> Result String (List Agent)
+parseAgents ts =
+    let
+        -- we need to check the possible names (i.e. the distinct uppercase characters)
+        -- so we can check if every agent in the input is accounted for
+        possibleNames =
+            ts
+                |> List.foldr
+                    (\t acc ->
+                        case t of
+                            Token _ name _ ->
+                                if Char.isUpper name then
+                                    Set.insert name acc
+
+                                else
+                                    acc
+
+                            _ ->
+                                acc
+                    )
+                    Set.empty
+
+        numberOfSegments =
+            ts
+                |> List.filter (\t -> t == Separator)
+                |> List.length
+                |> (+) 1
+
+        -- compares the result of parsing with the result of the function above, and gives
+        -- a hopefully useful debug message so the user can correct their input if needed
+        validateNumberOfAgents : List Agent -> Result String (List Agent)
+        validateNumberOfAgents agents =
+            let
+                numberOfNames =
+                    Set.size possibleNames
+
+                numberOfAgents =
+                    List.length agents
+            in
+            if numberOfNames == 0 then
+                Err "Your input does not contain any secret relations. Therefore, I cannot determine the names of the agents. I need every agent to at least know their own secret!"
+
+            else if numberOfAgents < numberOfSegments then
+                Err <|
+                    "I found " ++ pluralize numberOfSegments "segment" "segments" ++ ", but I only found " ++ pluralize numberOfAgents "unique agent" "unique agents" ++ "."
+            else if numberOfAgents /= numberOfNames then
+                Err <| "Your input contains the names of " ++ pluralize numberOfNames "name" "names" ++ " agents, but I was only able to identify segments representing the relations of the following " ++ pluralize numberOfAgents "agent" "agents" ++ ": " ++ renderCharacterList (List.map (\a -> a.name) agents) ++ ". Make sure every segment contains the identity relation for the agent it represents!"
+
+            else
+                Ok agents
+
+        -- The main parser function works by looping over the list of tokens.
+        -- While keeping track of the names it has encountered, it loops over the segments
+        -- (i.e. the groups of letters between separators), and takes the first character it
+        -- has not encountered yet as the name of a new agent.
+        -- TODO: An improvement to make the parser a bit stricter could be to enforce the agents
+        --       are represented by secret relations, that is, I_S must be satisfied.
+        --       this could be achieved rather simply by skipping over lowercase characters.
+        parser : List Char -> Int -> List LexToken -> Result String (List Agent)
+        parser names pos tokens =
+            case tokens of
+                [] ->
+                    Ok []
+
+                (Token _ name id) :: rest ->
+                    if Char.isLower name || List.member name names then
+                        -- skip this agent if it is already known, or if its name is lowercase
+                        parser names (pos + 1) rest
 
                     else
-                        toRelationsAcc xs ({ from = from, to = to, directed = True, kind = kind } :: relations)
+                        -- take the current character as an agent and skip until the next separator
+                        let
+                            agent =
+                                { id = id, name = name }
 
-        removeDuplicates : List Relation -> List Relation
-        removeDuplicates relations =
-            let
-                removeDuplicatesAcc withDups withoutDups =
-                    case withDups of
-                        [] ->
-                            withoutDups
+                            skippedCharacters =
+                                takeWhile (\a -> not <| a == Separator) rest |> List.length
+                        in
+                        case parser (name :: names) (pos + 1 + skippedCharacters) (dropWhile (\a -> not <| a == Separator) rest) of
+                            Ok nextTokens ->
+                                Ok <| agent :: nextTokens
 
-                        rel :: withDupsRest ->
-                            if rel.directed && List.any (\r -> (r.from == rel.from && r.to == rel.to && not r.directed) || (r.from == rel.to && r.to == rel.from && not r.directed)) relations then
-                                removeDuplicatesAcc withDupsRest withoutDups
+                            Err e ->
+                                Err e
 
-                            else
-                                removeDuplicatesAcc withDupsRest (rel :: withoutDups)
-            in
-            removeDuplicatesAcc relations []
+                Separator :: rest ->
+                    let
+                        nextSegment =
+                            takeWhile ((/=) Separator) rest
+
+                        isLastToken =
+                            List.isEmpty nextSegment && List.isEmpty rest
+
+                        hasConsectiveSeparators =
+                            List.isEmpty nextSegment && not (List.isEmpty rest)
+
+                        agentNames =
+                            List.foldr
+                                (\t acc ->
+                                    case t of
+                                        Token _ name _ ->
+                                            name :: acc
+
+                                        Separator ->
+                                            acc
+                                )
+                                []
+                                nextSegment
+
+                        distinctAgentNames =
+                            agentNames |> distinct
+
+                        hasDuplicates =
+                            List.length agentNames > List.length distinctAgentNames
+                    in
+                    if isLastToken then
+                        Err <| "I expected another segment at position " ++ String.fromInt pos ++ ", but there's nothing else here."
+
+                    else if hasConsectiveSeparators then
+                        Err <| "I found multiple separators at position " ++ String.fromInt pos ++ "."
+
+                    else if hasDuplicates then
+                        Err <| "The segment starting at position " ++ String.fromInt pos ++ " has a duplicate agent."
+
+                    else
+                        parser names (pos + 1) rest
     in
-    toRelationsAcc tuples []
+    parser [] 1 ts
+        |> Result.andThen validateNumberOfAgents
 
 
-{-| Extracts the agents from the input string.
 
-    parseAgents "Ab aB"
-        == [ { id = 0, name = 'A' }
-           , { id = 1, name = 'B' }
-           ]
-
--}
-parseAgents : String -> List Agent
-parseAgents input =
-    input
-        |> String.filter Char.isAlpha
-        |> String.toUpper
-        |> String.toList
-        |> distinct
-        |> List.indexedMap (\index name -> { id = index, name = name })
+-- LEXING
 
 
-{-| Extracts the relations from the input string.
+separators : List Char
+separators =
+    [ ' ' ]
 
-    parseRelations "Ab aB"
-        [ { id = 0, name = 'A' }
-        , { id = 1, name = 'B' }
-        ]
-        == [ { from = 0, to = 1, directed = False, kind = Number } ]
 
--}
-parseRelations : String -> List Agent -> List Relation
-parseRelations input agents =
+renderCharacterList : List Char -> String
+renderCharacterList characters =
+    characters
+        |> List.map (\x -> String.fromList [ '‘', x, '’' ])
+        |> List.intersperse ","
+        |> List.concatMap String.toList
+        |> String.fromList
+
+
+lexer : ParseOptions -> String -> Result String (List LexToken)
+lexer options string =
     let
-        numberRelations =
-            input
-                |> String.split " "
-                |> List.map (String.filter Char.isLower)
-                |> findRelationTuples agents
-                |> toRelations Number
+        charLexer : Int -> List Char -> Result String (List LexToken)
+        charLexer id characters =
+            case characters of
+                [] ->
+                    Ok []
 
-        secretRelations =
-            input
-                |> String.split " "
-                |> List.map (String.filter Char.isUpper)
-                |> findRelationTuples agents
-                |> toRelations Secret
+                c :: cs ->
+                    if Char.isAlpha c then
+                        let
+                            rest =
+                                charLexer id cs
+                        in
+                        case rest of
+                            Ok tokens ->
+                                if Char.isUpper c then
+                                    Ok <| Token Secret c id :: tokens
+
+                                else
+                                    Ok <| Token Number c id :: tokens
+
+                            Err e ->
+                                Err e
+
+                    else if List.member c separators then
+                        let
+                            rest =
+                                charLexer (id + 1) cs
+                        in
+                        case rest of
+                            Ok tokens ->
+                                Ok <| Separator :: tokens
+
+                            Err e ->
+                                Err e
+
+                    else
+                        Err <| "Only lower- and uppercase letters and separator(s) " ++ renderCharacterList separators ++ " are allowed."
     in
-    append numberRelations secretRelations
+    String.toList string
+        |> charLexer 0
