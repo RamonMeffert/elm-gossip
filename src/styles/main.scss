@@ -4,6 +4,7 @@
 @use 'callsequence';
 @use 'variables'as v;
 @use 'mixins'as m;
+@use 'sass:color';
 
 header {
     margin-bottom: v.$pad-v;
@@ -58,7 +59,7 @@ hr {
 
 .info {
     @include m.box;
-    background-color: lightblue;
+    background-color: color.scale(steelblue, $lightness: 80%);
 }
 
 .columns {

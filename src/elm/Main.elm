@@ -10,7 +10,7 @@ import FontAwesome.Icon as Icon exposing (Icon)
 import FontAwesome.Solid as Icon
 import GossipGraph.Agent exposing (Agent)
 import GossipGraph.Call as Call exposing (Call)
-import GossipGraph.Parser
+-- import GossipGraph.Parser
 import GossipGraph.Relation exposing (Relation)
 import GossipGraph.Renderer
 import GossipProtocol.Conditions.Predefined as Predefined
@@ -20,6 +20,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Json.Decode as Json
+import GossipGraph.Parser
 
 
 
@@ -39,9 +40,9 @@ type alias Model =
     { inputGossipGraph : String
     , canonicalGossipGraph : String
     , inputCallSequence : String
-    , graph : Graph Agent Relation
-    , agents : List Agent
-    , relations : List Relation
+    , graph : Result String (Graph Agent Relation)
+    , agents : Result String (List Agent)
+    , relations : Result String (List Relation)
     , protocolCondition : GossipProtocol.ProtocolCondition
     , protocolName : String
     , graphSettings : GossipGraph.Renderer.GraphSettings
@@ -55,15 +56,17 @@ init =
     , inputCallSequence = ""
     , canonicalGossipGraph = ""
     , callSequence = Ok []
-    , graph = Graph.empty
-    , agents = []
-    , relations = []
+    , graph = Ok Graph.empty
+    , agents = Ok []
+    , relations = Ok []
     , protocolCondition = Predefined.any
     , protocolName = "any"
     , graphSettings =
         { nodeRadius = 20
         , edgeWidth = 2
         , arrowLength = 6
+        , canvasWidth = 800
+        , canvasHeight = 400
         }
     }
 
@@ -84,21 +87,46 @@ update msg model =
         -- TODO: move to separate method for cleanliness
         ChangeGossipGraph input ->
             let
-                ( agents, relations ) =
-                    GossipGraph.Parser.parse input
+                lexResult = GossipGraph.Parser.lexer { separator = " " } input
+
+                agents : Result String (List Agent)
+                agents = lexResult
+                    |> Result.andThen GossipGraph.Parser.parseAgents
+
+                relations = 
+                    case (lexResult, agents) of
+                        (Ok tokens, Ok agts) ->
+                            GossipGraph.Parser.parseRelations agts tokens
+                        
+                        (Err e, Ok _) ->
+                            Err e
+
+                        (Ok _, Err e) ->
+                            Err e
+                        
+                        _ ->
+                            Err "Something went wrong when parsing the relations"
 
                 graph =
-                    GossipGraph.Parser.fromAgentsAndRelations agents relations
+                    case (agents, relations) of
+                        (Ok agts, Ok rels) ->
+                            Ok <| GossipGraph.Parser.fromAgentsAndRelations agts rels
+                        
+                        (Err e, _) ->
+                            Err e
 
-                callSequence =
-                    CallSequence.Parser.parse model.inputCallSequence agents
+                        (_, Err e) ->
+                            Err e
 
-                canonical =
-                    GossipGraph.Parser.toCanonicalString graph
+                callSequence = agents 
+                    |> Result.andThen (CallSequence.Parser.parse model.inputCallSequence)
+
+            --     canonical =
+            --         GossipGraph.Parser.toCanonicalString graph
             in
             { model
                 | inputGossipGraph = input
-                , canonicalGossipGraph = canonical
+                -- , canonicalGossipGraph = canonical
                 , graph = graph
                 , agents = agents
                 , relations = relations
@@ -107,8 +135,8 @@ update msg model =
 
         ChangeCallSequence input ->
             let
-                callSequence =
-                    CallSequence.Parser.parse input model.agents
+                callSequence = model.agents 
+                    |> Result.andThen (CallSequence.Parser.parse model.inputCallSequence)
             in
             { model
                 | inputCallSequence = input
@@ -231,19 +259,20 @@ protocolView model =
 
               else
                 div [ class "call-list" ]
-                    (case model.callSequence of
-                        Ok sequence ->
+                    (case (model.callSequence, model.agents, model.graph) of
+                        (Ok sequence, Ok agents, Ok graph) ->
                             let
                                 calls =
-                                    GossipProtocol.select model.graph model.protocolCondition sequence
+                                    GossipProtocol.select graph model.protocolCondition sequence
                             in
                             if List.isEmpty calls then
                                 [ text "No more calls are possible." ]
 
                             else
-                                List.map (Call.render model.agents) calls
+                                List.map (Call.render agents) calls
 
-                        Err e ->
+                        _ ->
+                            -- TODO: propagate errors from model.callSequence, .agents, .graph instead of the error below
                             [ div [ class "error" ]
                                 [ Icon.viewIcon Icon.exclamationTriangle
                                 , text " The call sequence below is impossible. How am I supposed to find the next set of calls?"

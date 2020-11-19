@@ -16,3 +16,12 @@ uncurry f ( a, b ) =
 curry : (( a, b ) -> c) -> a -> b -> c
 curry f a b =
     f ( a, b )
+
+
+pluralize : Int -> String -> String -> String
+pluralize number sing plur =
+    if number /= 1 then
+        String.fromInt number ++ " " ++ plur
+
+    else
+        "one " ++ sing
