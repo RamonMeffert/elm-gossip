@@ -5,7 +5,11 @@ module.exports = {
     "src": "/_dist_"
   },
   plugins: [
-    ["snowpack-plugin-elm", { "verbose": false, "debugger": "dev", "optimize": "build" }],
+    ["snowpack-plugin-elm", {
+      "verbose": false,
+      "debugger": "dev",
+      "optimize": "build"
+    }],
     "@snowpack/plugin-sass",
     "@snowpack/plugin-optimize"
   ],

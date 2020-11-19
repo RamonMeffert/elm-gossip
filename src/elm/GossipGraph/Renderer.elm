@@ -82,15 +82,18 @@ renderGraph graph settings =
         forces : List (Force.Force Int)
         forces =
             [ Force.customLinks 1 (getLinks entityGraph)
-            , Graph.nodes entityGraph 
-                |> List.map .id 
-                |> Force.manyBody
+            , Force.manyBodyStrength 100 <|
+                List.map .id <|
+                    Graph.nodes entityGraph
             , Force.center (settings.canvasWidth / 2) (settings.canvasHeight / 2)
             ]
 
         computedGraph : Graph Entity Relation
         computedGraph =
-            Force.computeSimulation (Force.simulation forces) (List.map (\n -> n.label) (Graph.nodes entityGraph))
+            Graph.nodes entityGraph
+                -- the labels are Entities
+                |> List.map (\n -> n.label)
+                |> Force.computeSimulation (Force.simulation forces)
                 |> updateGraphWithList entityGraph
     in
     svg [ viewBox 0 0 settings.canvasWidth settings.canvasHeight, preserveAspectRatio (Align ScaleMid ScaleMid) Meet ]
@@ -146,7 +149,9 @@ getLinks :
             , strength : Maybe Float
             }
 getLinks graph =
-    List.map (\edge -> { source = edge.from, target = edge.to, distance = 100, strength = Just 1 }) (Graph.edges graph)
+    Graph.edges graph
+        |> List.filter (\{ from, to } -> from /= to)
+        |> List.map (\edge -> { source = edge.from, target = edge.to, distance = 100, strength = Just 1 })
 
 
 {-| Code for rendering a node.
@@ -289,8 +294,6 @@ renderEdge graph settings edge =
     in
     if List.any (\e -> edge.from == e.to && edge.to == e.from) (Graph.edges graph) then
         renderEdgeOffset settings dashed source target
-        -- else if not edge.label.directed then
-        --     renderEdgeUndirected settings dashed source target
 
     else
         renderEdgeDirected settings dashed source target
