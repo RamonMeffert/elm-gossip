@@ -1,8 +1,11 @@
 module GossipGraph.Call exposing (..)
 
 import GossipGraph.Agent as Agent exposing (Agent, AgentId)
+import GossipGraph.Relation exposing (Kind(..), Relation)
+import Graph exposing (Graph, NodeContext)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
+import IntDict
 import Utils.List exposing (get)
 
 
@@ -58,6 +61,8 @@ includes call agent =
     call.from == agent || call.to == agent
 
 
+{-| Renders a single call
+-}
 render : List Agent -> Call -> Html msg
 render agents call =
     case ( Agent.fromId agents call.from, Agent.fromId agents call.to ) of
@@ -67,3 +72,70 @@ render agents call =
         _ ->
             div [ class "call" ]
                 [ text "❌" ]
+
+
+{-| Execute a call on a gossip graph
+
+Make sure the caller knows everything the receiver knows and vice versa. Since
+knowledge is represented as outgoing edges, we can simply add the outgoing edges
+of one agent to the other, making sure no duplicates are created and that
+relations are upgraded when necessary (i.e. number -> secret)
+
+Built on `Graph.update` and `IntDict.merge`.
+
+-}
+execute : Graph Agent Relation -> Call -> Graph Agent Relation
+execute graph { from, to } =
+    let
+        knowledge : AgentId -> Maybe (NodeContext Agent Relation)
+        knowledge id =
+            Graph.get id graph
+
+        -- merges the nodecontext for newId into currentContext
+        merge : AgentId -> Maybe (NodeContext Agent Relation) -> Maybe (NodeContext Agent Relation)
+        merge newId currentContext =
+            let
+                newContext : Maybe (NodeContext Agent Relation)
+                newContext =
+                    knowledge newId
+            in
+            case ( newContext, currentContext ) of
+                ( Just new, Just current ) ->
+                    -- change the current context so it includes the relations from the new context
+                    Just
+                        { current
+                          -- c (current) and n (new) are of type Relation. k is the key of the IntDict,
+                          -- indicating to which node the edge is pointing in the case of NodeContext.outgoing
+                            | outgoing =
+                                IntDict.merge
+                                    -- occurs only in current: just keep it
+                                    (\k c acc -> IntDict.insert k c acc)
+                                    -- occurs in both: check Kind, keep "most knowledge" (S > N)
+                                    (\k c n acc ->
+                                        if c.kind == Secret then
+                                            -- current relation is secret
+                                            IntDict.insert k c acc
+
+                                        else if n.kind == Secret then
+                                            -- new relation is secret
+                                            IntDict.insert k { n | from = current.node.id } acc
+
+                                        else
+                                            -- both relations are Number, so just keep the original
+                                            IntDict.insert k c acc
+                                    )
+                                    -- occurs in new: change n.from and insert
+                                    (\k n acc -> IntDict.insert k { n | from = current.node.id } acc)
+                                    current.outgoing
+                                    new.outgoing
+                                    IntDict.empty
+                        }
+
+                _ ->
+                    Nothing
+    in
+    graph
+        -- first update the caller
+        |> Graph.update from (merge to)
+        -- then update the receiver
+        |> Graph.update to (merge from)

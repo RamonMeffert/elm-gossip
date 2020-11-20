@@ -21,8 +21,6 @@ containing sequence agent =
             []
 
         call :: calls ->
-            -- this would've read so nicely if Elm supported infix notation. Alas.
-            -- (if call `includes` agent then) (calls `containing` agent)
             if includes call agent then
                 call :: containing calls agent
 
