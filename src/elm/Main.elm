@@ -21,6 +21,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Json.Decode as Json
 import GossipGraph.Parser
+import CallSequence.CallSequence
 
 
 
@@ -232,6 +233,14 @@ callSequenceView model =
                 model.callSequence
                 model.agents
             )
+        , div [] [
+            case (model.graph, model.callSequence) of
+                (Ok graph, Ok sequence) ->
+                    GossipProtocol.sequencePermittedOn model.protocolCondition graph sequence
+                        |> (\b -> text <| "This sequence is " ++ (if b then "" else "not") ++ " permitted in protocol " ++ model.protocolName)
+                _ ->
+                    text <| "This sequence is not permitted in protocol " ++ model.protocolName
+        ]
         ]
 
 
@@ -263,7 +272,7 @@ protocolView model =
                         (Ok sequence, Ok agents, Ok graph) ->
                             let
                                 calls =
-                                    GossipProtocol.select graph model.protocolCondition sequence
+                                    GossipProtocol.selectCalls graph model.protocolCondition sequence
                             in
                             if List.isEmpty calls then
                                 [ text "No more calls are possible." ]
