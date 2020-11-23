@@ -4,6 +4,8 @@
 @use 'callsequence';
 @use 'variables'as v;
 @use 'mixins'as m;
+@use 'input';
+@use 'alert';
 @use 'sass:color';
 
 header {
@@ -15,18 +17,14 @@ main {
     margin: 2rem auto 0 auto;
     padding: v.$pad-v v.$pad-h;
     background-color: white;
-}
 
-input[type=text] {
-    width: 100%;
-    box-sizing: border-box;
-    padding: v.$pad-v / 2 v.$pad-h / 2 v.$pad-v / (3/2) v.$pad-h / 2;
-    border: 2px solid darken(white, 25%);
-    margin-bottom: v.$pad-v;
+    section {
+        @include m.box;
+        margin-bottom: v.$pad-v;
+    }
 }
 
 #gossip-graph {
-    @include m.box;
     width: 100%;
     box-sizing: border-box;
 }
@@ -44,22 +42,10 @@ input[type=text] {
     }
 }
 
-.error {
-    background-color: moccasin;
-    padding: .5rem 1rem;
-    border-radius: v.$border-radius;
-    width: 100%;
-}
-
 hr {
     border: 2px solid darken(white, 25%);
     width: 75%;
     margin-left: 0;
-}
-
-.info {
-    @include m.box;
-    background-color: color.scale(steelblue, $lightness: 80%);
 }
 
 .columns {

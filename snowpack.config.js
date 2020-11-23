@@ -5,13 +5,13 @@ module.exports = {
     "src": "/_dist_"
   },
   plugins: [
+    "@snowpack/plugin-sass",
     ["snowpack-plugin-elm", {
       "verbose": false,
       "debugger": "dev",
       "optimize": "build"
     }],
-    "@snowpack/plugin-sass",
-    "@snowpack/plugin-optimize"
+    // "@snowpack/plugin-optimize"
   ],
   install: [
     /* ... */

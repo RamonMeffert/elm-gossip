@@ -1,0 +1,32 @@
+@use 'variables'as v;
+@use 'mixins'as m;
+@use 'sass:color' as c;
+
+.alert {
+    @include m.box;
+    display: flex;
+
+    .icon {
+        padding-inline-end: v.$pad-h;
+        display: flex;
+        align-items: center;
+        color: rgba(0,0,0,0.7);
+    }
+
+    .content {
+        display: flex;
+        align-items: center;
+    }
+
+    &.info {
+        background-color: v.$lightBlue;
+    }
+
+    &.warning {
+        background-color: v.$lightYellow;
+    }
+
+    &.error {
+        background-color: v.$lightRed;
+    }
+}
