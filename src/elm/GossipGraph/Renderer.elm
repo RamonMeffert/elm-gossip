@@ -24,7 +24,7 @@ import TypedSvg.Attributes exposing (class, cx, cy, dy, fill, id, markerEnd, mar
 import TypedSvg.Core exposing (Attribute, Svg, text)
 import TypedSvg.Types exposing (Align(..), AnchorAlignment(..), Length(..), MeetOrSlice(..), Paint(..), Scale(..), px)
 import Utils.General exposing (uncurry)
-
+import Utils.Alert as Alert
 
 
 -- MODEL
@@ -66,10 +66,7 @@ render graphResult settings =
             renderGraph graph settings
 
         Err error ->
-            div [ Html.Attributes.class "error" ]
-                [ Icon.viewIcon Icon.exclamationTriangle
-                , text (" " ++ error)
-                ]
+            Alert.render Alert.Error error
 
 
 renderGraph : Graph Agent Relation -> GraphSettings -> Html msg
@@ -99,7 +96,7 @@ renderGraph graph settings =
     svg [ viewBox 0 0 settings.canvasWidth settings.canvasHeight, preserveAspectRatio (Align ScaleMid ScaleMid) Meet ]
         [ defs []
             (arrowHeads settings)
-        , g [ class [ "links" ] ] <| List.map (renderEdge computedGraph settings) <| Graph.edges computedGraph
+        , g [ class [ "links" ] ] <| List.map (renderEdge computedGraph settings) <| List.filter (\e -> e.from /= e.to) <| Graph.edges computedGraph
         , g [ class [ "nodes" ] ] <| List.map (renderNode settings) <| Graph.nodes computedGraph
         ]
 

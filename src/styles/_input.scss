@@ -1,0 +1,72 @@
+@use 'variables'as v;
+@use 'mixins'as m;
+
+input, button, select {
+    -webkit-appearance: none;
+    -moz-appearance:    none;
+    appearance:         none;
+    box-sizing: border-box;
+    padding: 0 v.$pad-h;
+    line-height: 3rem;
+    border: 2px solid darken(white, 25%);
+
+    &:focus {
+        outline: none;
+        box-shadow: 0 0 0 4px steelblue;
+        z-index: 5;
+    }
+}
+
+button,
+input[type=button] {
+    appearance: none;
+    background-color: darken(white, 10%);
+
+    &:active {
+        background-color: darken(white, 20%);
+    }
+}
+
+select {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 48'><path d='M23.7 17.3c.9 1.5-.2 3.5-2 3.5H2.3c-1.8 0-2.9-1.9-2-3.5L10 1.1c.9-1.5 3-1.5 3.9 0 .1 0 9.8 16.2 9.8 16.2zM.3 30.7c-.9-1.5.2-3.5 2-3.5h19.4c1.8 0 2.9 1.9 2 3.5L14 46.9c-.9 1.5-3 1.5-3.9 0C10 46.9.3 30.7.3 30.7z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: center right (v.$pad-h / 1.5);
+    background-origin: padding-box;
+    background-size: .5rem;
+    padding-right: v.$pad-h * 1.5;
+}
+
+.input-group {
+    display: flex;
+    align-items: flex-start;
+
+    &:not(:last-child) {
+        margin-bottom: v.$pad-v;
+    }
+
+    input:not([type=button]), select {
+        width: 100%
+    }
+
+    input, button, select {
+        border-right-width: 0;
+
+        &:first-child {
+            border-radius: v.$border-radius 0 0 v.$border-radius;
+        }
+
+        &:last-child {
+            border-right-width: 2px;
+            border-radius: 0 v.$border-radius v.$border-radius 0;
+        }
+    
+        &:only-child {
+            border-radius: v.$border-radius;
+        }
+    }
+
+    &:focus-within {
+        box-shadow: 0 0 0 4px rgba(70, 130, 180, 0.5);
+        border-radius: v.$border-radius;
+    }
+}

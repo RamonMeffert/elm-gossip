@@ -39,7 +39,7 @@ fromList agents =
             get agents 1
     in
     if List.length agents > 2 then
-        Err "No group calls allowed."
+        Err "A call must contain two agents."
 
     else
         case ( from, to ) of
@@ -51,7 +51,8 @@ fromList agents =
                     Ok { from = f.id, to = t.id }
 
             _ ->
-                Err "There is no one to call. Make sure a call looks like “xy”."
+                -- Seems like this only occurs when there's only one agent
+                Err "A call must contain two agents."
 
 
 {-| Returns whether an agent is in a call

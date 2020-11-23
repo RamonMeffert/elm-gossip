@@ -7,7 +7,7 @@ import GossipGraph.Agent as Agent exposing (Agent)
 import GossipGraph.Call as Call exposing (Call)
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class, id)
-import Task exposing (sequence)
+import Utils.Alert as Alert
 
 
 render : Result String CallSequence -> Result String (List Agent) -> List (Html msg)
@@ -22,22 +22,16 @@ render sequenceResult agentsResult =
                 |> List.map (Call.render agents)
 
         (Err error, Ok _) ->
-            [ div [ class "error" ]
-                [ Icon.viewIcon Icon.exclamationTriangle
-                , text (" " ++ error)
-                ]
+            -- Error in parsing sequence
+            [ Alert.render Alert.Error error
             ]
 
         (Ok _, Err _) ->
-            [ div [ class "error" ]
-                [ Icon.viewIcon Icon.exclamationTriangle
-                , text " There was an error parsing the initial gossip graph."
-                ]
+            -- Error in parsing gossip graph
+            [ Alert.render Alert.Warning " There was a problem parsing the initial gossip graph."
             ]
 
-        _ ->
-            [ div [ class "error" ]
-                [ Icon.viewIcon Icon.exclamationTriangle
-                , text " Something went very wrong."
-                ]
+        (Err e1, Err _) ->
+            -- Error in parsing sequence
+            [ Alert.render Alert.Error <| e1 ++ " Additionally, there was a problem parsing the initial gossip graph."
             ]

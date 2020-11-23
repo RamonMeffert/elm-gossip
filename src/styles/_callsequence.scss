@@ -1,11 +1,18 @@
+@use 'variables' as v;
 @use 'sass:color';
 @use 'mixins' as m;
 
 .call-list {
     @include m.box;
     display: flex;
+    flex-wrap: wrap;
 
     .call {
-        @include m.call;
+        padding: v.$pad-v / 4 v.$pad-h / 2;
+        background-color: v.$lightBlue;
+        margin: v.$pad-v / 4;
+        border-radius: v.$border-radius;
+        text-align: center;
+        border: 2px solid rgba(0,0,0, 10%);
     }
 }
