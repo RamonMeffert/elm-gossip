@@ -8,6 +8,8 @@ import Utils.General exposing (pluralize)
 import Html exposing (i)
 import GossipGraph.Relation as Relation exposing (Relation)
 import Graph exposing (Graph)
+import Graph exposing (Node)
+import Graph exposing (NodeContext)
 
 
 type alias ParseOptions =
@@ -247,3 +249,90 @@ lexer options string =
     in
     String.toList string
         |> charLexer 0
+
+
+-- CONVERSION TO STRING
+
+{-| Converts a gossip graph to its string representation.
+    graph = parse "Abc ABC abC"
+        |> uncurry fromAgentsAndRelations
+    toString graph == "Abc ABC abC"
+-}
+toString : Graph Agent Relation -> String
+toString graph =
+    Graph.fold (adjacencyToString (Graph.nodes graph)) [] graph
+        |> List.reverse
+        -- include separator
+        -- TODO: make separator configurable
+        |> List.intersperse " "
+        -- concatenate list of strings into string
+        |> List.foldr (++) ""
+
+
+toCanonicalString : Graph Agent Relation -> String
+toCanonicalString graph =
+    Graph.fold (adjacencyToCanonicalString) [] graph
+        |> List.reverse
+        -- include separator
+        -- TODO: make separator configurable
+        |> List.intersperse " "
+        -- concatenate list of strings into string
+        |> List.foldr (++) ""
+
+
+{-| Converts an adjacency, i.e. a node and its incoming and outgoing edges, to
+a string
+-}
+adjacencyToString : List (Node Agent) -> NodeContext Agent Relation -> List String -> List String
+adjacencyToString agents context acc =
+    let
+        -- Accumulating function that takes a partially completed knowledge
+        -- string and adds a new character based on an AgentId and a RelationType
+        toCharacter : ( Int, Kind ) -> String -> String
+        toCharacter ( id, kind ) acc2 =
+            Utils.List.find (\node -> node.label.id == id) agents
+                |> Maybe.map (.label >> .name)
+                |> Maybe.withDefault '?'
+                |> (if kind == Number then
+                        Char.toLower
+
+                    else
+                        Char.toUpper
+                   )
+                |> (\c -> String.fromChar c ++ acc2)
+
+        relations = context
+            |> Relation.fromNodeContext
+            |> List.map (\r -> ( r.to, r.kind ))
+            |> List.sortBy Tuple.first
+    in
+    List.foldr toCharacter "" relations :: acc
+
+
+
+{-| Converts an adjacency, i.e. a node and its incoming and outgoing edges, to
+a string
+-}
+adjacencyToCanonicalString : NodeContext Agent Relation -> List String -> List String
+adjacencyToCanonicalString context acc =
+    let
+        -- Accumulating function that takes a partially completed knowledge
+        -- string and adds a new character based on an AgentId and a RelationType
+        toCharacter : ( Int, Kind ) -> String -> String
+        toCharacter ( id, kind ) acc2 =
+            -- 65 is the unicode code for 'A', so we're mapping 0 to 'A' here
+            Char.fromCode (id + 65)
+                |> (if kind == Number then
+                        Char.toLower
+
+                    else
+                        Char.toUpper
+                   )
+                |> (\c -> String.fromChar c ++ acc2)
+
+        relations = context
+            |> Relation.fromNodeContext
+            |> List.map (\r -> ( r.to, r.kind ))
+            |> List.sortBy Tuple.first
+    in
+    List.foldr toCharacter "" relations :: acc

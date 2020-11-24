@@ -13,7 +13,7 @@ import FontAwesome.Solid as Icon
 import GossipGraph.Agent exposing (Agent)
 import GossipGraph.Call as Call exposing (Call)
 import GossipGraph.Parser
-import GossipGraph.Relation exposing (Relation)
+import GossipGraph.Relation exposing (Kind(..), Relation)
 import GossipGraph.Renderer
 import GossipProtocol.Conditions.Predefined as Predefined
 import GossipProtocol.GossipProtocol as GossipProtocol
@@ -22,8 +22,9 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Json.Decode as Json
-import Utils.Alert as Alert
 import Tuple
+import Utils.Alert as Alert
+
 
 
 -- MAIN
@@ -128,13 +129,12 @@ update msg model =
                         |> Result.andThen (CallSequence.Parser.parse model.inputCallSequence)
 
                 -- TODO: Reimplement this for the new Graph datastructure
-                -- canonical =
-                --     GossipGraph.Parser.toCanonicalString graph
+                canonical =
+                    GossipGraph.Parser.toCanonicalString (Result.withDefault Graph.empty graph)
             in
             { model
                 | inputGossipGraph = input
-
-                -- , canonicalGossipGraph = canonical
+                , canonicalGossipGraph = canonical
                 , graph = graph
                 , agents = agents
                 , relations = relations
@@ -153,19 +153,24 @@ update msg model =
             }
 
         ApplyCallSequence ->
-            case (model.graph, model.callSequence) of
-                (Ok graph, Ok sequence) ->
+            case ( model.graph, model.callSequence ) of
+                ( Ok graph, Ok sequence ) ->
                     let
-                         newGraph = List.foldr (\call (history, state) ->
-                            (call :: history
-                            , Call.execute state call
-                            )
-                            ) ([], graph) sequence
-                            |> Tuple.second
-                    in        
+                        newGraph =
+                            List.foldr
+                                (\call ( history, state ) ->
+                                    ( call :: history
+                                    , Call.execute state call
+                                    )
+                                )
+                                ( [], graph )
+                                sequence
+                                |> Tuple.second
+                    in
                     { model
                         | graph = Ok newGraph
-                        }
+                    }
+
                 _ ->
                     model
 
@@ -245,6 +250,46 @@ gossipGraphView model =
             div [ id "gossip-graph" ]
                 [ GossipGraph.Renderer.render model.graph model.graphSettings
                 , text ("Canonical representation: " ++ model.canonicalGossipGraph)
+                , br [] []
+                , text <| "Weakly connected N: "
+                    ++ (if GossipProtocol.isWeaklyConnected Number (Result.withDefault Graph.empty model.graph) then
+                            "yes"
+
+                        else
+                            "no"
+                       )
+                , br [] []
+                , text <| "Weakly connected S: "
+                    ++ (if GossipProtocol.isWeaklyConnected Secret (Result.withDefault Graph.empty model.graph) then
+                            "yes"
+
+                        else
+                            "no"
+                       )
+                , br [] []
+                , text <| "Strongly connected N: "
+                    ++ (if GossipProtocol.isStronglyConnected Number (Result.withDefault Graph.empty model.graph) then
+                            "yes"
+
+                        else
+                            "no"
+                       )
+                , br [] []
+                , text <| "Strongly connected S: "
+                    ++ (if GossipProtocol.isStronglyConnected Secret (Result.withDefault Graph.empty model.graph) then
+                            "yes"
+
+                        else
+                            "no"
+                       )
+                , br [] []
+                , text <| "Sun Graph: "
+                    ++ (if GossipProtocol.isSunGraph (Result.withDefault Graph.empty model.graph) then
+                            "yes"
+
+                        else
+                            "no"
+                       )
                 ]
         ]
 
@@ -266,18 +311,24 @@ callSequenceView model =
         , p [] [ text "You can enter a text representation of a call sequence on the gossip graph above here. This sequence is taken as the call history." ]
         , if permitted then
             -- TODO: move this to CallSequence.Renderer.render
-            Alert.render Alert.Information <| "This sequence is permitted under the “" ++ (Dict.get model.protocolName Predefined.name |> Maybe.withDefault "?")  ++ "” protocol."
+            Alert.render Alert.Information <| "This sequence is permitted under the “" ++ (Dict.get model.protocolName Predefined.name |> Maybe.withDefault "?") ++ "” protocol."
 
           else
             Alert.render Alert.Warning <| "This sequence is not permitted under the “" ++ (Dict.get model.protocolName Predefined.name |> Maybe.withDefault "?") ++ "” protocol."
         , div [ class "input-group" ]
             [ input [ type_ "text", id "call-sequence-input", value model.inputCallSequence, onInput ChangeCallSequence, placeholder "Call sequence input" ] []
-            , button 
+            , button
                 [ type_ "button"
                 , onClick ApplyCallSequence
                 , disabled <| not permitted
-                , title (if permitted then "Execute the calls in this sequence on the gossip graph" else "The call sequence must be permitted before it can be executed")
-                ] 
+                , title
+                    (if permitted then
+                        "Execute the calls in this sequence on the gossip graph"
+
+                     else
+                        "The call sequence must be permitted before it can be executed"
+                    )
+                ]
                 [ text "Execute" ]
             ]
         , div [ class "call-list" ]
