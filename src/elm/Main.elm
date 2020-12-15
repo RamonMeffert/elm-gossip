@@ -157,6 +157,8 @@ update msg model =
                 , agents = agents
                 , relations = relations
                 , callSequence = callSequence
+                , callHistory = Array.empty
+                , graphHistory = Array.empty
             }, Cmd.none)
 
         ChangeCallSequence input ->
@@ -286,77 +288,97 @@ gossipGraphView model =
           else
             div [ id "gossip-graph" ]
                 [ GossipGraph.Renderer.render model.graph model.graphSettings
-                , br [] []
-                , div [  ]
-                    [ text "Call history"
-                    , div [class "call-list"]
-                    (if Array.length model.callHistory > 0 then
-                        div [ class "call", onClick (TimeTravel 0) ] [ text "Initial graph" ] ::
-                        (Array.toList <| Array.indexedMap
-                            (\i call ->
-                                case ( Agent.fromId (Result.withDefault [] model.agents) call.from, Agent.fromId (Result.withDefault [] model.agents) call.to ) of
-                                    ( Ok from, Ok to ) ->
-                                        div [ class "call", onClick (TimeTravel (i + 1)) ] 
-                                            [ text (String.fromChar from.name ++ " 📞 " ++ String.fromChar to.name) 
-                                            ]
+                , (
+                case model.graph of
+                    Ok graph -> 
+                        div [ class "connection-info-container" ]
+                            [ connectionInfoView Number model.graph
+                            , connectionInfoView Secret model.graph
+                            , sunInfoView model.graph 
+                            ]
 
-                                    _ ->
-                                        div [ class "call" ]
-                                            [ text "❌" ]
-                            )
-                            model.callHistory)
-
-                      else
-                        [ text "No calls have been made" ]
-                    )]
-                , text ("Canonical representation: " ++ model.canonicalGossipGraph)
-                , text <|
-                    "Weakly connected N: "
-                        ++ (if GossipProtocol.isWeaklyConnected Number (Result.withDefault Graph.empty model.graph) then
-                                "yes"
-
-                            else
-                                "no"
-                           )
-                , br [] []
-                , text <|
-                    "Weakly connected S: "
-                        ++ (if GossipProtocol.isWeaklyConnected Secret (Result.withDefault Graph.empty model.graph) then
-                                "yes"
-
-                            else
-                                "no"
-                           )
-                , br [] []
-                , text <|
-                    "Strongly connected N: "
-                        ++ (if GossipProtocol.isStronglyConnected Number (Result.withDefault Graph.empty model.graph) then
-                                "yes"
-
-                            else
-                                "no"
-                           )
-                , br [] []
-                , text <|
-                    "Strongly connected S: "
-                        ++ (if GossipProtocol.isStronglyConnected Secret (Result.withDefault Graph.empty model.graph) then
-                                "yes"
-
-                            else
-                                "no"
-                           )
-                , br [] []
-                , text <|
-                    "Sun Graph: "
-                        ++ (if GossipProtocol.isSunGraph (Result.withDefault Graph.empty model.graph) then
-                                "yes"
-
-                            else
-                                "no"
-                           )
+                    Err e -> 
+                        div [] [])
                 ]
+        , if not <| String.isEmpty model.inputGossipGraph then 
+            text ("Canonical representation: " ++ model.canonicalGossipGraph)
+          else
+            text ""
+        , div [ id "graph-history" ]
+            [ h3 [] [ text "Call history" ]
+            , div [class "call-list"]
+            (if Array.length model.callHistory > 0 then
+                div [ class "call", onClick (TimeTravel 0) ] [ text "Initial graph" ] ::
+                (Array.toList <| Array.indexedMap
+                    (\i call ->
+                        case ( Agent.fromId (Result.withDefault [] model.agents) call.from, Agent.fromId (Result.withDefault [] model.agents) call.to ) of
+                            ( Ok from, Ok to ) ->
+                                div [ class "call", onClick (TimeTravel (i + 1)) ] 
+                                    [ text (String.fromChar from.name ++ " 📞 " ++ String.fromChar to.name) 
+                                    ]
+
+                            _ ->
+                                div [ class "call" ]
+                                    [ text "❌" ]
+                    )
+                    model.callHistory)
+
+                else
+                [ text "No calls have been made yet." ]
+            )]
         ]
 
+
+connectionInfoView : Kind -> Result String (Graph Agent Relation) -> Html Message
+connectionInfoView kind graph =
+    let
+        icon =
+            case kind of
+                Number ->
+                    Icon.phone
+                
+                Secret ->
+                    Icon.lock
+
+        relationType =
+            case kind of
+                Number ->
+                    "Number relation"
+                
+                Secret ->
+                    "Secret relation"
+
+        stronglyConnected = GossipProtocol.isStronglyConnected kind (Result.withDefault Graph.empty graph)
+        weaklyConnected = GossipProtocol.isWeaklyConnected kind (Result.withDefault Graph.empty graph)
+    in
+    Html.div [ class "connection-info" ]
+        [ Html.div [ class "visible" ]
+            [ Html.div [ class "icon" ] [Icon.viewIcon icon]
+            , Html.span [ class "explanation" ] [ text relationType ]
+            ]
+        , Html.div [ class "divider" ] []
+        , Html.div [ if stronglyConnected then class "visible" else class "" ]
+            [ Html.div [ class "icon" ] [Icon.viewIcon Icon.dumbbell]
+            , Html.span [ class "explanation" ] [ text <| "This relation is " ++ (if stronglyConnected then "" else "not") ++ " strongly connected" ]
+            ]
+        , Html.div [ if weaklyConnected then class "visible" else class "" ] 
+            [ Html.div [ class "icon" ] [Icon.viewIcon Icon.feather]
+            , Html.span [ class "explanation" ] [ text <| "This relation is " ++ (if weaklyConnected then "" else "not") ++ " weakly connected" ]
+            ]
+        ]
+
+
+sunInfoView : Result String (Graph Agent Relation) -> Html Message
+sunInfoView graph =
+    let
+        isSunGraph = GossipProtocol.isSunGraph (Result.withDefault Graph.empty graph)
+    in
+    Html.div [ class "connection-info" ]
+        [ Html.div [ if isSunGraph then class "visible" else class "" ]
+            [ Html.div [ class "icon" ] [Icon.viewIcon Icon.sun]
+            , Html.span [ class "explanation" ] [ text <| "The graph is " ++ (if isSunGraph then "" else "not") ++ " a sun graph" ]
+            ]
+        ]
 
 callSequenceView : Model -> Html Message
 callSequenceView model =

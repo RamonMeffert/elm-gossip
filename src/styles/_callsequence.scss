@@ -3,7 +3,6 @@
 @use 'mixins' as m;
 
 .call-list {
-    @include m.box;
     display: flex;
     flex-wrap: wrap;
 
