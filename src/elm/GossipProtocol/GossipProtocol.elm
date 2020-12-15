@@ -10,6 +10,7 @@ import List.Extra exposing (mapAccumr)
 import Graph
 import Graph exposing (NodeId)
 import Utils.List exposing (distinct)
+import GossipGraph.Relation
 
 
 {-| Protocol conditions
@@ -60,8 +61,7 @@ sequencePermittedOn condition graph sequence =
     let
         relations : Graph Agent Relation -> List Relation
         relations g =
-            Graph.edges g
-                |> List.map .label
+            Graph.fold (\ctx acc -> acc ++ (GossipGraph.Relation.fromNodeContext ctx)) [] graph
 
         isCallPermitted : Call -> Graph Agent Relation -> CallSequence -> Bool
         isCallPermitted { from, to } currentGraph callHistory =

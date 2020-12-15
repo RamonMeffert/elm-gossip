@@ -190,9 +190,12 @@ update msg model =
                     in
                     ({ model
                         | graph = Ok <| (\( _, g, _ ) -> g) newGraph
+                        , relations = Ok <| (\(_,g,_) -> Graph.fold (\ctx acc -> acc ++ (GossipGraph.Relation.fromNodeContext ctx)) [] g) newGraph
                         , graphHistory = (\( _, _, h ) -> h) newGraph
                         , graphHistoryLocation = (\( _, _, h ) -> h) newGraph |> Array.length |> (-) 1
                         , callHistory = (\( h, _, _ ) -> h) newGraph
+                        , inputCallSequence = ""
+                        , callSequence = Ok []
                     }, Cmd.none)
 
                 _ ->
