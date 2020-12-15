@@ -43,8 +43,11 @@ main {
     }
 }
 
-#graph-history {
+#graph-history,
+#graph-input-examples,
+#canonical-representation {
     @include m.box;
+    margin-bottom: v.$pad-v;
 }
 
 hr {
