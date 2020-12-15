@@ -25,7 +25,9 @@ import Json.Decode as Json
 import Tuple
 import Utils.Alert as Alert
 import Browser exposing (Document)
-
+import Array as Array
+import Array exposing (Array)
+import GossipGraph.Agent as Agent exposing (Agent)
 
 
 -- MAIN
@@ -56,6 +58,9 @@ type alias Model =
     , protocolName : String
     , graphSettings : GossipGraph.Renderer.GraphSettings
     , callSequence : Result CallSequence.Parser.Error CallSequence.CallSequence.CallSequence -- not great. Maybe move "type" to main namespace somehow
+    , graphHistory : Array (Graph Agent Relation)
+    , graphHistoryLocation : Int
+    , callHistory : Array (Call)
     }
 
 
@@ -65,6 +70,9 @@ init f =
     , inputCallSequence = ""
     , canonicalGossipGraph = ""
     , callSequence = Ok []
+    , callHistory = Array.empty
+    , graphHistory = Array.empty
+    , graphHistoryLocation = 0
     , graph = Ok Graph.empty
     , agents = Ok []
     , relations = Ok []
@@ -93,6 +101,7 @@ type Message
     | ChangeCallSequence String
     | ChangeProtocol String
     | ApplyCallSequence
+    | TimeTravel Int
 
 
 update : Message -> Model -> (Model, Cmd msg)
@@ -138,7 +147,6 @@ update msg model =
                     agents
                         |> Result.andThen (CallSequence.Parser.parse model.inputCallSequence)
 
-                -- TODO: Reimplement this for the new Graph datastructure
                 canonical =
                     GossipGraph.Parser.toCanonicalString (Result.withDefault Graph.empty graph)
             in
@@ -168,17 +176,20 @@ update msg model =
                     let
                         newGraph =
                             List.foldr
-                                (\call ( history, state ) ->
-                                    ( call :: history
+                                (\call ( callHistory, state, graphHistory ) ->
+                                    ( Array.push call callHistory
                                     , Call.execute state call
+                                    , Array.push (Call.execute state call) graphHistory
                                     )
                                 )
-                                ( [], graph )
+                                ( Array.empty, graph, Array.fromList [ graph ] )
                                 sequence
-                                |> Tuple.second
                     in
                     ({ model
-                        | graph = Ok newGraph
+                        | graph = Ok <| (\( _, g, _ ) -> g) newGraph
+                        , graphHistory = (\( _, _, h ) -> h) newGraph
+                        , graphHistoryLocation = (\( _, _, h ) -> h) newGraph |> Array.length |> (-) 1
+                        , callHistory = (\( h, _, _ ) -> h) newGraph
                     }, Cmd.none)
 
                 _ ->
@@ -233,7 +244,14 @@ update msg model =
                         | protocolCondition = Predefined.any
                         , protocolName = protocolName
                     }, Cmd.none)
-
+                TimeTravel time ->
+                    case Array.get time model.graphHistory of
+                        Just graph ->
+                            { model
+                                | graph = Ok graph
+                                }
+                        Nothing ->
+                            model
 
 
 -- VIEW
@@ -264,47 +282,74 @@ gossipGraphView model =
           else
             div [ id "gossip-graph" ]
                 [ GossipGraph.Renderer.render model.graph model.graphSettings
+                , br [] []
+                , div [  ]
+                    [ text "Call history"
+                    , div [class "call-list"]
+                    (if Array.length model.callHistory > 0 then
+                        div [ class "call", onClick (TimeTravel 0) ] [ text "Initial graph" ] ::
+                        (Array.toList <| Array.indexedMap
+                            (\i call ->
+                                case ( Agent.fromId (Result.withDefault [] model.agents) call.from, Agent.fromId (Result.withDefault [] model.agents) call.to ) of
+                                    ( Ok from, Ok to ) ->
+                                        div [ class "call", onClick (TimeTravel (i + 1)) ] 
+                                            [ text (String.fromChar from.name ++ " 📞 " ++ String.fromChar to.name) 
+                                            ]
+
+                                    _ ->
+                                        div [ class "call" ]
+                                            [ text "❌" ]
+                            )
+                            model.callHistory)
+
+                      else
+                        [ text "No calls have been made" ]
+                    )]
                 , text ("Canonical representation: " ++ model.canonicalGossipGraph)
-                , br [] []
-                , text <| "Weakly connected N: "
-                    ++ (if GossipProtocol.isWeaklyConnected Number (Result.withDefault Graph.empty model.graph) then
-                            "yes"
+                , text <|
+                    "Weakly connected N: "
+                        ++ (if GossipProtocol.isWeaklyConnected Number (Result.withDefault Graph.empty model.graph) then
+                                "yes"
 
-                        else
-                            "no"
-                       )
+                            else
+                                "no"
+                           )
                 , br [] []
-                , text <| "Weakly connected S: "
-                    ++ (if GossipProtocol.isWeaklyConnected Secret (Result.withDefault Graph.empty model.graph) then
-                            "yes"
+                , text <|
+                    "Weakly connected S: "
+                        ++ (if GossipProtocol.isWeaklyConnected Secret (Result.withDefault Graph.empty model.graph) then
+                                "yes"
 
-                        else
-                            "no"
-                       )
+                            else
+                                "no"
+                           )
                 , br [] []
-                , text <| "Strongly connected N: "
-                    ++ (if GossipProtocol.isStronglyConnected Number (Result.withDefault Graph.empty model.graph) then
-                            "yes"
+                , text <|
+                    "Strongly connected N: "
+                        ++ (if GossipProtocol.isStronglyConnected Number (Result.withDefault Graph.empty model.graph) then
+                                "yes"
 
-                        else
-                            "no"
-                       )
+                            else
+                                "no"
+                           )
                 , br [] []
-                , text <| "Strongly connected S: "
-                    ++ (if GossipProtocol.isStronglyConnected Secret (Result.withDefault Graph.empty model.graph) then
-                            "yes"
+                , text <|
+                    "Strongly connected S: "
+                        ++ (if GossipProtocol.isStronglyConnected Secret (Result.withDefault Graph.empty model.graph) then
+                                "yes"
 
-                        else
-                            "no"
-                       )
+                            else
+                                "no"
+                           )
                 , br [] []
-                , text <| "Sun Graph: "
-                    ++ (if GossipProtocol.isSunGraph (Result.withDefault Graph.empty model.graph) then
-                            "yes"
+                , text <|
+                    "Sun Graph: "
+                        ++ (if GossipProtocol.isSunGraph (Result.withDefault Graph.empty model.graph) then
+                                "yes"
 
-                        else
-                            "no"
-                       )
+                            else
+                                "no"
+                           )
                 ]
         ]
 
