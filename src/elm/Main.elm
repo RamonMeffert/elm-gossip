@@ -24,6 +24,7 @@ import Html.Events exposing (..)
 import Json.Decode as Json
 import Tuple
 import Utils.Alert as Alert
+import Browser exposing (Document)
 import Array as Array
 import Array exposing (Array)
 import GossipGraph.Agent as Agent exposing (Agent)
@@ -34,7 +35,12 @@ import GossipGraph.Agent as Agent exposing (Agent)
 
 main : Program () Model Message
 main =
-    Browser.sandbox { init = init, update = update, view = view }
+    Browser.document 
+        { init = init
+        , update = update
+        , view = view 
+        , subscriptions = subscriptions
+        }
 
 
 
@@ -58,9 +64,9 @@ type alias Model =
     }
 
 
-init : Model
-init =
-    { inputGossipGraph = ""
+init : () -> (Model, Cmd msg)
+init f =
+    ({ inputGossipGraph = ""
     , inputCallSequence = ""
     , canonicalGossipGraph = ""
     , callSequence = Ok []
@@ -79,8 +85,12 @@ init =
         , canvasWidth = 800
         , canvasHeight = 400
         }
-    }
+    }, Cmd.none)
 
+
+subscriptions : Model -> Sub Message
+subscriptions model =
+    Sub.none
 
 
 -- UPDATE
@@ -94,7 +104,7 @@ type Message
     | TimeTravel Int
 
 
-update : Message -> Model -> Model
+update : Message -> Model -> (Model, Cmd msg)
 update msg model =
     case msg of
         -- TODO: move to separate method for cleanliness
@@ -140,14 +150,14 @@ update msg model =
                 canonical =
                     GossipGraph.Parser.toCanonicalString (Result.withDefault Graph.empty graph)
             in
-            { model
+            ({ model
                 | inputGossipGraph = input
                 , canonicalGossipGraph = canonical
                 , graph = graph
                 , agents = agents
                 , relations = relations
                 , callSequence = callSequence
-            }
+            }, Cmd.none)
 
         ChangeCallSequence input ->
             let
@@ -155,10 +165,10 @@ update msg model =
                     model.agents
                         |> Result.andThen (CallSequence.Parser.parse input)
             in
-            { model
+            ({ model
                 | inputCallSequence = input
                 , callSequence = callSequence
-            }
+            }, Cmd.none)
 
         ApplyCallSequence ->
             case ( model.graph, model.callSequence ) of
@@ -175,70 +185,73 @@ update msg model =
                                 ( Array.empty, graph, Array.fromList [ graph ] )
                                 sequence
                     in
-                    { model
+                    ({ model
                         | graph = Ok <| (\( _, g, _ ) -> g) newGraph
                         , graphHistory = (\( _, _, h ) -> h) newGraph
                         , graphHistoryLocation = (\( _, _, h ) -> h) newGraph |> Array.length |> (-) 1
                         , callHistory = (\( h, _, _ ) -> h) newGraph
-                    }
+                    }, Cmd.none)
 
                 _ ->
-                    model
+                    (model, Cmd.none)
 
         ChangeProtocol protocolName ->
             case protocolName of
                 -- TODO: Define a dict and just map this
                 "any" ->
-                    { model
+                    ({ model
                         | protocolCondition = Predefined.any
                         , protocolName = protocolName
-                    }
+                    }, Cmd.none)
 
                 "tok" ->
-                    { model
+                    ({ model
                         | protocolCondition = Predefined.tok
                         , protocolName = protocolName
-                    }
+                    }, Cmd.none)
 
                 "spi" ->
-                    { model
+                    ({ model
                         | protocolCondition = Predefined.spi
                         , protocolName = protocolName
-                    }
+                    }, Cmd.none)
 
                 "co" ->
-                    { model
+                    ({ model
                         | protocolCondition = Predefined.co
                         , protocolName = protocolName
-                    }
+                    }, Cmd.none)
 
                 "wco" ->
-                    { model
+                    ({ model
                         | protocolCondition = Predefined.wco
                         , protocolName = protocolName
-                    }
+                    }, Cmd.none)
 
                 "lns" ->
-                    { model
+                    ({ model
                         | protocolCondition = Predefined.lns
                         , protocolName = protocolName
-                    }
+                    }, Cmd.none)
+
+                "custom" ->
+                    ({ model
+                        | protocolName = protocolName
+                    }, Cmd.none)
 
                 _ ->
-                    { model
+                    ({ model
                         | protocolCondition = Predefined.any
                         , protocolName = protocolName
-                    }
-        TimeTravel time ->
-            case Array.get time model.graphHistory of
-                Just graph ->
-                    { model
-                        | graph = Ok graph
-                        }
-                Nothing ->
-                    model
-
-
+                    }, Cmd.none)
+                TimeTravel time ->
+                    case Array.get time model.graphHistory of
+                        Just graph ->
+                            { model
+                                | graph = Ok graph
+                                }
+                        Nothing ->
+                            model
 
 
 -- VIEW
@@ -419,7 +432,8 @@ protocolView model =
             , div [ class "info" ]
                 [ div [ class "input-group" ]
                     [ select [ on "change" (Json.map ChangeProtocol targetValue) ]
-                        (List.map (\k -> option [ value k ] [ text <| Maybe.withDefault "?" <| Dict.get k Predefined.name ]) (Dict.keys Predefined.name))
+                        ((List.map (\k -> option [ value k ] [ text <| Maybe.withDefault "?" <| Dict.get k Predefined.name ]) (Dict.keys Predefined.name))
+                        ++ [option [ value "custom" ] [ text "Custom" ]])
                     ]
                 , case Dict.get model.protocolName Predefined.explanation of
                     Just explanation ->
@@ -432,17 +446,24 @@ protocolView model =
                             ]
 
                     Nothing ->
-                        text "I have no clue."
+                        if model.protocolName == "custom" then
+                            text "Custom"
+                        else
+                            text "I have no clue."
                 ]
             ]
         ]
 
 
-view : Model -> Html Message
+view : Model -> Document Message
 view model =
-    main_ []
+    { title = "Tools for Gossip"
+    , body = [ main_ []
         [ headerView
         , gossipGraphView model
         , protocolView model
         , callSequenceView model
         ]
+    ]
+    }
+    
