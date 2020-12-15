@@ -66,9 +66,12 @@ sequencePermittedOn condition graph sequence =
         isCallPermitted : Call -> Graph Agent Relation -> CallSequence -> Bool
         isCallPermitted { from, to } currentGraph callHistory =
             let
+                -- `rels` is the set of relations on the current graph, i.e. N^σ ∪ S^σ
+                rels : List Relation
                 rels =
                     relations currentGraph
             in
+                -- x ≠ y
                 (from /= to)
                 -- N^σ xy
                 && (List.any (\r -> knows from to Number r) rels)
