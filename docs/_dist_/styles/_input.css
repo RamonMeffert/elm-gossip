@@ -1,0 +1,63 @@
+input, button, select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  padding: 0 1.5rem;
+  line-height: 3rem;
+  border: 2px solid #bfbfbf;
+}
+input:focus, button:focus, select:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px steelblue;
+  z-index: 5;
+}
+
+button,
+input[type=button] {
+  appearance: none;
+  background-color: #e6e6e6;
+}
+button:active,
+input[type=button]:active {
+  background-color: #cccccc;
+}
+
+select {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 48'><path d='M23.7 17.3c.9 1.5-.2 3.5-2 3.5H2.3c-1.8 0-2.9-1.9-2-3.5L10 1.1c.9-1.5 3-1.5 3.9 0 .1 0 9.8 16.2 9.8 16.2zM.3 30.7c-.9-1.5.2-3.5 2-3.5h19.4c1.8 0 2.9 1.9 2 3.5L14 46.9c-.9 1.5-3 1.5-3.9 0C10 46.9.3 30.7.3 30.7z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: center right 1rem;
+  background-origin: padding-box;
+  background-size: 0.5rem;
+  padding-right: 2.25rem;
+}
+
+.input-group {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+}
+.input-group:not(:last-child) {
+  margin-bottom: 1.3rem;
+}
+.input-group input:not([type=button]), .input-group select {
+  width: 100%;
+}
+.input-group input, .input-group button, .input-group select {
+  border-right-width: 0;
+  flex-grow: 1;
+}
+.input-group input:first-child, .input-group button:first-child, .input-group select:first-child {
+  border-radius: 0.3rem 0 0 0.3rem;
+}
+.input-group input:last-child, .input-group button:last-child, .input-group select:last-child {
+  border-right-width: 2px;
+  border-radius: 0 0.3rem 0.3rem 0;
+}
+.input-group input:only-child, .input-group button:only-child, .input-group select:only-child {
+  border-radius: 0.3rem;
+}
+.input-group:focus-within {
+  box-shadow: 0 0 0 4px rgba(70, 130, 180, 0.5);
+  border-radius: 0.3rem;
+}
