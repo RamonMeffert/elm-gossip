@@ -102,9 +102,10 @@ type Message
     | ChangeProtocol String
     | ApplyCallSequence
     | TimeTravel Int
+    | InsertExampleGraph String
 
 
-update : Message -> Model -> (Model, Cmd msg)
+update : Message -> Model -> (Model, Cmd Message)
 update msg model =
     case msg of
         -- TODO: move to separate method for cleanliness
@@ -257,8 +258,9 @@ update msg model =
                     )
                 Nothing ->
                     (model, Cmd.none)
-                    
-
+        
+        InsertExampleGraph graph ->
+            update (ChangeGossipGraph graph) model
 
 -- VIEW
 
@@ -268,6 +270,18 @@ headerView =
     header []
         [ h1 [] [ text "Tools for Gossip" ]
         , p [ class "subtitle" ] [ text "Bachelor's Project, R.A. Meffert — Supervisor: B.R.M. Gattinger" ]
+        , p [] 
+            [ text """Gossip protocols are protocols that determine how gossips (a.k.a. secrets) can spread in gossip graphs. 
+                A gossip graph is a set of nodes representing agents and a set of edges representing relations. 
+                A relation can be either a """
+            , strong [] [ text "number relation"]
+            , text """ (meaning that an agent knows the phone number of another agent) or """
+            , strong [] [ text "secret relation"]
+            , text """ (meaning that an agent knows the secret of the other agent)."""
+            ]
+        , p []
+            [ text "Using this tool, you can model gossip graphs and execute gossip protocols on them."
+            ]
         ]
 
 
@@ -275,7 +289,23 @@ gossipGraphView : Model -> Html Message
 gossipGraphView model =
     section []
         [ h2 [] [ text "Gossip graph" ]
-        , p [] [ text "You can enter a text representation of a gossip graph here." ]
+        , p [] [ text "You can enter a text representation of a gossip graph here. A gossip graph is represented as follows:" ]
+        , ul []
+            [ li [] [ text "Agents are represented by string segments, i.e. letter sequences separated by spaces" ]
+            , li [] [ text "Relations and agent names are represented by upper- and lowercase letters. A lowercase letter represents a number relation and an uppercase letter represents a secret relation." ]
+            , li [] [ text "The position of the string segment represents which agent the relations belongs to. For example, the string “A B” tells us that the first agent knows the secret of A and the second knows the secret of B." ]
+            , li [] [ text "The names of the agents are based on the relations that are present. In the example above, the names in the relations are “A“ and “B“, so we know that the first agent is called “A“ and the second is called “B“." ]
+            ]
+        , div [ id "graph-input-examples" ] 
+            [ h3 [] [ text "Examples" ]
+            , p [] [ text "Click one of the buttons to load an example gossip graph." ]
+            , div [ class "input-group" ]
+                [ button [ type_ "button", onClick <| InsertExampleGraph "Abc aBc abC" ] [ text "Number relations" ]
+                , button [ type_ "button", onClick <| InsertExampleGraph "ABC ABC ABC" ] [ text "Secret relations" ]
+                , button [ type_ "button", onClick <| InsertExampleGraph "Abc ABC C" ] [ text "Mixed relations" ]
+                , button [ type_ "button", onClick <| InsertExampleGraph "ABCDE aBcd abCE cDe aE" ] [ text "Complex example" ]
+                ]
+            ]
         , div [ class "input-group" ]
             [ input [ type_ "text", id "gossip-graph-input", value model.inputGossipGraph, onInput ChangeGossipGraph, placeholder "Gossip graph representation" ] []
             ]
@@ -300,10 +330,6 @@ gossipGraphView model =
                     Err e -> 
                         div [] [])
                 ]
-        , if not <| String.isEmpty model.inputGossipGraph then 
-            text ("Canonical representation: " ++ model.canonicalGossipGraph)
-          else
-            text ""
         , div [ id "graph-history" ]
             [ h3 [] [ text "Call history" ]
             , div [class "call-list"]
@@ -326,6 +352,15 @@ gossipGraphView model =
                 else
                 [ text "No calls have been made yet." ]
             )]
+        , if not <| String.isEmpty model.inputGossipGraph then
+            div [ id "canonical-representation" ]
+            [ h3 [] [ text "Canonical representation" ]
+            , text <| "“" ++ model.canonicalGossipGraph ++ "”"
+            , br [] []
+            , text "The gossip graph represented with “normalized” agent names, that is, agents are named starting with “A” for the first agent and following the alphabet."
+            ]
+          else
+            text ""
         ]
 
 

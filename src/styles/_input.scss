@@ -40,6 +40,8 @@ select {
     display: flex;
     align-items: flex-start;
 
+    width: 100%;
+
     &:not(:last-child) {
         margin-bottom: v.$pad-v;
     }
@@ -50,6 +52,7 @@ select {
 
     input, button, select {
         border-right-width: 0;
+        flex-grow: 1;
 
         &:first-child {
             border-radius: v.$border-radius 0 0 v.$border-radius;
