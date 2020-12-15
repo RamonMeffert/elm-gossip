@@ -28,7 +28,3 @@ jobs:
           node-version: '12'
       - run: yarn install
       - run: yarn build
-      - uses: crazy-max/ghaction-github-pages@v2.2.0
-        with:
-          build_dir: build
-          jekyll: false
