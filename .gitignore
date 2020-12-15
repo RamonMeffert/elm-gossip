@@ -4,6 +4,8 @@ elm-stuff
 repl-temp-*
 # node_modules
 node_modules/
+# docs for github pages should not be on master
+docs/
 # vs code dir
 .vscode
 # ignore files generated when building
