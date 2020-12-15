@@ -69,11 +69,11 @@ sequencePermittedOn condition graph sequence =
                 rels =
                     relations currentGraph
             in
-                (from /= to |> Debug.log "--\nx /= y")
+                (from /= to)
                 -- N^σ xy
-                && (List.any (\r -> knows from to Number r) rels |> Debug.log "Nxy")
+                && (List.any (\r -> knows from to Number r) rels)
                 -- π(x, y)
-                && condition ( from, to ) rels callHistory |> Debug.log "pi(x, y)"
+                && condition ( from, to ) rels callHistory
     in
     -- results in a tuple of the form ((Bool, (CallSequence, Graph Agent Relation)), List Graph Agent Relation)
     -- Since the empty call sequence is allowed, start with true

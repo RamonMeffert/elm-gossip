@@ -238,20 +238,24 @@ update msg model =
                     ({ model
                         | protocolName = protocolName
                     }, Cmd.none)
-
+                    
                 _ ->
                     ({ model
                         | protocolCondition = Predefined.any
-                        , protocolName = protocolName
+                        , protocolName = "any"
                     }, Cmd.none)
-                TimeTravel time ->
-                    case Array.get time model.graphHistory of
-                        Just graph ->
-                            { model
-                                | graph = Ok graph
-                                }
-                        Nothing ->
-                            model
+
+        TimeTravel time ->
+            case Array.get time model.graphHistory of
+                Just graph ->
+                    ({ model
+                        | graph = Ok graph
+                        }
+                    , Cmd.none
+                    )
+                Nothing ->
+                    (model, Cmd.none)
+                    
 
 
 -- VIEW
