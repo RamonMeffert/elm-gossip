@@ -51,7 +51,7 @@ If you want to build a release, you can run the following command:
 yarn build # or npm build
 ```
 
-This will generate a `/docs/`<sup>1</sup> directory. You can upload this directory to a web server or run a webserver locally from this directory (e.g. `python3 -m http.server`) to see the project.
+This will generate a `/docs/`<sup>1</sup> directory. You can upload this directory to a web server or run a local web server from this directory (e.g. `python3 -m http.server`) to see the project.
 
 ---
 
