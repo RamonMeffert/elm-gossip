@@ -36,7 +36,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add docs
-          git commit -m "Add new version for GitHub Pages" -a
+          git commit -m --allow-empty "Add new version for GitHub Pages" -a
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
