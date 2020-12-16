@@ -6,6 +6,12 @@ This repository contains the code for my Bachelors' Project Artificial Intellige
 The project is a tool to visualise and manipulate gossip protocols.
 It allows you to work on gossip graphs using an easy-to-use interface directly on the web.
 
+## Usage
+
+The most recent version of the project can be found on [GitHub pages](https://ramonmeffert.github.io/tools-for-gossip). 
+This version is regularly updated when changes are made to the project.
+If you want to build and run the project yourself, please refer to the information below.
+
 ## Features
 
 - Visualise gossip graphs
@@ -20,12 +26,6 @@ It allows you to work on gossip graphs using an easy-to-use interface directly o
 
 You can track the progress of these features on the [Issues](https://github.com/RamonMeffert/tools-for-gossip/issues) page.
 Besides the features mentioned above, I am also working on improving the stability and user experience of the application.
-
-## Usage
-
-The most recent version of the project can be found on [GitHub pages](https://ramonmeffert.github.io/tools-for-gossip). 
-This version is regularly updated when changes are made to the project.
-If you want to build and run the project yourself, please refer to the information below.
 
 ## Running locally
 
