@@ -1,7 +1,6 @@
 # Tools for Gossip
 
 ![Deployment status](https://img.shields.io/github/workflow/status/ramonmeffert/tools-for-gossip/Deployment/gh-pages)
-![License](https://img.shields.io/github/license/ramonmeffert/tools-for-gossip)
 
 This repository contains the code for my Bachelors' Project Artificial Intelligence. 
 The project is a tool to visualise and manipulate gossip protocols.
