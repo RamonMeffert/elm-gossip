@@ -3,8 +3,8 @@ module GossipProtocol.Conditions.Constituents exposing (..)
 {-| All possible constituents of a protocol condition. Based on definition 4 in _Van Ditmarsch (2018)_
 -}
 
-import GossipGraph.Agent exposing (AgentId)
 import CallSequence.CallSequence exposing (CallSequence)
+import GossipGraph.Agent exposing (AgentId)
 import GossipGraph.Relation exposing (Kind(..), Relation, knows)
 import List exposing (head)
 

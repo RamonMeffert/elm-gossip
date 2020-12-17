@@ -2,7 +2,8 @@ module Main exposing (..)
 
 -- import GossipGraph.Parser
 
-import Browser
+import Array exposing (Array)
+import Browser exposing (Document)
 import CallSequence.CallSequence
 import CallSequence.Parser
 import CallSequence.Renderer
@@ -10,7 +11,7 @@ import Dict
 import FontAwesome.Attributes as Icon
 import FontAwesome.Icon as Icon exposing (Icon)
 import FontAwesome.Solid as Icon
-import GossipGraph.Agent exposing (Agent)
+import GossipGraph.Agent as Agent exposing (Agent)
 import GossipGraph.Call as Call exposing (Call)
 import GossipGraph.Parser
 import GossipGraph.Relation exposing (Kind(..), Relation)
@@ -24,10 +25,7 @@ import Html.Events exposing (..)
 import Json.Decode as Json
 import Tuple
 import Utils.Alert as Alert
-import Browser exposing (Document)
-import Array as Array
-import Array exposing (Array)
-import GossipGraph.Agent as Agent exposing (Agent)
+
 
 
 -- MAIN
@@ -35,10 +33,10 @@ import GossipGraph.Agent as Agent exposing (Agent)
 
 main : Program () Model Message
 main =
-    Browser.document 
+    Browser.document
         { init = init
         , update = update
-        , view = view 
+        , view = view
         , subscriptions = subscriptions
         }
 
@@ -60,37 +58,40 @@ type alias Model =
     , callSequence : Result CallSequence.Parser.Error CallSequence.CallSequence.CallSequence -- not great. Maybe move "type" to main namespace somehow
     , graphHistory : Array (Graph Agent Relation)
     , graphHistoryLocation : Int
-    , callHistory : Array (Call)
+    , callHistory : Array Call
     }
 
 
-init : () -> (Model, Cmd msg)
-init f =
-    ({ inputGossipGraph = ""
-    , inputCallSequence = ""
-    , canonicalGossipGraph = ""
-    , callSequence = Ok []
-    , callHistory = Array.empty
-    , graphHistory = Array.empty
-    , graphHistoryLocation = 0
-    , graph = Ok Graph.empty
-    , agents = Ok []
-    , relations = Ok []
-    , protocolCondition = Predefined.any
-    , protocolName = "any"
-    , graphSettings =
-        { nodeRadius = 20
-        , edgeWidth = 2
-        , arrowLength = 6
-        , canvasWidth = 800
-        , canvasHeight = 400
-        }
-    }, Cmd.none)
+init : () -> ( Model, Cmd msg )
+init _ =
+    ( { inputGossipGraph = ""
+      , inputCallSequence = ""
+      , canonicalGossipGraph = ""
+      , callSequence = Ok []
+      , callHistory = Array.empty
+      , graphHistory = Array.empty
+      , graphHistoryLocation = 0
+      , graph = Ok Graph.empty
+      , agents = Ok []
+      , relations = Ok []
+      , protocolCondition = Predefined.any
+      , protocolName = "any"
+      , graphSettings =
+            { nodeRadius = 20
+            , edgeWidth = 2
+            , arrowLength = 6
+            , canvasWidth = 800
+            , canvasHeight = 400
+            }
+      }
+    , Cmd.none
+    )
 
 
 subscriptions : Model -> Sub Message
-subscriptions model =
+subscriptions _ =
     Sub.none
+
 
 
 -- UPDATE
@@ -105,7 +106,7 @@ type Message
     | InsertExampleGraph String
 
 
-update : Message -> Model -> (Model, Cmd Message)
+update : Message -> Model -> ( Model, Cmd Message )
 update msg model =
     case msg of
         -- TODO: move to separate method for cleanliness
@@ -151,7 +152,7 @@ update msg model =
                 canonical =
                     GossipGraph.Parser.toCanonicalString (Result.withDefault Graph.empty graph)
             in
-            ({ model
+            ( { model
                 | inputGossipGraph = input
                 , canonicalGossipGraph = canonical
                 , graph = graph
@@ -160,7 +161,9 @@ update msg model =
                 , callSequence = callSequence
                 , callHistory = Array.empty
                 , graphHistory = Array.empty
-            }, Cmd.none)
+              }
+            , Cmd.none
+            )
 
         ChangeCallSequence input ->
             let
@@ -168,10 +171,12 @@ update msg model =
                     model.agents
                         |> Result.andThen (CallSequence.Parser.parse input)
             in
-            ({ model
+            ( { model
                 | inputCallSequence = input
                 , callSequence = callSequence
-            }, Cmd.none)
+              }
+            , Cmd.none
+            )
 
         ApplyCallSequence ->
             case ( model.graph, model.callSequence ) of
@@ -188,82 +193,103 @@ update msg model =
                                 ( Array.empty, graph, Array.fromList [ graph ] )
                                 sequence
                     in
-                    ({ model
+                    ( { model
                         | graph = Ok <| (\( _, g, _ ) -> g) newGraph
-                        , relations = Ok <| (\(_,g,_) -> Graph.fold (\ctx acc -> acc ++ (GossipGraph.Relation.fromNodeContext ctx)) [] g) newGraph
+                        , relations = Ok <| (\( _, g, _ ) -> Graph.fold (\ctx acc -> acc ++ GossipGraph.Relation.fromNodeContext ctx) [] g) newGraph
                         , graphHistory = (\( _, _, h ) -> h) newGraph
                         , graphHistoryLocation = (\( _, _, h ) -> h) newGraph |> Array.length |> (-) 1
                         , callHistory = (\( h, _, _ ) -> h) newGraph
                         , inputCallSequence = ""
                         , callSequence = Ok []
-                    }, Cmd.none)
+                      }
+                    , Cmd.none
+                    )
 
                 _ ->
-                    (model, Cmd.none)
+                    ( model, Cmd.none )
 
         ChangeProtocol protocolName ->
             case protocolName of
                 -- TODO: Define a dict and just map this
                 "any" ->
-                    ({ model
+                    ( { model
                         | protocolCondition = Predefined.any
                         , protocolName = protocolName
-                    }, Cmd.none)
+                      }
+                    , Cmd.none
+                    )
 
                 "tok" ->
-                    ({ model
+                    ( { model
                         | protocolCondition = Predefined.tok
                         , protocolName = protocolName
-                    }, Cmd.none)
+                      }
+                    , Cmd.none
+                    )
 
                 "spi" ->
-                    ({ model
+                    ( { model
                         | protocolCondition = Predefined.spi
                         , protocolName = protocolName
-                    }, Cmd.none)
+                      }
+                    , Cmd.none
+                    )
 
                 "co" ->
-                    ({ model
+                    ( { model
                         | protocolCondition = Predefined.co
                         , protocolName = protocolName
-                    }, Cmd.none)
+                      }
+                    , Cmd.none
+                    )
 
                 "wco" ->
-                    ({ model
+                    ( { model
                         | protocolCondition = Predefined.wco
                         , protocolName = protocolName
-                    }, Cmd.none)
+                      }
+                    , Cmd.none
+                    )
 
                 "lns" ->
-                    ({ model
+                    ( { model
                         | protocolCondition = Predefined.lns
                         , protocolName = protocolName
-                    }, Cmd.none)
+                      }
+                    , Cmd.none
+                    )
 
                 "custom" ->
-                    ({ model
+                    ( { model
                         | protocolName = protocolName
-                    }, Cmd.none)
-                    
+                      }
+                    , Cmd.none
+                    )
+
                 _ ->
-                    ({ model
+                    ( { model
                         | protocolCondition = Predefined.any
                         , protocolName = "any"
-                    }, Cmd.none)
+                      }
+                    , Cmd.none
+                    )
 
         TimeTravel time ->
             case Array.get time model.graphHistory of
                 Just graph ->
-                    ({ model
+                    ( { model
                         | graph = Ok graph
-                        }
+                      }
                     , Cmd.none
                     )
+
                 Nothing ->
-                    (model, Cmd.none)
-        
+                    ( model, Cmd.none )
+
         InsertExampleGraph graph ->
             update (ChangeGossipGraph graph) model
+
+
 
 -- VIEW
 
@@ -273,13 +299,13 @@ headerView =
     header []
         [ h1 [] [ text "Tools for Gossip" ]
         , p [ class "subtitle" ] [ text "Bachelor's Project, R.A. Meffert — Supervisor: B.R.M. Gattinger" ]
-        , p [] 
+        , p []
             [ text """Gossip protocols are protocols that determine how gossips (a.k.a. secrets) can spread in gossip graphs. 
                 A gossip graph is a set of nodes representing agents and a set of edges representing relations. 
                 A relation can be either a """
-            , strong [] [ text "number relation"]
+            , strong [] [ text "number relation" ]
             , text """ (meaning that an agent knows the phone number of another agent) or """
-            , strong [] [ text "secret relation"]
+            , strong [] [ text "secret relation" ]
             , text """ (meaning that an agent knows the secret of the other agent)."""
             ]
         , p []
@@ -299,7 +325,7 @@ gossipGraphView model =
             , li [] [ text "The position of the string segment represents which agent the relations belongs to. For example, the string “A B” tells us that the first agent knows the secret of A and the second knows the secret of B." ]
             , li [] [ text "The names of the agents are based on the relations that are present. In the example above, the names in the relations are “A“ and “B“, so we know that the first agent is called “A“ and the second is called “B“." ]
             ]
-        , div [ id "graph-input-examples" ] 
+        , div [ id "graph-input-examples" ]
             [ h3 [] [ text "Examples" ]
             , p [] [ text "Click one of the buttons to load an example gossip graph." ]
             , div [ class "input-group" ]
@@ -321,47 +347,50 @@ gossipGraphView model =
           else
             div [ id "gossip-graph" ]
                 [ GossipGraph.Renderer.render model.graph model.graphSettings
-                , (
-                case model.graph of
-                    Ok graph -> 
+                , case model.graph of
+                    Ok _ ->
                         div [ class "connection-info-container" ]
                             [ connectionInfoView Number model.graph
                             , connectionInfoView Secret model.graph
-                            , sunInfoView model.graph 
+                            , sunInfoView model.graph
                             ]
 
-                    Err e -> 
-                        div [] [])
+                    Err _ ->
+                        div [] []
                 ]
         , div [ id "graph-history" ]
             [ h3 [] [ text "Call history" ]
-            , div [class "call-list"]
-            (if Array.length model.callHistory > 0 then
-                div [ class "call", onClick (TimeTravel 0) ] [ text "Initial graph" ] ::
-                (Array.toList <| Array.indexedMap
-                    (\i call ->
-                        case ( Agent.fromId (Result.withDefault [] model.agents) call.from, Agent.fromId (Result.withDefault [] model.agents) call.to ) of
-                            ( Ok from, Ok to ) ->
-                                div [ class "call", onClick (TimeTravel (i + 1)) ] 
-                                    [ text (String.fromChar from.name ++ " 📞 " ++ String.fromChar to.name) 
-                                    ]
+            , div [ class "call-list" ]
+                (if Array.length model.callHistory > 0 then
+                    div [ class "call", onClick (TimeTravel 0) ] [ text "Initial graph" ]
+                        :: (Array.toList <|
+                                Array.indexedMap
+                                    (\i call ->
+                                        case ( Agent.fromId (Result.withDefault [] model.agents) call.from, Agent.fromId (Result.withDefault [] model.agents) call.to ) of
+                                            ( Ok from, Ok to ) ->
+                                                div [ class "call", onClick (TimeTravel (i + 1)) ]
+                                                    [ text (String.fromChar from.name ++ " 📞 " ++ String.fromChar to.name)
+                                                    ]
 
-                            _ ->
-                                div [ class "call" ]
-                                    [ text "❌" ]
-                    )
-                    model.callHistory)
+                                            _ ->
+                                                div [ class "call" ]
+                                                    [ text "❌" ]
+                                    )
+                                    model.callHistory
+                           )
 
-                else
-                [ text "No calls have been made yet." ]
-            )]
+                 else
+                    [ text "No calls have been made yet." ]
+                )
+            ]
         , if not <| String.isEmpty model.inputGossipGraph then
             div [ id "canonical-representation" ]
-            [ h3 [] [ text "Canonical representation" ]
-            , text <| "“" ++ model.canonicalGossipGraph ++ "”"
-            , br [] []
-            , text "The gossip graph represented with “normalized” agent names, that is, agents are named starting with “A” for the first agent and following the alphabet."
-            ]
+                [ h3 [] [ text "Canonical representation" ]
+                , text <| "“" ++ model.canonicalGossipGraph ++ "”"
+                , br [] []
+                , text "The gossip graph represented with “normalized” agent names, that is, agents are named starting with “A” for the first agent and following the alphabet."
+                ]
+
           else
             text ""
         ]
@@ -374,7 +403,7 @@ connectionInfoView kind graph =
             case kind of
                 Number ->
                     Icon.phone
-                
+
                 Secret ->
                     Icon.lock
 
@@ -382,26 +411,61 @@ connectionInfoView kind graph =
             case kind of
                 Number ->
                     "Number relation"
-                
+
                 Secret ->
                     "Secret relation"
 
-        stronglyConnected = GossipProtocol.isStronglyConnected kind (Result.withDefault Graph.empty graph)
-        weaklyConnected = GossipProtocol.isWeaklyConnected kind (Result.withDefault Graph.empty graph)
+        stronglyConnected =
+            GossipProtocol.isStronglyConnected kind (Result.withDefault Graph.empty graph)
+
+        weaklyConnected =
+            GossipProtocol.isWeaklyConnected kind (Result.withDefault Graph.empty graph)
     in
     Html.div [ class "connection-info" ]
         [ Html.div [ class "visible" ]
-            [ Html.div [ class "icon" ] [Icon.viewIcon icon]
+            [ Html.div [ class "icon" ] [ Icon.viewIcon icon ]
             , Html.span [ class "explanation" ] [ text relationType ]
             ]
         , Html.div [ class "divider" ] []
-        , Html.div [ if stronglyConnected then class "visible" else class "" ]
-            [ Html.div [ class "icon" ] [Icon.viewIcon Icon.dumbbell]
-            , Html.span [ class "explanation" ] [ text <| "This relation is " ++ (if stronglyConnected then "" else "not") ++ " strongly connected" ]
+        , Html.div
+            [ if stronglyConnected then
+                class "visible"
+
+              else
+                class ""
             ]
-        , Html.div [ if weaklyConnected then class "visible" else class "" ] 
-            [ Html.div [ class "icon" ] [Icon.viewIcon Icon.feather]
-            , Html.span [ class "explanation" ] [ text <| "This relation is " ++ (if weaklyConnected then "" else "not") ++ " weakly connected" ]
+            [ Html.div [ class "icon" ] [ Icon.viewIcon Icon.dumbbell ]
+            , Html.span [ class "explanation" ]
+                [ text <|
+                    "This relation is "
+                        ++ (if stronglyConnected then
+                                ""
+
+                            else
+                                "not"
+                           )
+                        ++ " strongly connected"
+                ]
+            ]
+        , Html.div
+            [ if weaklyConnected then
+                class "visible"
+
+              else
+                class ""
+            ]
+            [ Html.div [ class "icon" ] [ Icon.viewIcon Icon.feather ]
+            , Html.span [ class "explanation" ]
+                [ text <|
+                    "This relation is "
+                        ++ (if weaklyConnected then
+                                ""
+
+                            else
+                                "not"
+                           )
+                        ++ " weakly connected"
+                ]
             ]
         ]
 
@@ -409,14 +473,32 @@ connectionInfoView kind graph =
 sunInfoView : Result String (Graph Agent Relation) -> Html Message
 sunInfoView graph =
     let
-        isSunGraph = GossipProtocol.isSunGraph (Result.withDefault Graph.empty graph)
+        isSunGraph =
+            GossipProtocol.isSunGraph (Result.withDefault Graph.empty graph)
     in
     Html.div [ class "connection-info" ]
-        [ Html.div [ if isSunGraph then class "visible" else class "" ]
-            [ Html.div [ class "icon" ] [Icon.viewIcon Icon.sun]
-            , Html.span [ class "explanation" ] [ text <| "The graph is " ++ (if isSunGraph then "" else "not") ++ " a sun graph" ]
+        [ Html.div
+            [ if isSunGraph then
+                class "visible"
+
+              else
+                class ""
+            ]
+            [ Html.div [ class "icon" ] [ Icon.viewIcon Icon.sun ]
+            , Html.span [ class "explanation" ]
+                [ text <|
+                    "The graph is "
+                        ++ (if isSunGraph then
+                                ""
+
+                            else
+                                "not"
+                           )
+                        ++ " a sun graph"
+                ]
             ]
         ]
+
 
 callSequenceView : Model -> Html Message
 callSequenceView model =
@@ -496,8 +578,9 @@ protocolView model =
             , div [ class "info" ]
                 [ div [ class "input-group" ]
                     [ select [ on "change" (Json.map ChangeProtocol targetValue) ]
-                        ((List.map (\k -> option [ value k ] [ text <| Maybe.withDefault "?" <| Dict.get k Predefined.name ]) (Dict.keys Predefined.name))
-                        ++ [option [ value "custom" ] [ text "Custom" ]])
+                        (List.map (\k -> option [ value k ] [ text <| Maybe.withDefault "?" <| Dict.get k Predefined.name ]) (Dict.keys Predefined.name)
+                            ++ [ option [ value "custom" ] [ text "Custom" ] ]
+                        )
                     ]
                 , case Dict.get model.protocolName Predefined.explanation of
                     Just explanation ->
@@ -512,6 +595,7 @@ protocolView model =
                     Nothing ->
                         if model.protocolName == "custom" then
                             text "Custom"
+
                         else
                             text "I have no clue."
                 ]
@@ -522,12 +606,12 @@ protocolView model =
 view : Model -> Document Message
 view model =
     { title = "Tools for Gossip"
-    , body = [ main_ []
-        [ headerView
-        , gossipGraphView model
-        , protocolView model
-        , callSequenceView model
+    , body =
+        [ main_ []
+            [ headerView
+            , gossipGraphView model
+            , protocolView model
+            , callSequenceView model
+            ]
         ]
-    ]
     }
-    

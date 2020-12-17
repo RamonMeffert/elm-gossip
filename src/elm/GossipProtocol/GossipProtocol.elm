@@ -4,16 +4,14 @@ import CallSequence.CallSequence exposing (CallSequence)
 import GossipGraph.Agent exposing (Agent, AgentId)
 import GossipGraph.Call as Call exposing (Call)
 import GossipGraph.Relation as Relation exposing (Kind(..), Relation, knows)
-import Graph exposing (Graph, NodeContext)
+import Graph exposing (Graph, NodeContext, NodeId)
 import IntDict
 import List.Extra exposing (mapAccumr)
-import Graph
-import Graph exposing (NodeId)
 import Utils.List exposing (distinct)
-import GossipGraph.Relation
 
 
 {-| Protocol conditions
+import GossipGraph.Relation
 -}
 type alias ProtocolCondition =
     ( AgentId, AgentId ) -> List Relation -> CallSequence -> Bool
@@ -61,7 +59,7 @@ sequencePermittedOn condition graph sequence =
     let
         relations : Graph Agent Relation -> List Relation
         relations g =
-            Graph.fold (\ctx acc -> acc ++ (GossipGraph.Relation.fromNodeContext ctx)) [] graph
+            Graph.fold (\ctx acc -> acc ++ Relation.fromNodeContext ctx) [] g
 
         isCallPermitted : Call -> Graph Agent Relation -> CallSequence -> Bool
         isCallPermitted { from, to } currentGraph callHistory =
@@ -71,10 +69,10 @@ sequencePermittedOn condition graph sequence =
                 rels =
                     relations currentGraph
             in
-                -- x ≠ y
-                (from /= to)
+            -- x ≠ y
+            (from /= to)
                 -- N^σ xy
-                && (List.any (\r -> knows from to Number r) rels)
+                && List.any (\r -> knows from to Number r) rels
                 -- π(x, y)
                 && condition ( from, to ) rels callHistory
     in
@@ -84,46 +82,56 @@ sequencePermittedOn condition graph sequence =
     -- - the calls that have occured so far
     -- - the current state of the graph
     -- - whether the current call was permitted
-    List.foldr (\call (history, state, permitted) ->
-        (call :: history
-        , Call.execute state call
-        , permitted && isCallPermitted call state history
+    List.foldr
+        (\call ( history, state, permitted ) ->
+            ( call :: history
+            , Call.execute state call
+            , permitted && isCallPermitted call state history
+            )
         )
-    ) ([], graph, True) sequence
-        |> \(_, _, isPermitted) -> isPermitted
+        ( [], graph, True )
+        sequence
+        |> (\( _, _, isPermitted ) -> isPermitted)
+
 
 
 -- TODO: move everything below here to GossipGraph
 -- TODO: Extract edgeInAnyDirection function as it is used by both isWeaklyConnected and isStronglyConnected
 
+
 {-| An initial gossip graph G = (A, N, S) is a sun iff N is strongly connected
 on the restriction of G to the set of non-terminal nodes.
 
 That is: if you prune leaf nodes (i.e. nodes with only incoming edges), N should be strongly connected.
+
 -}
 isSunGraph : Graph Agent Relation -> Bool
 isSunGraph graph =
     let
         prune g =
-            Graph.fold (\ctx acc -> 
-                -- if the only outgoing relation is the identity relation,
-                -- that means there are no outgoing relations and the node can
-                -- be pruned
-                if IntDict.remove ctx.node.id ctx.outgoing |> IntDict.isEmpty then
-                    ctx.node.id :: acc
-                else
-                    acc
-            ) [] g
-            |> List.foldr (\nodeid acc -> Graph.remove nodeid graph) g
+            Graph.fold
+                (\ctx acc ->
+                    -- if the only outgoing relation is the identity relation,
+                    -- that means there are no outgoing relations and the node can
+                    -- be pruned
+                    if IntDict.remove ctx.node.id ctx.outgoing |> IntDict.isEmpty then
+                        ctx.node.id :: acc
+
+                    else
+                        acc
+                )
+                []
+                g
+                |> List.foldr (\nodeid _ -> Graph.remove nodeid graph) g
     in
-    graph 
+    graph
         |> prune
         |> isStronglyConnected Number
 
 
 {-| Van Ditmarsch et al. (2018) state that “[a relation] is weakly connected if,
-for all *x, y ∈ A*, there is an *(N ∪ N⁻¹)* path from *x* to *y*” 
-(Note: *N* is *a* relation, not necessarily the number relation)
+for all _x, y ∈ A_, there is an _(N ∪ N⁻¹)_ path from _x_ to _y_”
+(Note: _N_ is _a_ relation, not necessarily the number relation)
 
 That is: for all nodes, there must exist a connection in at least one direction
 to every other node.
@@ -133,47 +141,52 @@ make sure that (`incoming` ∪ `outgoing`) == A
 
 Note: Since (N ∪ N⁻¹) is the symmetric closure of N, and the `Graph` library
 defines a function to find symmetric closures, it might be possible to use that.
+
 -}
 isWeaklyConnected : Kind -> Graph Agent Relation -> Bool
 isWeaklyConnected kind graph =
     let
-        agentIds = Graph.nodeIds graph 
-            |> List.sort
+        agentIds =
+            Graph.nodeIds graph
+                |> List.sort
 
         edgeInAnyDirection : NodeContext Agent Relation -> Bool
         edgeInAnyDirection ctx =
-            -- since ctx.outgoing == ctx.incoming (because of 
+            -- since ctx.outgoing == ctx.incoming (because of
             -- Graph.symmetricClosure), we can check either one of them.
             -- In either case, all agents should be reached.
             -- comparing sorted lists seems to be the easiest way to check if
             -- lists contain exactly the same members
-            ctx.outgoing 
+            ctx.outgoing
                 |> IntDict.values
                 |> List.filter (\r -> Relation.isOfKind r kind)
-                |> List.concatMap (\r -> [r.from, r.to])
+                |> List.concatMap (\r -> [ r.from, r.to ])
                 |> distinct
                 |> List.sort
-                |> ((==) agentIds)
+                |> (==) agentIds
 
         merger : NodeId -> NodeId -> Relation -> Relation -> Relation
-        merger from to outLabel inLabel = outLabel
+        merger _ _ outLabel _ =
+            outLabel
     in
-    Graph.fold 
+    Graph.fold
         (\ctx acc -> acc && edgeInAnyDirection ctx)
         True
         (Graph.symmetricClosure merger graph)
-    
 
-{-| Van Ditmarsch et al. (2018) state that “[a relation] is strongly connected 
-if, for all *x, y ∈ A*, there is an *N*-path from *x* to *y*”
+
+{-| Van Ditmarsch et al. (2018) state that “[a relation] is strongly connected
+if, for all _x, y ∈ A_, there is an _N_-path from _x_ to _y_”
 
 That is: all nodes must be connected to all other nodes in all directions.
+
 -}
 isStronglyConnected : Kind -> Graph Agent Relation -> Bool
-isStronglyConnected kind graph = 
+isStronglyConnected kind graph =
     let
-        agentIds = Graph.nodeIds graph 
-            |> List.sort
+        agentIds =
+            Graph.nodeIds graph
+                |> List.sort
 
         edgeInAnyDirection : NodeContext Agent Relation -> Bool
         edgeInAnyDirection ctx =
@@ -183,15 +196,12 @@ isStronglyConnected kind graph =
             ctx.outgoing
                 |> IntDict.values
                 |> List.filter (\r -> Relation.isOfKind r kind)
-                |> List.concatMap (\r -> [r.from, r.to])
+                |> List.concatMap (\r -> [ r.from, r.to ])
                 |> distinct
                 |> List.sort
-                |> ((==) agentIds)
-
-        merger : NodeId -> NodeId -> Relation -> Relation -> Relation
-        merger from to outLabel inLabel = outLabel
+                |> (==) agentIds
     in
-    Graph.fold 
+    Graph.fold
         (\ctx acc -> acc && edgeInAnyDirection ctx)
         True
         graph

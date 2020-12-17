@@ -1,15 +1,12 @@
 module GossipGraph.Parser exposing (..)
 
 import GossipGraph.Agent as Agent exposing (Agent)
-import GossipGraph.Relation exposing (Kind(..))
-import Utils.List exposing (distinct, dropWhile, takeWhile)
+import GossipGraph.Relation as Relation exposing (Kind(..), Relation)
+import Graph exposing (Graph, Node, NodeContext)
+import Html exposing (i)
 import Set
 import Utils.General exposing (pluralize)
-import Html exposing (i)
-import GossipGraph.Relation as Relation exposing (Relation)
-import Graph exposing (Graph)
-import Graph exposing (Node)
-import Graph exposing (NodeContext)
+import Utils.List exposing (distinct, dropWhile, takeWhile)
 
 
 type alias ParseOptions =
@@ -22,22 +19,24 @@ type LexToken
     | Separator
 
 
+
 -- PARSING
 
 
 fromAgentsAndRelations : List Agent -> List Relation -> Graph Agent Relation
-fromAgentsAndRelations agents relations = 
+fromAgentsAndRelations agents relations =
     let
-        nodes = List.map Agent.toNode agents
+        nodes =
+            List.map Agent.toNode agents
 
-        edges = List.map Relation.toEdge relations
+        edges =
+            List.map Relation.toEdge relations
     in
-    
     Graph.fromNodesAndEdges nodes edges
 
 
 parseRelations : List Agent -> List LexToken -> Result String (List Relation)
-parseRelations agents tokens = 
+parseRelations agents tokens =
     let
         parser pos ts =
             case ts of
@@ -47,15 +46,17 @@ parseRelations agents tokens =
                 Separator :: rest ->
                     parseRelations agents rest
 
-                Token kind name id :: rest ->
+                (Token kind name id) :: rest ->
                     case parseRelations agents rest of
                         Ok relations ->
-                            Agent.fromChar agents name 
+                            Agent.fromChar agents name
                                 |> Result.map (\agent -> { from = id, to = agent.id, kind = kind } :: relations)
+
                         Err e ->
                             Err e
     in
     parser 1 tokens
+
 
 parseAgents : List LexToken -> Result String (List Agent)
 parseAgents ts =
@@ -101,7 +102,12 @@ parseAgents ts =
 
             else if numberOfAgents < numberOfSegments then
                 Err <|
-                    "I found " ++ pluralize numberOfSegments "segment" "segments" ++ ", but I only found " ++ pluralize numberOfAgents "unique agent" "unique agents" ++ "."
+                    "I found "
+                        ++ pluralize numberOfSegments "segment" "segments"
+                        ++ ", but I only found "
+                        ++ pluralize numberOfAgents "unique agent" "unique agents"
+                        ++ "."
+
             else if numberOfAgents /= numberOfNames then
                 Err <| "Your input contains the names of " ++ pluralize numberOfNames "name" "names" ++ " agents, but I was only able to identify segments representing the relations of the following " ++ pluralize numberOfAgents "agent" "agents" ++ ": " ++ renderCharacterList (List.map (\a -> a.name) agents) ++ ". Make sure every segment contains the identity relation for the agent it represents!"
 
@@ -251,12 +257,14 @@ lexer options string =
         |> charLexer 0
 
 
+
 -- CONVERSION TO STRING
 
+
 {-| Converts a gossip graph to its string representation.
-    graph = parse "Abc ABC abC"
-        |> uncurry fromAgentsAndRelations
-    toString graph == "Abc ABC abC"
+graph = parse "Abc ABC abC"
+|> uncurry fromAgentsAndRelations
+toString graph == "Abc ABC abC"
 -}
 toString : Graph Agent Relation -> String
 toString graph =
@@ -271,7 +279,7 @@ toString graph =
 
 toCanonicalString : Graph Agent Relation -> String
 toCanonicalString graph =
-    Graph.fold (adjacencyToCanonicalString) [] graph
+    Graph.fold adjacencyToCanonicalString [] graph
         |> List.reverse
         -- include separator
         -- TODO: make separator configurable
@@ -301,13 +309,13 @@ adjacencyToString agents context acc =
                    )
                 |> (\c -> String.fromChar c ++ acc2)
 
-        relations = context
-            |> Relation.fromNodeContext
-            |> List.map (\r -> ( r.to, r.kind ))
-            |> List.sortBy Tuple.first
+        relations =
+            context
+                |> Relation.fromNodeContext
+                |> List.map (\r -> ( r.to, r.kind ))
+                |> List.sortBy Tuple.first
     in
     List.foldr toCharacter "" relations :: acc
-
 
 
 {-| Converts an adjacency, i.e. a node and its incoming and outgoing edges, to
@@ -330,9 +338,10 @@ adjacencyToCanonicalString context acc =
                    )
                 |> (\c -> String.fromChar c ++ acc2)
 
-        relations = context
-            |> Relation.fromNodeContext
-            |> List.map (\r -> ( r.to, r.kind ))
-            |> List.sortBy Tuple.first
+        relations =
+            context
+                |> Relation.fromNodeContext
+                |> List.map (\r -> ( r.to, r.kind ))
+                |> List.sortBy Tuple.first
     in
     List.foldr toCharacter "" relations :: acc

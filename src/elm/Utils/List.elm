@@ -4,7 +4,7 @@ module Utils.List exposing (distinct, dropWhile, find, get, takeWhile)
 availability in Haskell.
 -}
 
-import List exposing (head, reverse)
+import List
 
 
 {-| Returns the unique elements in a list.
