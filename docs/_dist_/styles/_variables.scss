@@ -1,7 +1,7 @@
 @use 'sass:color' as c;
 
-$pad-v: 1.3rem;
-$pad-h: 1.5rem;
+$pad-v: 1rem;
+$pad-h: 1.2rem;
 $border-radius: .3rem;
 
 $lightBlue: c.scale(steelblue, $lightness: 70%);

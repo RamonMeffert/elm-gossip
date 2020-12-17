@@ -784,11 +784,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.db.bq === region.dA.bq)
+	if (region.df.br === region.dE.br)
 	{
-		return 'on line ' + region.db.bq;
+		return 'on line ' + region.df.br;
 	}
-	return 'on lines ' + region.db.bq + ' through ' + region.dA.bq;
+	return 'on lines ' + region.df.br + ' through ' + region.dE.br;
 }
 
 
@@ -1857,9 +1857,9 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.e1,
-		impl.fE,
-		impl.ft,
+		impl.e5,
+		impl.fH,
+		impl.fx,
 		function() { return function() {} }
 	);
 });
@@ -2712,9 +2712,9 @@ var _VirtualDom_mapEventTuple = F2(function(func, tuple)
 var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
-		at: func(record.at),
-		dc: record.dc,
-		cY: record.cY
+		aw: func(record.aw),
+		dg: record.dg,
+		c0: record.c0
 	}
 });
 
@@ -2982,11 +2982,11 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 		// 3 = Custom
 
 		var value = result.a;
-		var message = !tag ? value : tag < 3 ? value.a : value.at;
-		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.dc;
+		var message = !tag ? value : tag < 3 ? value.a : value.aw;
+		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.dg;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
-			(tag == 2 ? value.b : tag == 3 && value.cY) && event.preventDefault(),
+			(tag == 2 ? value.b : tag == 3 && value.c0) && event.preventDefault(),
 			eventNode
 		);
 		var tagger;
@@ -3936,11 +3936,11 @@ var _Browser_element = _Debugger_element || F4(function(impl, flagDecoder, debug
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.e1,
-		impl.fE,
-		impl.ft,
+		impl.e5,
+		impl.fH,
+		impl.fx,
 		function(sendToApp, initialModel) {
-			var view = impl.fF;
+			var view = impl.fI;
 			/**/
 			var domNode = args['node'];
 			//*/
@@ -3972,12 +3972,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 	return _Platform_initialize(
 		flagDecoder,
 		args,
-		impl.e1,
-		impl.fE,
-		impl.ft,
+		impl.e5,
+		impl.fH,
+		impl.fx,
 		function(sendToApp, initialModel) {
-			var divertHrefToApp = impl.c3 && impl.c3(sendToApp)
-			var view = impl.fF;
+			var divertHrefToApp = impl.c7 && impl.c7(sendToApp)
+			var view = impl.fI;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
 			var currNode = _VirtualDom_virtualize(bodyNode);
@@ -3985,12 +3985,12 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 			{
 				_VirtualDom_divertHrefToApp = divertHrefToApp;
 				var doc = view(model);
-				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.eG);
+				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.eK);
 				var patches = _VirtualDom_diff(currNode, nextNode);
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
 				_VirtualDom_divertHrefToApp = 0;
-				(title !== doc.fx) && (_VirtualDom_doc.title = title = doc.fx);
+				(title !== doc.b_) && (_VirtualDom_doc.title = title = doc.b_);
 			});
 		}
 	);
@@ -4046,12 +4046,12 @@ function _Browser_makeAnimator(model, draw)
 
 function _Browser_application(impl)
 {
-	var onUrlChange = impl.fa;
-	var onUrlRequest = impl.fb;
+	var onUrlChange = impl.fe;
+	var onUrlRequest = impl.ff;
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
-		c3: function(sendToApp)
+		c7: function(sendToApp)
 		{
 			key.a = sendToApp;
 			_Browser_window.addEventListener('popstate', key);
@@ -4067,9 +4067,9 @@ function _Browser_application(impl)
 					var next = $elm$url$Url$fromString(href).a;
 					sendToApp(onUrlRequest(
 						(next
-							&& curr.ec === next.ec
-							&& curr.dI === next.dI
-							&& curr.d8.a === next.d8.a
+							&& curr.eg === next.eg
+							&& curr.dM === next.dM
+							&& curr.ec.a === next.ec.a
 						)
 							? $elm$browser$Browser$Internal(next)
 							: $elm$browser$Browser$External(href)
@@ -4077,13 +4077,13 @@ function _Browser_application(impl)
 				}
 			});
 		},
-		e1: function(flags)
+		e5: function(flags)
 		{
-			return A3(impl.e1, flags, _Browser_getUrl(), key);
+			return A3(impl.e5, flags, _Browser_getUrl(), key);
 		},
-		fF: impl.fF,
-		fE: impl.fE,
-		ft: impl.ft
+		fI: impl.fI,
+		fH: impl.fH,
+		fx: impl.fx
 	});
 }
 
@@ -4149,17 +4149,17 @@ var _Browser_decodeEvent = F2(function(decoder, event)
 function _Browser_visibilityInfo()
 {
 	return (typeof _VirtualDom_doc.hidden !== 'undefined')
-		? { e$: 'hidden', eJ: 'visibilitychange' }
+		? { e3: 'hidden', eN: 'visibilitychange' }
 		:
 	(typeof _VirtualDom_doc.mozHidden !== 'undefined')
-		? { e$: 'mozHidden', eJ: 'mozvisibilitychange' }
+		? { e3: 'mozHidden', eN: 'mozvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.msHidden !== 'undefined')
-		? { e$: 'msHidden', eJ: 'msvisibilitychange' }
+		? { e3: 'msHidden', eN: 'msvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.webkitHidden !== 'undefined')
-		? { e$: 'webkitHidden', eJ: 'webkitvisibilitychange' }
-		: { e$: 'hidden', eJ: 'visibilitychange' };
+		? { e3: 'webkitHidden', eN: 'webkitvisibilitychange' }
+		: { e3: 'hidden', eN: 'visibilitychange' };
 }
 
 
@@ -4240,12 +4240,12 @@ var _Browser_call = F2(function(functionName, id)
 function _Browser_getViewport()
 {
 	return {
-		ek: _Browser_getScene(),
-		ex: {
-			R: _Browser_window.pageXOffset,
-			S: _Browser_window.pageYOffset,
-			eA: _Browser_doc.documentElement.clientWidth,
-			dH: _Browser_doc.documentElement.clientHeight
+		eo: _Browser_getScene(),
+		eB: {
+			S: _Browser_window.pageXOffset,
+			T: _Browser_window.pageYOffset,
+			eE: _Browser_doc.documentElement.clientWidth,
+			dL: _Browser_doc.documentElement.clientHeight
 		}
 	};
 }
@@ -4255,8 +4255,8 @@ function _Browser_getScene()
 	var body = _Browser_doc.body;
 	var elem = _Browser_doc.documentElement;
 	return {
-		eA: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
-		dH: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
+		eE: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
+		dL: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
 
@@ -4279,15 +4279,15 @@ function _Browser_getViewportOf(id)
 	return _Browser_withNode(id, function(node)
 	{
 		return {
-			ek: {
-				eA: node.scrollWidth,
-				dH: node.scrollHeight
+			eo: {
+				eE: node.scrollWidth,
+				dL: node.scrollHeight
 			},
-			ex: {
-				R: node.scrollLeft,
-				S: node.scrollTop,
-				eA: node.clientWidth,
-				dH: node.clientHeight
+			eB: {
+				S: node.scrollLeft,
+				T: node.scrollTop,
+				eE: node.clientWidth,
+				dL: node.clientHeight
 			}
 		};
 	});
@@ -4317,18 +4317,18 @@ function _Browser_getElement(id)
 		var x = _Browser_window.pageXOffset;
 		var y = _Browser_window.pageYOffset;
 		return {
-			ek: _Browser_getScene(),
-			ex: {
-				R: x,
-				S: y,
-				eA: _Browser_doc.documentElement.clientWidth,
-				dH: _Browser_doc.documentElement.clientHeight
+			eo: _Browser_getScene(),
+			eB: {
+				S: x,
+				T: y,
+				eE: _Browser_doc.documentElement.clientWidth,
+				dL: _Browser_doc.documentElement.clientHeight
 			},
-			eT: {
-				R: x + rect.left,
-				S: y + rect.top,
-				eA: rect.width,
-				dH: rect.height
+			eX: {
+				S: x + rect.left,
+				T: y + rect.top,
+				eE: rect.width,
+				dL: rect.height
 			}
 		};
 	});
@@ -4904,7 +4904,7 @@ var $elm$url$Url$Http = 0;
 var $elm$url$Url$Https = 1;
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {dG: fragment, dI: host, d6: path, d8: port_, ec: protocol, ed: query};
+		return {dK: fragment, dM: host, ea: path, ec: port_, eg: protocol, eh: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -5196,19 +5196,20 @@ var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
 		{
-			ap: $elm$core$Result$Ok(_List_Nil),
-			aR: $elm$core$Array$empty,
-			ag: $elm$core$Result$Ok(_List_Nil),
-			bK: '',
-			C: $elm$core$Result$Ok($elm_community$graph$Graph$empty),
-			bn: $elm$core$Array$empty,
-			ch: 0,
-			ci: {bd: 6, b7: 400, b8: 800, bM: 2, aH: 20},
-			aX: '',
-			aG: '',
-			W: $author$project$GossipProtocol$Conditions$Predefined$any,
-			y: 'any',
-			bX: $elm$core$Result$Ok(_List_Nil)
+			ar: $elm$core$Result$Ok(_List_Nil),
+			x: $elm$core$Array$empty,
+			at: $elm$core$Result$Ok(_List_Nil),
+			bL: '',
+			A: $elm$core$Result$Ok($elm_community$graph$Graph$empty),
+			bo: $elm$core$Array$empty,
+			cl: 0,
+			cm: {be: 6, ca: 400, cb: 800, bN: 1.5, aK: 20},
+			ah: '',
+			ai: '',
+			ax: {cd: _List_Nil, b_: '', b3: false},
+			X: $author$project$GossipProtocol$Conditions$Predefined$any,
+			z: 'any',
+			bY: $elm$core$Result$Ok(_List_Nil)
 		},
 		$elm$core$Platform$Cmd$none);
 };
@@ -5232,7 +5233,7 @@ var $elm$core$Result$andThen = F2(
 	});
 var $author$project$GossipGraph$Call$includes = F2(
 	function (call, agent) {
-		return _Utils_eq(call.as, agent) || _Utils_eq(call.a8, agent);
+		return _Utils_eq(call.av, agent) || _Utils_eq(call.a9, agent);
 	});
 var $author$project$CallSequence$CallSequence$containing = F2(
 	function (sequence, agent) {
@@ -5284,7 +5285,7 @@ var $author$project$GossipProtocol$Conditions$Constituents$hasCalled = F3(
 		return A2(
 			$elm$core$List$any,
 			function (c) {
-				return _Utils_eq(c.as, x) && _Utils_eq(c.a8, y);
+				return _Utils_eq(c.av, x) && _Utils_eq(c.a9, y);
 			},
 			sequence);
 	});
@@ -5294,7 +5295,7 @@ var $author$project$GossipProtocol$Conditions$Constituents$wasCalledBy = F3(
 		return A2(
 			$elm$core$List$any,
 			function (c) {
-				return _Utils_eq(c.as, y) && _Utils_eq(c.a8, x);
+				return _Utils_eq(c.av, y) && _Utils_eq(c.a9, x);
 			},
 			sequence);
 	});
@@ -5339,7 +5340,7 @@ var $elm_community$intdict$IntDict$isBranchingBitSet = function (p) {
 		$elm$core$Bitwise$xor($elm_community$intdict$IntDict$signBit),
 		A2(
 			$elm$core$Basics$composeR,
-			$elm$core$Bitwise$and(p.aQ),
+			$elm$core$Bitwise$and(p.aT),
 			$elm$core$Basics$neq(0)));
 };
 var $elm_community$intdict$IntDict$higherBitMask = function (branchingBit) {
@@ -5348,8 +5349,8 @@ var $elm_community$intdict$IntDict$higherBitMask = function (branchingBit) {
 var $elm_community$intdict$IntDict$prefixMatches = F2(
 	function (p, n) {
 		return _Utils_eq(
-			n & $elm_community$intdict$IntDict$higherBitMask(p.aQ),
-			p.ad);
+			n & $elm_community$intdict$IntDict$higherBitMask(p.aT),
+			p.ae);
 	});
 var $elm_community$intdict$IntDict$get = F2(
 	function (key, dict) {
@@ -5360,7 +5361,7 @@ var $elm_community$intdict$IntDict$get = F2(
 					return $elm$core$Maybe$Nothing;
 				case 1:
 					var l = dict.a;
-					return _Utils_eq(l.dR, key) ? $elm$core$Maybe$Just(l.ev) : $elm$core$Maybe$Nothing;
+					return _Utils_eq(l.dV, key) ? $elm$core$Maybe$Just(l.ez) : $elm$core$Maybe$Nothing;
 				default:
 					var i = dict.a;
 					if (!A2($elm_community$intdict$IntDict$prefixMatches, i.h, key)) {
@@ -5408,7 +5409,7 @@ var $elm_community$intdict$IntDict$size = function (dict) {
 			return 1;
 		default:
 			var i = dict.a;
-			return i.c4;
+			return i.c8;
 	}
 };
 var $elm_community$intdict$IntDict$inner = F3(
@@ -5427,7 +5428,7 @@ var $elm_community$intdict$IntDict$inner = F3(
 						d: l,
 						h: p,
 						e: r,
-						c4: $elm_community$intdict$IntDict$size(l) + $elm_community$intdict$IntDict$size(r)
+						c8: $elm_community$intdict$IntDict$size(l) + $elm_community$intdict$IntDict$size(r)
 					});
 			}
 		}
@@ -5437,7 +5438,7 @@ var $elm_community$intdict$IntDict$lcp = F2(
 		var branchingBit = $elm_community$intdict$IntDict$highestBitSet(x ^ y);
 		var mask = $elm_community$intdict$IntDict$higherBitMask(branchingBit);
 		var prefixBits = x & mask;
-		return {aQ: branchingBit, ad: prefixBits};
+		return {aT: branchingBit, ae: prefixBits};
 	});
 var $elm_community$intdict$IntDict$Leaf = function (a) {
 	return {$: 1, a: a};
@@ -5445,7 +5446,7 @@ var $elm_community$intdict$IntDict$Leaf = function (a) {
 var $elm_community$intdict$IntDict$leaf = F2(
 	function (k, v) {
 		return $elm_community$intdict$IntDict$Leaf(
-			{dR: k, ev: v});
+			{dV: k, ez: v});
 	});
 var $elm_community$intdict$IntDict$update = F3(
 	function (key, alter, dict) {
@@ -5472,13 +5473,13 @@ var $elm_community$intdict$IntDict$update = F3(
 				return alteredNode($elm$core$Maybe$Nothing);
 			case 1:
 				var l = dict.a;
-				return _Utils_eq(l.dR, key) ? alteredNode(
-					$elm$core$Maybe$Just(l.ev)) : A2(
+				return _Utils_eq(l.dV, key) ? alteredNode(
+					$elm$core$Maybe$Just(l.ez)) : A2(
 					join,
 					_Utils_Tuple2(
 						key,
 						alteredNode($elm$core$Maybe$Nothing)),
-					_Utils_Tuple2(l.dR, dict));
+					_Utils_Tuple2(l.dV, dict));
 			default:
 				var i = dict.a;
 				return A2($elm_community$intdict$IntDict$prefixMatches, i.h, key) ? (A2($elm_community$intdict$IntDict$isBranchingBitSet, i.h, key) ? A3(
@@ -5494,7 +5495,7 @@ var $elm_community$intdict$IntDict$update = F3(
 					_Utils_Tuple2(
 						key,
 						alteredNode($elm$core$Maybe$Nothing)),
-					_Utils_Tuple2(i.h.ad, dict));
+					_Utils_Tuple2(i.h.ae, dict));
 		}
 	});
 var $elm_community$intdict$IntDict$insert = F3(
@@ -5530,12 +5531,12 @@ var $elm_community$intdict$IntDict$determineBranchRelation = F2(
 		var rp = r.h;
 		var lp = l.h;
 		var mask = $elm_community$intdict$IntDict$highestBitSet(
-			A2($elm_community$intdict$IntDict$mostSignificantBranchingBit, lp.aQ, rp.aQ));
-		var modifiedRightPrefix = A3($elm_community$intdict$IntDict$combineBits, rp.ad, ~lp.ad, mask);
-		var prefix = A2($elm_community$intdict$IntDict$lcp, lp.ad, modifiedRightPrefix);
+			A2($elm_community$intdict$IntDict$mostSignificantBranchingBit, lp.aT, rp.aT));
+		var modifiedRightPrefix = A3($elm_community$intdict$IntDict$combineBits, rp.ae, ~lp.ae, mask);
+		var prefix = A2($elm_community$intdict$IntDict$lcp, lp.ae, modifiedRightPrefix);
 		var childEdge = F2(
 			function (branchPrefix, c) {
-				return A2($elm_community$intdict$IntDict$isBranchingBitSet, branchPrefix, c.h.ad) ? 1 : 0;
+				return A2($elm_community$intdict$IntDict$isBranchingBitSet, branchPrefix, c.h.ae) ? 1 : 0;
 			});
 		return _Utils_eq(lp, rp) ? $elm_community$intdict$IntDict$SamePrefix : (_Utils_eq(prefix, lp) ? A2(
 			$elm_community$intdict$IntDict$Parent,
@@ -5557,7 +5558,7 @@ var $elm_community$intdict$IntDict$foldl = F3(
 					return acc;
 				case 1:
 					var l = dict.a;
-					return A3(f, l.dR, l.ev, acc);
+					return A3(f, l.dV, l.ez, acc);
 				default:
 					var i = dict.a;
 					var $temp$f = f,
@@ -5605,20 +5606,20 @@ var $elm_community$intdict$IntDict$merge = F6(
 								break _v0$1;
 							case 1:
 								var r2 = _v0.b.a;
-								var _v4 = A2($elm_community$intdict$IntDict$get, r2.dR, l);
+								var _v4 = A2($elm_community$intdict$IntDict$get, r2.dV, l);
 								if (_v4.$ === 1) {
 									return A3(
 										m,
 										l,
 										$elm_community$intdict$IntDict$Empty,
-										A3(right, r2.dR, r2.ev, acc));
+										A3(right, r2.dV, r2.ez, acc));
 								} else {
 									var v = _v4.a;
 									return A3(
 										m,
-										A2($elm_community$intdict$IntDict$remove, r2.dR, l),
+										A2($elm_community$intdict$IntDict$remove, r2.dV, l),
 										$elm_community$intdict$IntDict$Empty,
-										A4(both, r2.dR, v, r2.ev, acc));
+										A4(both, r2.dV, v, r2.ez, acc));
 								}
 							default:
 								var il = _v0.a.a;
@@ -5690,20 +5691,20 @@ var $elm_community$intdict$IntDict$merge = F6(
 				}
 			}
 			var l2 = _v0.a.a;
-			var _v3 = A2($elm_community$intdict$IntDict$get, l2.dR, r);
+			var _v3 = A2($elm_community$intdict$IntDict$get, l2.dV, r);
 			if (_v3.$ === 1) {
 				return A3(
 					m,
 					$elm_community$intdict$IntDict$Empty,
 					r,
-					A3(left, l2.dR, l2.ev, acc));
+					A3(left, l2.dV, l2.ez, acc));
 			} else {
 				var v = _v3.a;
 				return A3(
 					m,
 					$elm_community$intdict$IntDict$Empty,
-					A2($elm_community$intdict$IntDict$remove, l2.dR, r),
-					A4(both, l2.dR, l2.ev, v, acc));
+					A2($elm_community$intdict$IntDict$remove, l2.dV, r),
+					A4(both, l2.dV, l2.ez, v, acc));
 			}
 		}
 		var _v2 = _v0.b;
@@ -5726,7 +5727,7 @@ var $elm_community$graph$Graph$applyEdgeDiff = F3(
 				return _Utils_update(
 					node,
 					{
-						cN: A3($elm_community$intdict$IntDict$update, nodeId, upd, node.cN)
+						cR: A3($elm_community$intdict$IntDict$update, nodeId, upd, node.cR)
 					});
 			});
 		var updateIncomingEdge = F2(
@@ -5762,7 +5763,7 @@ var $elm_community$graph$Graph$applyEdgeDiff = F3(
 		return A3(
 			flippedFoldl,
 			updateAdjacency(updateOutgoingEdge),
-			diff.cN,
+			diff.cR,
 			A3(
 				flippedFoldl,
 				updateAdjacency(updateIncomingEdge),
@@ -5783,7 +5784,7 @@ var $elm_community$graph$Graph$crashHack = function (msg) {
 		continue crashHack;
 	}
 };
-var $elm_community$graph$Graph$emptyDiff = {l: $elm_community$intdict$IntDict$empty, cN: $elm_community$intdict$IntDict$empty};
+var $elm_community$graph$Graph$emptyDiff = {l: $elm_community$intdict$IntDict$empty, cR: $elm_community$intdict$IntDict$empty};
 var $elm_community$graph$Graph$computeEdgeDiff = F2(
 	function (old, _new) {
 		var collectUpdates = F3(
@@ -5831,8 +5832,8 @@ var $elm_community$graph$Graph$computeEdgeDiff = F2(
 				var _v4 = _v0.a;
 				var ins = _v0.b.a;
 				return {
-					l: A3(collect, $elm_community$graph$Graph$Insert, ins.cN, $elm_community$intdict$IntDict$empty),
-					cN: A3(collect, $elm_community$graph$Graph$Insert, ins.l, $elm_community$intdict$IntDict$empty)
+					l: A3(collect, $elm_community$graph$Graph$Insert, ins.cR, $elm_community$intdict$IntDict$empty),
+					cR: A3(collect, $elm_community$graph$Graph$Insert, ins.l, $elm_community$intdict$IntDict$empty)
 				};
 			}
 		} else {
@@ -5840,8 +5841,8 @@ var $elm_community$graph$Graph$computeEdgeDiff = F2(
 				var rem = _v0.a.a;
 				var _v3 = _v0.b;
 				return {
-					l: A3(collect, $elm_community$graph$Graph$Remove, rem.cN, $elm_community$intdict$IntDict$empty),
-					cN: A3(collect, $elm_community$graph$Graph$Remove, rem.l, $elm_community$intdict$IntDict$empty)
+					l: A3(collect, $elm_community$graph$Graph$Remove, rem.cR, $elm_community$intdict$IntDict$empty),
+					cR: A3(collect, $elm_community$graph$Graph$Remove, rem.l, $elm_community$intdict$IntDict$empty)
 				};
 			} else {
 				var rem = _v0.a.a;
@@ -5850,9 +5851,9 @@ var $elm_community$graph$Graph$computeEdgeDiff = F2(
 					l: A3(
 						collect,
 						$elm_community$graph$Graph$Insert,
-						ins.cN,
-						A3(collect, $elm_community$graph$Graph$Remove, rem.cN, $elm_community$intdict$IntDict$empty)),
-					cN: A3(
+						ins.cR,
+						A3(collect, $elm_community$graph$Graph$Remove, rem.cR, $elm_community$intdict$IntDict$empty)),
+					cR: A3(
 						collect,
 						$elm_community$graph$Graph$Insert,
 						ins.l,
@@ -5886,7 +5887,7 @@ var $elm_community$graph$Graph$update = F2(
 				return $elm_community$intdict$IntDict$filter(
 					F2(
 						function (id, _v0) {
-							return _Utils_eq(id, ctx.d1.bO) || A2($elm_community$intdict$IntDict$member, id, rep);
+							return _Utils_eq(id, ctx.d5.bP) || A2($elm_community$intdict$IntDict$member, id, rep);
 						}));
 			};
 			var cleanUpEdges = function (ctx) {
@@ -5894,7 +5895,7 @@ var $elm_community$graph$Graph$update = F2(
 					ctx,
 					{
 						l: A2(filterInvalidEdges, ctx, ctx.l),
-						cN: A2(filterInvalidEdges, ctx, ctx.cN)
+						cR: A2(filterInvalidEdges, ctx, ctx.cR)
 					});
 			};
 			var _new = A2(
@@ -5915,8 +5916,8 @@ var $elm_community$graph$Graph$update = F2(
 	});
 var $author$project$GossipGraph$Call$execute = F2(
 	function (graph, _v0) {
-		var from = _v0.as;
-		var to = _v0.a8;
+		var from = _v0.av;
+		var to = _v0.a9;
 		var knowledge = function (id) {
 			return A2($elm_community$graph$Graph$get, id, graph);
 		};
@@ -5931,7 +5932,7 @@ var $author$project$GossipGraph$Call$execute = F2(
 						_Utils_update(
 							current,
 							{
-								cN: A6(
+								cR: A6(
 									$elm_community$intdict$IntDict$merge,
 									F3(
 										function (k, c, acc) {
@@ -5939,12 +5940,12 @@ var $author$project$GossipGraph$Call$execute = F2(
 										}),
 									F4(
 										function (k, c, n, acc) {
-											return (c.dS === 1) ? A3($elm_community$intdict$IntDict$insert, k, c, acc) : ((n.dS === 1) ? A3(
+											return (c.dW === 1) ? A3($elm_community$intdict$IntDict$insert, k, c, acc) : ((n.dW === 1) ? A3(
 												$elm_community$intdict$IntDict$insert,
 												k,
 												_Utils_update(
 													n,
-													{as: current.d1.bO}),
+													{av: current.d5.bP}),
 												acc) : A3($elm_community$intdict$IntDict$insert, k, c, acc));
 										}),
 									F3(
@@ -5954,11 +5955,11 @@ var $author$project$GossipGraph$Call$execute = F2(
 												k,
 												_Utils_update(
 													n,
-													{as: current.d1.bO}),
+													{av: current.d5.bP}),
 												acc);
 										}),
-									current.cN,
-									_new.cN,
+									current.cR,
+									_new.cR,
 									$elm_community$intdict$IntDict$empty)
 							}));
 				} else {
@@ -5993,7 +5994,7 @@ var $elm_community$intdict$IntDict$findMax = function (dict) {
 			case 1:
 				var l = dict.a;
 				return $elm$core$Maybe$Just(
-					_Utils_Tuple2(l.dR, l.ev));
+					_Utils_Tuple2(l.dV, l.ez));
 			default:
 				var i = dict.a;
 				var $temp$dict = i.e;
@@ -6011,7 +6012,7 @@ var $elm_community$intdict$IntDict$findMin = function (dict) {
 			case 1:
 				var l = dict.a;
 				return $elm$core$Maybe$Just(
-					_Utils_Tuple2(l.dR, l.ev));
+					_Utils_Tuple2(l.dV, l.ez));
 			default:
 				var i = dict.a;
 				var $temp$dict = i.d;
@@ -6064,7 +6065,7 @@ var $elm_community$graph$Graph$fold = F3(
 					if (!maybeContext.$) {
 						var ctx = maybeContext.a;
 						var $temp$acc1 = A2(f, ctx, acc1),
-							$temp$graph1 = A2($elm_community$graph$Graph$remove, ctx.d1.bO, graph1);
+							$temp$graph1 = A2($elm_community$graph$Graph$remove, ctx.d5.bP, graph1);
 						acc1 = $temp$acc1;
 						graph1 = $temp$graph1;
 						continue go;
@@ -6077,7 +6078,7 @@ var $elm_community$graph$Graph$fold = F3(
 	});
 var $elm_community$graph$Graph$NodeContext = F3(
 	function (node, incoming, outgoing) {
-		return {l: incoming, d1: node, cN: outgoing};
+		return {l: incoming, d5: node, cR: outgoing};
 	});
 var $elm_community$graph$Graph$fromNodesAndEdges = F2(
 	function (nodes_, edges_) {
@@ -6086,7 +6087,7 @@ var $elm_community$graph$Graph$fromNodesAndEdges = F2(
 			function (n) {
 				return A2(
 					$elm_community$intdict$IntDict$insert,
-					n.bO,
+					n.bP,
 					A3($elm_community$graph$Graph$NodeContext, n, $elm_community$intdict$IntDict$empty, $elm_community$intdict$IntDict$empty));
 			},
 			$elm_community$intdict$IntDict$empty,
@@ -6097,37 +6098,37 @@ var $elm_community$graph$Graph$fromNodesAndEdges = F2(
 					return _Utils_update(
 						ctx,
 						{
-							cN: A3($elm_community$intdict$IntDict$insert, edge.a8, edge.e3, ctx.cN)
+							cR: A3($elm_community$intdict$IntDict$insert, edge.a9, edge.e7, ctx.cR)
 						});
 				};
 				var updateIncoming = function (ctx) {
 					return _Utils_update(
 						ctx,
 						{
-							l: A3($elm_community$intdict$IntDict$insert, edge.as, edge.e3, ctx.l)
+							l: A3($elm_community$intdict$IntDict$insert, edge.av, edge.e7, ctx.l)
 						});
 				};
 				return A3(
 					$elm_community$intdict$IntDict$update,
-					edge.a8,
+					edge.a9,
 					$elm$core$Maybe$map(updateIncoming),
 					A3(
 						$elm_community$intdict$IntDict$update,
-						edge.as,
+						edge.av,
 						$elm$core$Maybe$map(updateOutgoing),
 						rep));
 			});
 		var addEdgeIfValid = F2(
 			function (edge, rep) {
-				return (A2($elm_community$intdict$IntDict$member, edge.as, rep) && A2($elm_community$intdict$IntDict$member, edge.a8, rep)) ? A2(addEdge, edge, rep) : rep;
+				return (A2($elm_community$intdict$IntDict$member, edge.av, rep) && A2($elm_community$intdict$IntDict$member, edge.a9, rep)) ? A2(addEdge, edge, rep) : rep;
 			});
 		return A3($elm$core$List$foldl, addEdgeIfValid, nodeRep, edges_);
 	});
 var $author$project$GossipGraph$Relation$toEdge = function (rel) {
-	return {as: rel.as, e3: rel, a8: rel.a8};
+	return {av: rel.av, e7: rel, a9: rel.a9};
 };
 var $author$project$GossipGraph$Agent$toNode = function (agent) {
-	return {bO: agent.bO, e3: agent};
+	return {bP: agent.bP, e7: agent};
 };
 var $author$project$GossipGraph$Parser$fromAgentsAndRelations = F2(
 	function (agents, relations) {
@@ -6179,7 +6180,7 @@ var $elm_community$intdict$IntDict$foldr = F3(
 					return acc;
 				case 1:
 					var l = dict.a;
-					return A3(f, l.dR, l.ev, acc);
+					return A3(f, l.dV, l.ez, acc);
 				default:
 					var i = dict.a;
 					var $temp$f = f,
@@ -6203,7 +6204,7 @@ var $elm_community$intdict$IntDict$values = function (dict) {
 		dict);
 };
 var $author$project$GossipGraph$Relation$fromNodeContext = function (context) {
-	return $elm_community$intdict$IntDict$values(context.cN);
+	return $elm_community$intdict$IntDict$values(context.cR);
 };
 var $elm$core$Array$bitMask = 4294967295 >>> (32 - $elm$core$Array$shiftStep);
 var $elm$core$Basics$ge = _Utils_ge;
@@ -6373,7 +6374,7 @@ var $author$project$GossipGraph$Parser$lexer = F2(
 	});
 var $author$project$GossipGraph$Relation$knows = F4(
 	function (x, y, kind, relation) {
-		return _Utils_eq(relation.as, x) && (_Utils_eq(relation.a8, y) && _Utils_eq(relation.dS, kind));
+		return _Utils_eq(relation.av, x) && (_Utils_eq(relation.a9, y) && _Utils_eq(relation.dW, kind));
 	});
 var $author$project$GossipProtocol$Conditions$Constituents$knowsSecret = F3(
 	function (x, y, relations) {
@@ -6435,8 +6436,8 @@ var $author$project$GossipGraph$Call$fromList = function (agents) {
 		if ((!_v0.a.$) && (!_v0.b.$)) {
 			var f = _v0.a.a;
 			var t = _v0.b.a;
-			return _Utils_eq(f.bO, t.bO) ? $elm$core$Result$Err('An agent cannot call itself.') : $elm$core$Result$Ok(
-				{as: f.bO, a8: t.bO});
+			return _Utils_eq(f.bP, t.bP) ? $elm$core$Result$Err('An agent cannot call itself.') : $elm$core$Result$Ok(
+				{av: f.bP, a9: t.bP});
 		} else {
 			return $elm$core$Result$Err('A call must contain two agents.');
 		}
@@ -6488,7 +6489,7 @@ var $author$project$GossipGraph$Agent$fromChar = F2(
 				$author$project$Utils$List$find,
 				function (agent) {
 					return _Utils_eq(
-						agent.cH,
+						agent.cL,
 						$elm$core$Char$toUpper(_char));
 				},
 				agents));
@@ -6552,7 +6553,7 @@ var $author$project$Utils$List$dropWhile = F2(
 		return A2(trav, f, xs);
 	});
 var $author$project$CallSequence$Parser$separators = _List_fromArray(
-	[';']);
+	[';', ',', ' ']);
 var $author$project$Utils$List$takeWhile = F2(
 	function (f, xs) {
 		var trav = F3(
@@ -6629,7 +6630,7 @@ var $author$project$CallSequence$Parser$lexer = function (s) {
 											return $elm$core$Char$isAlpha(x);
 										},
 										cs),
-									(pos + 1) + $elm$core$String$length(token));
+									pos + $elm$core$String$length(token));
 								if (!rest.$) {
 									var tokens = rest.a;
 									return $elm$core$Result$Ok(
@@ -6951,7 +6952,7 @@ var $author$project$GossipGraph$Parser$parseAgents = function (ts) {
 										return !_Utils_eq(a, $author$project$GossipGraph$Parser$Separator);
 									},
 									rest));
-							var agent = {bO: id, cH: name};
+							var agent = {bP: id, cL: name};
 							var _v2 = A3(
 								parser,
 								A2($elm$core$List$cons, name, names),
@@ -7039,7 +7040,7 @@ var $author$project$GossipGraph$Parser$parseAgents = function (ts) {
 				A2(
 					$elm$core$List$map,
 					function (a) {
-						return a.cH;
+						return a.cL;
 					},
 					agents)) + '. Make sure every segment contains the identity relation for the agent it represents!')))))) : $elm$core$Result$Ok(agents)));
 	};
@@ -7073,7 +7074,7 @@ var $author$project$GossipGraph$Parser$parseRelations = F2(
 								function (agent) {
 									return A2(
 										$elm$core$List$cons,
-										{as: id, dS: kind, a8: agent.bO},
+										{av: id, dW: kind, a9: agent.bP},
 										relations);
 								},
 								A2($author$project$GossipGraph$Agent$fromChar, agents, name));
@@ -7173,7 +7174,7 @@ var $author$project$GossipProtocol$Conditions$Constituents$lastFrom = F2(
 		var _v0 = $elm$core$List$head(sequence);
 		if (!_v0.$) {
 			var call = _v0.a;
-			return _Utils_eq(call.as, agent);
+			return _Utils_eq(call.av, agent);
 		} else {
 			return false;
 		}
@@ -7207,7 +7208,7 @@ var $author$project$GossipGraph$Parser$adjacencyToCanonicalString = F2(
 			A2(
 				$elm$core$List$map,
 				function (r) {
-					return _Utils_Tuple2(r.a8, r.dS);
+					return _Utils_Tuple2(r.a9, r.dW);
 				},
 				$author$project$GossipGraph$Relation$fromNodeContext(context)));
 		return A2(
@@ -7226,12 +7227,93 @@ var $author$project$GossipGraph$Parser$toCanonicalString = function (graph) {
 			$elm$core$List$reverse(
 				A3($elm_community$graph$Graph$fold, $author$project$GossipGraph$Parser$adjacencyToCanonicalString, _List_Nil, graph))));
 };
+var $elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (!maybe.$) {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
+	});
+var $author$project$GossipGraph$Parser$adjacencyToString = F3(
+	function (agents, context, acc) {
+		var toCharacter = F2(
+			function (_v0, acc2) {
+				var id = _v0.a;
+				var kind = _v0.b;
+				return function (c) {
+					return _Utils_ap(
+						$elm$core$String$fromChar(c),
+						acc2);
+				}(
+					((!kind) ? $elm$core$Char$toLower : $elm$core$Char$toUpper)(
+						A2(
+							$elm$core$Maybe$withDefault,
+							'?',
+							A2(
+								$elm$core$Maybe$map,
+								A2(
+									$elm$core$Basics$composeR,
+									function ($) {
+										return $.e7;
+									},
+									function ($) {
+										return $.cL;
+									}),
+								A2(
+									$author$project$Utils$List$find,
+									function (node) {
+										return _Utils_eq(node.e7.bP, id);
+									},
+									agents)))));
+			});
+		var relations = A2(
+			$elm$core$List$sortBy,
+			$elm$core$Tuple$first,
+			A2(
+				$elm$core$List$map,
+				function (r) {
+					return _Utils_Tuple2(r.a9, r.dW);
+				},
+				$author$project$GossipGraph$Relation$fromNodeContext(context)));
+		return A2(
+			$elm$core$List$cons,
+			A3($elm$core$List$foldr, toCharacter, '', relations),
+			acc);
+	});
+var $elm_community$graph$Graph$nodes = A2(
+	$elm$core$Basics$composeR,
+	$elm_community$graph$Graph$unGraph,
+	A2(
+		$elm$core$Basics$composeR,
+		$elm_community$intdict$IntDict$values,
+		$elm$core$List$map(
+			function ($) {
+				return $.d5;
+			})));
+var $author$project$GossipGraph$Parser$toString = function (graph) {
+	return A3(
+		$elm$core$List$foldr,
+		$elm$core$Basics$append,
+		'',
+		A2(
+			$elm$core$List$intersperse,
+			' ',
+			$elm$core$List$reverse(
+				A3(
+					$elm_community$graph$Graph$fold,
+					$author$project$GossipGraph$Parser$adjacencyToString(
+						$elm_community$graph$Graph$nodes(graph)),
+					_List_Nil,
+					graph))));
+};
 var $author$project$GossipProtocol$Conditions$Constituents$lastTo = F2(
 	function (agent, sequence) {
 		var _v0 = $elm$core$List$head(sequence);
 		if (!_v0.$) {
 			var call = _v0.a;
-			return _Utils_eq(call.a8, agent);
+			return _Utils_eq(call.a9, agent);
 		} else {
 			return false;
 		}
@@ -7267,12 +7349,12 @@ var $author$project$Main$update = F2(
 					var input = msg.a;
 					var lexResult = A2(
 						$author$project$GossipGraph$Parser$lexer,
-						{fp: ' '},
+						{ft: ' '},
 						input);
 					var agents = A2($elm$core$Result$andThen, $author$project$GossipGraph$Parser$parseAgents, lexResult);
 					var callSequence = A2(
 						$elm$core$Result$andThen,
-						$author$project$CallSequence$Parser$parse(model.aX),
+						$author$project$CallSequence$Parser$parse(model.ah),
 						agents);
 					var relations = function () {
 						var _v2 = _Utils_Tuple2(lexResult, agents);
@@ -7316,31 +7398,31 @@ var $author$project$Main$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{ap: agents, aR: $elm$core$Array$empty, ag: callSequence, bK: canonical, C: graph, bn: $elm$core$Array$empty, aG: input, bX: relations}),
+							{ar: agents, x: $elm$core$Array$empty, at: callSequence, bL: canonical, A: graph, bo: $elm$core$Array$empty, ai: input, bY: relations}),
 						$elm$core$Platform$Cmd$none);
 				case 1:
 					var input = msg.a;
 					var callSequence = A2(
 						$elm$core$Result$andThen,
 						$author$project$CallSequence$Parser$parse(input),
-						model.ap);
+						model.ar);
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{ag: callSequence, aX: input}),
+							{at: callSequence, ah: input}),
 						$elm$core$Platform$Cmd$none);
 				case 3:
-					var _v3 = _Utils_Tuple2(model.C, model.ag);
+					var _v3 = _Utils_Tuple2(model.A, model.at);
 					if ((!_v3.a.$) && (!_v3.b.$)) {
 						var graph = _v3.a.a;
 						var sequence = _v3.b.a;
 						var newGraph = A3(
 							$elm$core$List$foldr,
 							F2(
-								function (call, _v9) {
-									var callHistory = _v9.a;
-									var state = _v9.b;
-									var graphHistory = _v9.c;
+								function (call, _v10) {
+									var callHistory = _v10.a;
+									var state = _v10.b;
+									var graphHistory = _v10.c;
 									return _Utils_Tuple3(
 										A2($elm$core$Array$push, call, callHistory),
 										A2($author$project$GossipGraph$Call$execute, state, call),
@@ -7360,29 +7442,33 @@ var $author$project$Main$update = F2(
 							_Utils_update(
 								model,
 								{
-									aR: function (_v4) {
+									x: function (_v4) {
 										var h = _v4.a;
 										return h;
 									}(newGraph),
-									ag: $elm$core$Result$Ok(_List_Nil),
-									C: $elm$core$Result$Ok(
+									at: $elm$core$Result$Ok(_List_Nil),
+									A: $elm$core$Result$Ok(
 										function (_v5) {
 											var g = _v5.b;
 											return g;
 										}(newGraph)),
-									bn: function (_v6) {
+									bo: function (_v6) {
 										var h = _v6.c;
 										return h;
 									}(newGraph),
-									ch: 1 - $elm$core$Array$length(
+									cl: 1 - $elm$core$Array$length(
 										function (_v7) {
 											var h = _v7.c;
 											return h;
 										}(newGraph)),
-									aX: '',
-									bX: $elm$core$Result$Ok(
-										function (_v8) {
-											var g = _v8.b;
+									ah: '',
+									ai: function (_v8) {
+										var g = _v8.b;
+										return $author$project$GossipGraph$Parser$toString(g);
+									}(newGraph),
+									bY: $elm$core$Result$Ok(
+										function (_v9) {
+											var g = _v9.b;
 											return A3(
 												$elm_community$graph$Graph$fold,
 												F2(
@@ -7406,73 +7492,96 @@ var $author$project$Main$update = F2(
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
-									{W: $author$project$GossipProtocol$Conditions$Predefined$any, y: protocolName}),
+									{x: $elm$core$Array$empty, X: $author$project$GossipProtocol$Conditions$Predefined$any, z: protocolName}),
 								$elm$core$Platform$Cmd$none);
 						case 'tok':
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
-									{W: $author$project$GossipProtocol$Conditions$Predefined$tok, y: protocolName}),
+									{x: $elm$core$Array$empty, X: $author$project$GossipProtocol$Conditions$Predefined$tok, z: protocolName}),
 								$elm$core$Platform$Cmd$none);
 						case 'spi':
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
-									{W: $author$project$GossipProtocol$Conditions$Predefined$spi, y: protocolName}),
+									{x: $elm$core$Array$empty, X: $author$project$GossipProtocol$Conditions$Predefined$spi, z: protocolName}),
 								$elm$core$Platform$Cmd$none);
 						case 'co':
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
-									{W: $author$project$GossipProtocol$Conditions$Predefined$co, y: protocolName}),
+									{x: $elm$core$Array$empty, X: $author$project$GossipProtocol$Conditions$Predefined$co, z: protocolName}),
 								$elm$core$Platform$Cmd$none);
 						case 'wco':
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
-									{W: $author$project$GossipProtocol$Conditions$Predefined$wco, y: protocolName}),
+									{x: $elm$core$Array$empty, X: $author$project$GossipProtocol$Conditions$Predefined$wco, z: protocolName}),
 								$elm$core$Platform$Cmd$none);
 						case 'lns':
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
-									{W: $author$project$GossipProtocol$Conditions$Predefined$lns, y: protocolName}),
+									{x: $elm$core$Array$empty, X: $author$project$GossipProtocol$Conditions$Predefined$lns, z: protocolName}),
 								$elm$core$Platform$Cmd$none);
 						case 'custom':
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
-									{y: protocolName}),
+									{x: $elm$core$Array$empty, z: protocolName}),
 								$elm$core$Platform$Cmd$none);
 						default:
 							return _Utils_Tuple2(
 								_Utils_update(
 									model,
-									{W: $author$project$GossipProtocol$Conditions$Predefined$any, y: 'any'}),
+									{x: $elm$core$Array$empty, X: $author$project$GossipProtocol$Conditions$Predefined$any, z: 'any'}),
 								$elm$core$Platform$Cmd$none);
 					}
 				case 4:
 					var time = msg.a;
-					var _v11 = A2($elm$core$Array$get, time, model.bn);
-					if (!_v11.$) {
-						var graph = _v11.a;
+					var _v12 = A2($elm$core$Array$get, time, model.bo);
+					if (!_v12.$) {
+						var graph = _v12.a;
 						return _Utils_Tuple2(
 							_Utils_update(
 								model,
 								{
-									C: $elm$core$Result$Ok(graph)
+									A: $elm$core$Result$Ok(graph),
+									ai: $author$project$GossipGraph$Parser$toString(graph)
 								}),
 							$elm$core$Platform$Cmd$none);
 					} else {
 						return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 					}
-				default:
+				case 5:
 					var graph = msg.a;
 					var $temp$msg = $author$project$Main$ChangeGossipGraph(graph),
 						$temp$model = model;
 					msg = $temp$msg;
 					model = $temp$model;
 					continue update;
+				case 7:
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								ax: function (md) {
+									return _Utils_update(
+										md,
+										{b3: false});
+								}(model.ax)
+							}),
+						$elm$core$Platform$Cmd$none);
+				default:
+					var title = msg.a;
+					var content = msg.b;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								ax: {cd: content, b_: title, b3: true}
+							}),
+						$elm$core$Platform$Cmd$none);
 			}
 		}
 	});
@@ -7480,9 +7589,603 @@ var $author$project$Main$ApplyCallSequence = {$: 3};
 var $author$project$Main$ChangeCallSequence = function (a) {
 	return {$: 1, a: a};
 };
-var $author$project$Utils$Alert$Information = 0;
-var $author$project$Utils$Alert$Warning = 1;
+var $author$project$Main$ShowModal = F2(
+	function (a, b) {
+		return {$: 6, a: a, b: b};
+	});
 var $elm$html$Html$button = _VirtualDom_node('button');
+var $lattyware$elm_fontawesome$FontAwesome$Icon$Icon = F5(
+	function (prefix, name, width, height, paths) {
+		return {dL: height, cL: name, fj: paths, h: prefix, eE: width};
+	});
+var $lattyware$elm_fontawesome$FontAwesome$Solid$check = A5(
+	$lattyware$elm_fontawesome$FontAwesome$Icon$Icon,
+	'fas',
+	'check',
+	512,
+	512,
+	_List_fromArray(
+		['M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z']));
+var $elm$html$Html$code = _VirtualDom_node('code');
+var $elm$html$Html$p = _VirtualDom_node('p');
+var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
+var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $lattyware$elm_fontawesome$FontAwesome$Solid$times = A5(
+	$lattyware$elm_fontawesome$FontAwesome$Icon$Icon,
+	'fas',
+	'times',
+	352,
+	512,
+	_List_fromArray(
+		['M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z']));
+var $lattyware$elm_fontawesome$FontAwesome$Icon$Presentation = $elm$core$Basics$identity;
+var $lattyware$elm_fontawesome$FontAwesome$Icon$present = function (icon) {
+	return {bJ: _List_Nil, dP: icon, bP: $elm$core$Maybe$Nothing, bt: $elm$core$Maybe$Nothing, c5: 'img', b_: $elm$core$Maybe$Nothing, b1: _List_Nil};
+};
+var $lattyware$elm_fontawesome$FontAwesome$Icon$styled = F2(
+	function (attributes, _v0) {
+		var presentation = _v0;
+		return _Utils_update(
+			presentation,
+			{
+				bJ: _Utils_ap(presentation.bJ, attributes)
+			});
+	});
+var $elm$virtual_dom$VirtualDom$attribute = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_attribute,
+			_VirtualDom_noOnOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
+var $elm$html$Html$Attributes$attribute = $elm$virtual_dom$VirtualDom$attribute;
+var $elm$svg$Svg$Attributes$class = _VirtualDom_attribute('class');
+var $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$add = F2(
+	function (transform, combined) {
+		switch (transform.$) {
+			case 0:
+				var direction = transform.a;
+				var amount = function () {
+					if (!direction.$) {
+						var by = direction.a;
+						return by;
+					} else {
+						var by = direction.a;
+						return -by;
+					}
+				}();
+				return _Utils_update(
+					combined,
+					{c8: combined.c8 + amount});
+			case 1:
+				var direction = transform.a;
+				var _v2 = function () {
+					switch (direction.$) {
+						case 0:
+							var by = direction.a;
+							return _Utils_Tuple2(0, -by);
+						case 1:
+							var by = direction.a;
+							return _Utils_Tuple2(0, by);
+						case 2:
+							var by = direction.a;
+							return _Utils_Tuple2(-by, 0);
+						default:
+							var by = direction.a;
+							return _Utils_Tuple2(by, 0);
+					}
+				}();
+				var x = _v2.a;
+				var y = _v2.b;
+				return _Utils_update(
+					combined,
+					{S: combined.S + x, T: combined.T + y});
+			case 2:
+				var rotation = transform.a;
+				return _Utils_update(
+					combined,
+					{fo: combined.fo + rotation});
+			default:
+				if (!transform.a) {
+					var _v4 = transform.a;
+					return _Utils_update(
+						combined,
+						{e$: true});
+				} else {
+					var _v5 = transform.a;
+					return _Utils_update(
+						combined,
+						{e0: true});
+				}
+		}
+	});
+var $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$baseSize = 16;
+var $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$meaninglessTransform = {e$: false, e0: false, fo: 0, c8: $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$baseSize, S: 0, T: 0};
+var $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$combine = function (transforms) {
+	return A3($elm$core$List$foldl, $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$add, $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$meaninglessTransform, transforms);
+};
+var $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$meaningfulTransform = function (transforms) {
+	var combined = $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$combine(transforms);
+	return _Utils_eq(combined, $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$meaninglessTransform) ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(combined);
+};
+var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
+var $elm$svg$Svg$svg = $elm$svg$Svg$trustedNode('svg');
+var $elm$svg$Svg$Attributes$id = _VirtualDom_attribute('id');
+var $elm$svg$Svg$text = $elm$virtual_dom$VirtualDom$text;
+var $elm$svg$Svg$title = $elm$svg$Svg$trustedNode('title');
+var $lattyware$elm_fontawesome$FontAwesome$Icon$titledContents = F3(
+	function (titleId, contents, title) {
+		return A2(
+			$elm$core$List$cons,
+			A2(
+				$elm$svg$Svg$title,
+				_List_fromArray(
+					[
+						$elm$svg$Svg$Attributes$id(titleId)
+					]),
+				_List_fromArray(
+					[
+						$elm$svg$Svg$text(title)
+					])),
+			contents);
+	});
+var $elm$core$String$fromFloat = _String_fromNumber;
+var $elm$svg$Svg$Attributes$transform = _VirtualDom_attribute('transform');
+var $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$transformForSvg = F3(
+	function (containerWidth, iconWidth, transform) {
+		var path = 'translate(' + ($elm$core$String$fromFloat((iconWidth / 2) * (-1)) + ' -256)');
+		var outer = 'translate(' + ($elm$core$String$fromFloat(containerWidth / 2) + ' 256)');
+		var innerTranslate = 'translate(' + ($elm$core$String$fromFloat(transform.S * 32) + (',' + ($elm$core$String$fromFloat(transform.T * 32) + ') ')));
+		var innerRotate = 'rotate(' + ($elm$core$String$fromFloat(transform.fo) + ' 0 0)');
+		var flipY = transform.e0 ? (-1) : 1;
+		var scaleY = (transform.c8 / $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$baseSize) * flipY;
+		var flipX = transform.e$ ? (-1) : 1;
+		var scaleX = (transform.c8 / $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$baseSize) * flipX;
+		var innerScale = 'scale(' + ($elm$core$String$fromFloat(scaleX) + (', ' + ($elm$core$String$fromFloat(scaleY) + ') ')));
+		return {
+			dQ: $elm$svg$Svg$Attributes$transform(
+				_Utils_ap(
+					innerTranslate,
+					_Utils_ap(innerScale, innerRotate))),
+			bt: $elm$svg$Svg$Attributes$transform(outer),
+			ea: $elm$svg$Svg$Attributes$transform(path)
+		};
+	});
+var $elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
+var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
+var $elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
+var $elm$svg$Svg$Attributes$x = _VirtualDom_attribute('x');
+var $elm$svg$Svg$Attributes$y = _VirtualDom_attribute('y');
+var $lattyware$elm_fontawesome$FontAwesome$Icon$allSpace = _List_fromArray(
+	[
+		$elm$svg$Svg$Attributes$x('0'),
+		$elm$svg$Svg$Attributes$y('0'),
+		$elm$svg$Svg$Attributes$width('100%'),
+		$elm$svg$Svg$Attributes$height('100%')
+	]);
+var $elm$svg$Svg$clipPath = $elm$svg$Svg$trustedNode('clipPath');
+var $elm$svg$Svg$Attributes$clipPath = _VirtualDom_attribute('clip-path');
+var $elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
+var $elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
+var $elm$svg$Svg$path = $elm$svg$Svg$trustedNode('path');
+var $lattyware$elm_fontawesome$FontAwesome$Svg$Internal$corePath = F2(
+	function (attrs, d) {
+		return A2(
+			$elm$svg$Svg$path,
+			A2(
+				$elm$core$List$cons,
+				$elm$svg$Svg$Attributes$fill('currentColor'),
+				A2(
+					$elm$core$List$cons,
+					$elm$svg$Svg$Attributes$d(d),
+					attrs)),
+			_List_Nil);
+	});
+var $elm$svg$Svg$g = $elm$svg$Svg$trustedNode('g');
+var $lattyware$elm_fontawesome$FontAwesome$Svg$Internal$corePaths = F2(
+	function (attrs, icon) {
+		var _v0 = icon.fj;
+		if (!_v0.b) {
+			return A2($lattyware$elm_fontawesome$FontAwesome$Svg$Internal$corePath, attrs, '');
+		} else {
+			if (!_v0.b.b) {
+				var only = _v0.a;
+				return A2($lattyware$elm_fontawesome$FontAwesome$Svg$Internal$corePath, attrs, only);
+			} else {
+				var secondary = _v0.a;
+				var _v1 = _v0.b;
+				var primary = _v1.a;
+				return A2(
+					$elm$svg$Svg$g,
+					_List_fromArray(
+						[
+							$elm$svg$Svg$Attributes$class('fa-group')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$lattyware$elm_fontawesome$FontAwesome$Svg$Internal$corePath,
+							A2(
+								$elm$core$List$cons,
+								$elm$svg$Svg$Attributes$class('fa-secondary'),
+								attrs),
+							secondary),
+							A2(
+							$lattyware$elm_fontawesome$FontAwesome$Svg$Internal$corePath,
+							A2(
+								$elm$core$List$cons,
+								$elm$svg$Svg$Attributes$class('fa-primary'),
+								attrs),
+							primary)
+						]));
+			}
+		}
+	});
+var $elm$svg$Svg$defs = $elm$svg$Svg$trustedNode('defs');
+var $elm$svg$Svg$mask = $elm$svg$Svg$trustedNode('mask');
+var $elm$svg$Svg$Attributes$mask = _VirtualDom_attribute('mask');
+var $elm$svg$Svg$Attributes$maskContentUnits = _VirtualDom_attribute('maskContentUnits');
+var $elm$svg$Svg$Attributes$maskUnits = _VirtualDom_attribute('maskUnits');
+var $elm$svg$Svg$rect = $elm$svg$Svg$trustedNode('rect');
+var $lattyware$elm_fontawesome$FontAwesome$Icon$viewMaskedWithTransform = F4(
+	function (id, transforms, inner, outer) {
+		var maskInnerGroup = A2(
+			$elm$svg$Svg$g,
+			_List_fromArray(
+				[transforms.dQ]),
+			_List_fromArray(
+				[
+					A2(
+					$lattyware$elm_fontawesome$FontAwesome$Svg$Internal$corePaths,
+					_List_fromArray(
+						[
+							$elm$svg$Svg$Attributes$fill('black'),
+							transforms.ea
+						]),
+					inner)
+				]));
+		var maskId = 'mask-' + (inner.cL + ('-' + id));
+		var maskTag = A2(
+			$elm$svg$Svg$mask,
+			_Utils_ap(
+				_List_fromArray(
+					[
+						$elm$svg$Svg$Attributes$id(maskId),
+						$elm$svg$Svg$Attributes$maskUnits('userSpaceOnUse'),
+						$elm$svg$Svg$Attributes$maskContentUnits('userSpaceOnUse')
+					]),
+				$lattyware$elm_fontawesome$FontAwesome$Icon$allSpace),
+			_List_fromArray(
+				[
+					A2(
+					$elm$svg$Svg$rect,
+					A2(
+						$elm$core$List$cons,
+						$elm$svg$Svg$Attributes$fill('white'),
+						$lattyware$elm_fontawesome$FontAwesome$Icon$allSpace),
+					_List_Nil),
+					A2(
+					$elm$svg$Svg$g,
+					_List_fromArray(
+						[transforms.bt]),
+					_List_fromArray(
+						[maskInnerGroup]))
+				]));
+		var clipId = 'clip-' + (outer.cL + ('-' + id));
+		var defs = A2(
+			$elm$svg$Svg$defs,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					$elm$svg$Svg$clipPath,
+					_List_fromArray(
+						[
+							$elm$svg$Svg$Attributes$id(clipId)
+						]),
+					_List_fromArray(
+						[
+							A2($lattyware$elm_fontawesome$FontAwesome$Svg$Internal$corePaths, _List_Nil, outer)
+						])),
+					maskTag
+				]));
+		return _List_fromArray(
+			[
+				defs,
+				A2(
+				$elm$svg$Svg$rect,
+				$elm$core$List$concat(
+					_List_fromArray(
+						[
+							_List_fromArray(
+							[
+								$elm$svg$Svg$Attributes$fill('currentColor'),
+								$elm$svg$Svg$Attributes$clipPath('url(#' + (clipId + ')')),
+								$elm$svg$Svg$Attributes$mask('url(#' + (maskId + ')'))
+							]),
+							$lattyware$elm_fontawesome$FontAwesome$Icon$allSpace
+						])),
+				_List_Nil)
+			]);
+	});
+var $lattyware$elm_fontawesome$FontAwesome$Icon$viewWithTransform = F2(
+	function (transforms, icon) {
+		if (!transforms.$) {
+			var ts = transforms.a;
+			return A2(
+				$elm$svg$Svg$g,
+				_List_fromArray(
+					[ts.bt]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$svg$Svg$g,
+						_List_fromArray(
+							[ts.dQ]),
+						_List_fromArray(
+							[
+								A2(
+								$lattyware$elm_fontawesome$FontAwesome$Svg$Internal$corePaths,
+								_List_fromArray(
+									[ts.ea]),
+								icon)
+							]))
+					]));
+		} else {
+			return A2($lattyware$elm_fontawesome$FontAwesome$Svg$Internal$corePaths, _List_Nil, icon);
+		}
+	});
+var $lattyware$elm_fontawesome$FontAwesome$Icon$internalView = function (_v0) {
+	var icon = _v0.dP;
+	var attributes = _v0.bJ;
+	var transforms = _v0.b1;
+	var role = _v0.c5;
+	var id = _v0.bP;
+	var title = _v0.b_;
+	var outer = _v0.bt;
+	var alwaysId = A2($elm$core$Maybe$withDefault, icon.cL, id);
+	var titleId = alwaysId + '-title';
+	var semantics = A2(
+		$elm$core$Maybe$withDefault,
+		A2($elm$html$Html$Attributes$attribute, 'aria-hidden', 'true'),
+		A2(
+			$elm$core$Maybe$map,
+			$elm$core$Basics$always(
+				A2($elm$html$Html$Attributes$attribute, 'aria-labelledby', titleId)),
+			title));
+	var _v1 = A2(
+		$elm$core$Maybe$withDefault,
+		_Utils_Tuple2(icon.eE, icon.dL),
+		A2(
+			$elm$core$Maybe$map,
+			function (o) {
+				return _Utils_Tuple2(o.eE, o.dL);
+			},
+			outer));
+	var width = _v1.a;
+	var height = _v1.b;
+	var classes = _List_fromArray(
+		[
+			'svg-inline--fa',
+			'fa-' + icon.cL,
+			'fa-w-' + $elm$core$String$fromInt(
+			$elm$core$Basics$ceiling((width / height) * 16))
+		]);
+	var svgTransform = A2(
+		$elm$core$Maybe$map,
+		A2($lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$transformForSvg, width, icon.eE),
+		$lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$meaningfulTransform(transforms));
+	var contents = function () {
+		var resolvedSvgTransform = A2(
+			$elm$core$Maybe$withDefault,
+			A3($lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$transformForSvg, width, icon.eE, $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$meaninglessTransform),
+			svgTransform);
+		return A2(
+			$elm$core$Maybe$withDefault,
+			_List_fromArray(
+				[
+					A2($lattyware$elm_fontawesome$FontAwesome$Icon$viewWithTransform, svgTransform, icon)
+				]),
+			A2(
+				$elm$core$Maybe$map,
+				A3($lattyware$elm_fontawesome$FontAwesome$Icon$viewMaskedWithTransform, alwaysId, resolvedSvgTransform, icon),
+				outer));
+	}();
+	var potentiallyTitledContents = A2(
+		$elm$core$Maybe$withDefault,
+		contents,
+		A2(
+			$elm$core$Maybe$map,
+			A2($lattyware$elm_fontawesome$FontAwesome$Icon$titledContents, titleId, contents),
+			title));
+	return A2(
+		$elm$svg$Svg$svg,
+		$elm$core$List$concat(
+			_List_fromArray(
+				[
+					_List_fromArray(
+					[
+						A2($elm$html$Html$Attributes$attribute, 'role', role),
+						A2($elm$html$Html$Attributes$attribute, 'xmlns', 'http://www.w3.org/2000/svg'),
+						$elm$svg$Svg$Attributes$viewBox(
+						'0 0 ' + ($elm$core$String$fromInt(width) + (' ' + $elm$core$String$fromInt(height)))),
+						semantics
+					]),
+					A2($elm$core$List$map, $elm$svg$Svg$Attributes$class, classes),
+					attributes
+				])),
+		potentiallyTitledContents);
+};
+var $lattyware$elm_fontawesome$FontAwesome$Icon$view = function (presentation) {
+	return $lattyware$elm_fontawesome$FontAwesome$Icon$internalView(presentation);
+};
+var $lattyware$elm_fontawesome$FontAwesome$Icon$viewStyled = function (styles) {
+	return A2(
+		$elm$core$Basics$composeR,
+		$lattyware$elm_fontawesome$FontAwesome$Icon$present,
+		A2(
+			$elm$core$Basics$composeR,
+			$lattyware$elm_fontawesome$FontAwesome$Icon$styled(styles),
+			$lattyware$elm_fontawesome$FontAwesome$Icon$view));
+};
+var $author$project$Main$callSequenceHelpView = _List_fromArray(
+	[
+		A2(
+		$elm$html$Html$p,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('This input allows you to enter a call sequence and see if it is allowed under the current protocol. \n            The input has to look like '),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('ab;cd')
+					])),
+				$elm$html$Html$text('. This represents two calls: One from agent '),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('A')
+					])),
+				$elm$html$Html$text(' to agent '),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('B')
+					])),
+				$elm$html$Html$text(', and one from agent '),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('C')
+					])),
+				$elm$html$Html$text(' to agent '),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('D')
+					])),
+				$elm$html$Html$text('. You can use semicolons ('),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(';')
+					])),
+				$elm$html$Html$text('), commas ('),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(',')
+					])),
+				$elm$html$Html$text(') or spaces '),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('⎵')
+					])),
+				$elm$html$Html$text(' as separators between calls.')
+			])),
+		A2(
+		$elm$html$Html$p,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('Once you have entered a sequence, a symbol ('),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$lattyware$elm_fontawesome$FontAwesome$Icon$viewStyled,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'color', 'red')
+							]),
+						$lattyware$elm_fontawesome$FontAwesome$Solid$times)
+					])),
+				$elm$html$Html$text(' or '),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$lattyware$elm_fontawesome$FontAwesome$Icon$viewStyled,
+						_List_fromArray(
+							[
+								A2($elm$html$Html$Attributes$style, 'color', 'green')
+							]),
+						$lattyware$elm_fontawesome$FontAwesome$Solid$check)
+					])),
+				$elm$html$Html$text(') represents whether the call sequence is permissible. '),
+				$elm$html$Html$text('If the sequence is permissible, you can click the '),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Execute')
+					])),
+				$elm$html$Html$text(' button to execute the call sequence on the gossip graph. \n            The list of calls will then be made, and the graph will be changed accordingly,\n            and the call sequence will be added to the call history.')
+			]))
+	]);
+var $elm$html$Html$strong = _VirtualDom_node('strong');
+var $author$project$Main$callSequencePermissibilityHelpView = F2(
+	function (protocolName, permitted) {
+		return _List_fromArray(
+			[
+				A2(
+				$elm$html$Html$p,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(
+						'The current call sequence is ' + (((!permitted) ? 'not' : '') + ' permitted under the ')),
+						A2(
+						$elm$html$Html$code,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text(protocolName)
+							])),
+						$elm$html$Html$text(' protocol.')
+					])),
+				A2(
+				$elm$html$Html$p,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('You can see which calls are possible from the current graph in the '),
+						A2(
+						$elm$html$Html$strong,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Gossip Protocols')
+							])),
+						$elm$html$Html$text(' section.')
+					]))
+			]);
+	});
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -7534,6 +8237,48 @@ var $elm$core$Dict$get = F2(
 		}
 	});
 var $elm$html$Html$h2 = _VirtualDom_node('h2');
+var $elm$html$Html$header = _VirtualDom_node('header');
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 0, a: a};
+};
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var $elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'click',
+		$elm$json$Json$Decode$succeed(msg));
+};
+var $lattyware$elm_fontawesome$FontAwesome$Solid$question = A5(
+	$lattyware$elm_fontawesome$FontAwesome$Icon$Icon,
+	'fas',
+	'question',
+	384,
+	512,
+	_List_fromArray(
+		['M202.021 0C122.202 0 70.503 32.703 29.914 91.026c-7.363 10.58-5.093 25.086 5.178 32.874l43.138 32.709c10.373 7.865 25.132 6.026 33.253-4.148 25.049-31.381 43.63-49.449 82.757-49.449 30.764 0 68.816 19.799 68.816 49.631 0 22.552-18.617 34.134-48.993 51.164-35.423 19.86-82.299 44.576-82.299 106.405V320c0 13.255 10.745 24 24 24h72.471c13.255 0 24-10.745 24-24v-5.773c0-42.86 125.268-44.645 125.268-160.627C377.504 66.256 286.902 0 202.021 0zM192 373.459c-38.196 0-69.271 31.075-69.271 69.271 0 38.195 31.075 69.27 69.271 69.27s69.271-31.075 69.271-69.271-31.075-69.27-69.271-69.27z']));
+var $lattyware$elm_fontawesome$FontAwesome$Icon$viewIcon = A2($elm$core$Basics$composeR, $lattyware$elm_fontawesome$FontAwesome$Icon$present, $lattyware$elm_fontawesome$FontAwesome$Icon$view);
+var $author$project$Main$helpButtonView = F2(
+	function (title, content) {
+		return A2(
+			$elm$html$Html$button,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('help'),
+					$elm$html$Html$Events$onClick(
+					A2($author$project$Main$ShowModal, title, content))
+				]),
+			_List_fromArray(
+				[
+					$lattyware$elm_fontawesome$FontAwesome$Icon$viewIcon($lattyware$elm_fontawesome$FontAwesome$Solid$question)
+				]));
+	});
 var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
 var $elm$html$Html$input = _VirtualDom_node('input');
 var $elm$core$Dict$fromList = function (assocs) {
@@ -7558,23 +8303,6 @@ var $author$project$GossipProtocol$Conditions$Predefined$name = $elm$core$Dict$f
 			_Utils_Tuple2('wco', 'Weak Call Once'),
 			_Utils_Tuple2('lns', 'Learn New Secrets')
 		]));
-var $elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 0, a: a};
-};
-var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var $elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			$elm$virtual_dom$VirtualDom$on,
-			event,
-			$elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var $elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		$elm$html$Html$Events$on,
-		'click',
-		$elm$json$Json$Decode$succeed(msg));
-};
 var $elm$html$Html$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
 };
@@ -7608,9 +8336,9 @@ var $elm$html$Html$Events$onInput = function (tagger) {
 			$elm$html$Html$Events$alwaysStop,
 			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
 };
-var $elm$html$Html$p = _VirtualDom_node('p');
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
 var $author$project$Utils$Alert$Error = 2;
+var $author$project$Utils$Alert$Warning = 1;
 var $author$project$GossipGraph$Agent$fromId = F2(
 	function (agents, id) {
 		return A2(
@@ -7619,17 +8347,15 @@ var $author$project$GossipGraph$Agent$fromId = F2(
 			A2(
 				$author$project$Utils$List$find,
 				function (agent) {
-					return _Utils_eq(agent.bO, id);
+					return _Utils_eq(agent.bP, id);
 				},
 				agents));
 	});
-var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $author$project$GossipGraph$Call$render = F2(
 	function (agents, call) {
 		var _v0 = _Utils_Tuple2(
-			A2($author$project$GossipGraph$Agent$fromId, agents, call.as),
-			A2($author$project$GossipGraph$Agent$fromId, agents, call.a8));
+			A2($author$project$GossipGraph$Agent$fromId, agents, call.av),
+			A2($author$project$GossipGraph$Agent$fromId, agents, call.a9));
 		if ((!_v0.a.$) && (!_v0.b.$)) {
 			var from = _v0.a.a;
 			var to = _v0.b.a;
@@ -7642,7 +8368,7 @@ var $author$project$GossipGraph$Call$render = F2(
 				_List_fromArray(
 					[
 						$elm$html$Html$text(
-						$elm$core$String$fromChar(from.cH) + (' 📞 ' + $elm$core$String$fromChar(to.cH)))
+						$elm$core$String$fromChar(from.cL) + (' 📞 ' + $elm$core$String$fromChar(to.cL)))
 					]));
 		} else {
 			return A2(
@@ -7667,10 +8393,6 @@ var $author$project$Utils$Alert$cls = function (type_) {
 			return 'error';
 	}
 };
-var $lattyware$elm_fontawesome$FontAwesome$Icon$Icon = F5(
-	function (prefix, name, width, height, paths) {
-		return {dH: height, cH: name, ff: paths, h: prefix, eA: width};
-	});
 var $lattyware$elm_fontawesome$FontAwesome$Solid$exclamationCircle = A5(
 	$lattyware$elm_fontawesome$FontAwesome$Icon$Icon,
 	'fas',
@@ -7679,7 +8401,6 @@ var $lattyware$elm_fontawesome$FontAwesome$Solid$exclamationCircle = A5(
 	512,
 	_List_fromArray(
 		['M504 256c0 136.997-111.043 248-248 248S8 392.997 8 256C8 119.083 119.043 8 256 8s248 111.083 248 248zm-248 50c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z']));
-var $elm$svg$Svg$Attributes$class = _VirtualDom_attribute('class');
 var $lattyware$elm_fontawesome$FontAwesome$Attributes$fa2x = $elm$svg$Svg$Attributes$class('fa-2x');
 var $lattyware$elm_fontawesome$FontAwesome$Solid$infoCircle = A5(
 	$lattyware$elm_fontawesome$FontAwesome$Icon$Icon,
@@ -7697,424 +8418,6 @@ var $lattyware$elm_fontawesome$FontAwesome$Solid$timesCircle = A5(
 	512,
 	_List_fromArray(
 		['M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm121.6 313.1c4.7 4.7 4.7 12.3 0 17L338 377.6c-4.7 4.7-12.3 4.7-17 0L256 312l-65.1 65.6c-4.7 4.7-12.3 4.7-17 0L134.4 338c-4.7-4.7-4.7-12.3 0-17l65.6-65-65.6-65.1c-4.7-4.7-4.7-12.3 0-17l39.6-39.6c4.7-4.7 12.3-4.7 17 0l65 65.7 65.1-65.6c4.7-4.7 12.3-4.7 17 0l39.6 39.6c4.7 4.7 4.7 12.3 0 17L312 256l65.6 65.1z']));
-var $lattyware$elm_fontawesome$FontAwesome$Icon$Presentation = $elm$core$Basics$identity;
-var $lattyware$elm_fontawesome$FontAwesome$Icon$present = function (icon) {
-	return {bI: _List_Nil, dL: icon, bO: $elm$core$Maybe$Nothing, bs: $elm$core$Maybe$Nothing, c1: 'img', fx: $elm$core$Maybe$Nothing, b$: _List_Nil};
-};
-var $lattyware$elm_fontawesome$FontAwesome$Icon$styled = F2(
-	function (attributes, _v0) {
-		var presentation = _v0;
-		return _Utils_update(
-			presentation,
-			{
-				bI: _Utils_ap(presentation.bI, attributes)
-			});
-	});
-var $elm$virtual_dom$VirtualDom$attribute = F2(
-	function (key, value) {
-		return A2(
-			_VirtualDom_attribute,
-			_VirtualDom_noOnOrFormAction(key),
-			_VirtualDom_noJavaScriptOrHtmlUri(value));
-	});
-var $elm$html$Html$Attributes$attribute = $elm$virtual_dom$VirtualDom$attribute;
-var $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$add = F2(
-	function (transform, combined) {
-		switch (transform.$) {
-			case 0:
-				var direction = transform.a;
-				var amount = function () {
-					if (!direction.$) {
-						var by = direction.a;
-						return by;
-					} else {
-						var by = direction.a;
-						return -by;
-					}
-				}();
-				return _Utils_update(
-					combined,
-					{c4: combined.c4 + amount});
-			case 1:
-				var direction = transform.a;
-				var _v2 = function () {
-					switch (direction.$) {
-						case 0:
-							var by = direction.a;
-							return _Utils_Tuple2(0, -by);
-						case 1:
-							var by = direction.a;
-							return _Utils_Tuple2(0, by);
-						case 2:
-							var by = direction.a;
-							return _Utils_Tuple2(-by, 0);
-						default:
-							var by = direction.a;
-							return _Utils_Tuple2(by, 0);
-					}
-				}();
-				var x = _v2.a;
-				var y = _v2.b;
-				return _Utils_update(
-					combined,
-					{R: combined.R + x, S: combined.S + y});
-			case 2:
-				var rotation = transform.a;
-				return _Utils_update(
-					combined,
-					{fk: combined.fk + rotation});
-			default:
-				if (!transform.a) {
-					var _v4 = transform.a;
-					return _Utils_update(
-						combined,
-						{eX: true});
-				} else {
-					var _v5 = transform.a;
-					return _Utils_update(
-						combined,
-						{eY: true});
-				}
-		}
-	});
-var $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$baseSize = 16;
-var $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$meaninglessTransform = {eX: false, eY: false, fk: 0, c4: $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$baseSize, R: 0, S: 0};
-var $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$combine = function (transforms) {
-	return A3($elm$core$List$foldl, $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$add, $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$meaninglessTransform, transforms);
-};
-var $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$meaningfulTransform = function (transforms) {
-	var combined = $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$combine(transforms);
-	return _Utils_eq(combined, $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$meaninglessTransform) ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(combined);
-};
-var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
-var $elm$svg$Svg$svg = $elm$svg$Svg$trustedNode('svg');
-var $elm$svg$Svg$Attributes$id = _VirtualDom_attribute('id');
-var $elm$svg$Svg$text = $elm$virtual_dom$VirtualDom$text;
-var $elm$svg$Svg$title = $elm$svg$Svg$trustedNode('title');
-var $lattyware$elm_fontawesome$FontAwesome$Icon$titledContents = F3(
-	function (titleId, contents, title) {
-		return A2(
-			$elm$core$List$cons,
-			A2(
-				$elm$svg$Svg$title,
-				_List_fromArray(
-					[
-						$elm$svg$Svg$Attributes$id(titleId)
-					]),
-				_List_fromArray(
-					[
-						$elm$svg$Svg$text(title)
-					])),
-			contents);
-	});
-var $elm$core$String$fromFloat = _String_fromNumber;
-var $elm$svg$Svg$Attributes$transform = _VirtualDom_attribute('transform');
-var $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$transformForSvg = F3(
-	function (containerWidth, iconWidth, transform) {
-		var path = 'translate(' + ($elm$core$String$fromFloat((iconWidth / 2) * (-1)) + ' -256)');
-		var outer = 'translate(' + ($elm$core$String$fromFloat(containerWidth / 2) + ' 256)');
-		var innerTranslate = 'translate(' + ($elm$core$String$fromFloat(transform.R * 32) + (',' + ($elm$core$String$fromFloat(transform.S * 32) + ') ')));
-		var innerRotate = 'rotate(' + ($elm$core$String$fromFloat(transform.fk) + ' 0 0)');
-		var flipY = transform.eY ? (-1) : 1;
-		var scaleY = (transform.c4 / $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$baseSize) * flipY;
-		var flipX = transform.eX ? (-1) : 1;
-		var scaleX = (transform.c4 / $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$baseSize) * flipX;
-		var innerScale = 'scale(' + ($elm$core$String$fromFloat(scaleX) + (', ' + ($elm$core$String$fromFloat(scaleY) + ') ')));
-		return {
-			dM: $elm$svg$Svg$Attributes$transform(
-				_Utils_ap(
-					innerTranslate,
-					_Utils_ap(innerScale, innerRotate))),
-			bs: $elm$svg$Svg$Attributes$transform(outer),
-			d6: $elm$svg$Svg$Attributes$transform(path)
-		};
-	});
-var $elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
-var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
-var $elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
-var $elm$svg$Svg$Attributes$x = _VirtualDom_attribute('x');
-var $elm$svg$Svg$Attributes$y = _VirtualDom_attribute('y');
-var $lattyware$elm_fontawesome$FontAwesome$Icon$allSpace = _List_fromArray(
-	[
-		$elm$svg$Svg$Attributes$x('0'),
-		$elm$svg$Svg$Attributes$y('0'),
-		$elm$svg$Svg$Attributes$width('100%'),
-		$elm$svg$Svg$Attributes$height('100%')
-	]);
-var $elm$svg$Svg$clipPath = $elm$svg$Svg$trustedNode('clipPath');
-var $elm$svg$Svg$Attributes$clipPath = _VirtualDom_attribute('clip-path');
-var $elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
-var $elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
-var $elm$svg$Svg$path = $elm$svg$Svg$trustedNode('path');
-var $lattyware$elm_fontawesome$FontAwesome$Svg$Internal$corePath = F2(
-	function (attrs, d) {
-		return A2(
-			$elm$svg$Svg$path,
-			A2(
-				$elm$core$List$cons,
-				$elm$svg$Svg$Attributes$fill('currentColor'),
-				A2(
-					$elm$core$List$cons,
-					$elm$svg$Svg$Attributes$d(d),
-					attrs)),
-			_List_Nil);
-	});
-var $elm$svg$Svg$g = $elm$svg$Svg$trustedNode('g');
-var $lattyware$elm_fontawesome$FontAwesome$Svg$Internal$corePaths = F2(
-	function (attrs, icon) {
-		var _v0 = icon.ff;
-		if (!_v0.b) {
-			return A2($lattyware$elm_fontawesome$FontAwesome$Svg$Internal$corePath, attrs, '');
-		} else {
-			if (!_v0.b.b) {
-				var only = _v0.a;
-				return A2($lattyware$elm_fontawesome$FontAwesome$Svg$Internal$corePath, attrs, only);
-			} else {
-				var secondary = _v0.a;
-				var _v1 = _v0.b;
-				var primary = _v1.a;
-				return A2(
-					$elm$svg$Svg$g,
-					_List_fromArray(
-						[
-							$elm$svg$Svg$Attributes$class('fa-group')
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$lattyware$elm_fontawesome$FontAwesome$Svg$Internal$corePath,
-							A2(
-								$elm$core$List$cons,
-								$elm$svg$Svg$Attributes$class('fa-secondary'),
-								attrs),
-							secondary),
-							A2(
-							$lattyware$elm_fontawesome$FontAwesome$Svg$Internal$corePath,
-							A2(
-								$elm$core$List$cons,
-								$elm$svg$Svg$Attributes$class('fa-primary'),
-								attrs),
-							primary)
-						]));
-			}
-		}
-	});
-var $elm$svg$Svg$defs = $elm$svg$Svg$trustedNode('defs');
-var $elm$svg$Svg$mask = $elm$svg$Svg$trustedNode('mask');
-var $elm$svg$Svg$Attributes$mask = _VirtualDom_attribute('mask');
-var $elm$svg$Svg$Attributes$maskContentUnits = _VirtualDom_attribute('maskContentUnits');
-var $elm$svg$Svg$Attributes$maskUnits = _VirtualDom_attribute('maskUnits');
-var $elm$svg$Svg$rect = $elm$svg$Svg$trustedNode('rect');
-var $lattyware$elm_fontawesome$FontAwesome$Icon$viewMaskedWithTransform = F4(
-	function (id, transforms, inner, outer) {
-		var maskInnerGroup = A2(
-			$elm$svg$Svg$g,
-			_List_fromArray(
-				[transforms.dM]),
-			_List_fromArray(
-				[
-					A2(
-					$lattyware$elm_fontawesome$FontAwesome$Svg$Internal$corePaths,
-					_List_fromArray(
-						[
-							$elm$svg$Svg$Attributes$fill('black'),
-							transforms.d6
-						]),
-					inner)
-				]));
-		var maskId = 'mask-' + (inner.cH + ('-' + id));
-		var maskTag = A2(
-			$elm$svg$Svg$mask,
-			_Utils_ap(
-				_List_fromArray(
-					[
-						$elm$svg$Svg$Attributes$id(maskId),
-						$elm$svg$Svg$Attributes$maskUnits('userSpaceOnUse'),
-						$elm$svg$Svg$Attributes$maskContentUnits('userSpaceOnUse')
-					]),
-				$lattyware$elm_fontawesome$FontAwesome$Icon$allSpace),
-			_List_fromArray(
-				[
-					A2(
-					$elm$svg$Svg$rect,
-					A2(
-						$elm$core$List$cons,
-						$elm$svg$Svg$Attributes$fill('white'),
-						$lattyware$elm_fontawesome$FontAwesome$Icon$allSpace),
-					_List_Nil),
-					A2(
-					$elm$svg$Svg$g,
-					_List_fromArray(
-						[transforms.bs]),
-					_List_fromArray(
-						[maskInnerGroup]))
-				]));
-		var clipId = 'clip-' + (outer.cH + ('-' + id));
-		var defs = A2(
-			$elm$svg$Svg$defs,
-			_List_Nil,
-			_List_fromArray(
-				[
-					A2(
-					$elm$svg$Svg$clipPath,
-					_List_fromArray(
-						[
-							$elm$svg$Svg$Attributes$id(clipId)
-						]),
-					_List_fromArray(
-						[
-							A2($lattyware$elm_fontawesome$FontAwesome$Svg$Internal$corePaths, _List_Nil, outer)
-						])),
-					maskTag
-				]));
-		return _List_fromArray(
-			[
-				defs,
-				A2(
-				$elm$svg$Svg$rect,
-				$elm$core$List$concat(
-					_List_fromArray(
-						[
-							_List_fromArray(
-							[
-								$elm$svg$Svg$Attributes$fill('currentColor'),
-								$elm$svg$Svg$Attributes$clipPath('url(#' + (clipId + ')')),
-								$elm$svg$Svg$Attributes$mask('url(#' + (maskId + ')'))
-							]),
-							$lattyware$elm_fontawesome$FontAwesome$Icon$allSpace
-						])),
-				_List_Nil)
-			]);
-	});
-var $lattyware$elm_fontawesome$FontAwesome$Icon$viewWithTransform = F2(
-	function (transforms, icon) {
-		if (!transforms.$) {
-			var ts = transforms.a;
-			return A2(
-				$elm$svg$Svg$g,
-				_List_fromArray(
-					[ts.bs]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$svg$Svg$g,
-						_List_fromArray(
-							[ts.dM]),
-						_List_fromArray(
-							[
-								A2(
-								$lattyware$elm_fontawesome$FontAwesome$Svg$Internal$corePaths,
-								_List_fromArray(
-									[ts.d6]),
-								icon)
-							]))
-					]));
-		} else {
-			return A2($lattyware$elm_fontawesome$FontAwesome$Svg$Internal$corePaths, _List_Nil, icon);
-		}
-	});
-var $elm$core$Maybe$withDefault = F2(
-	function (_default, maybe) {
-		if (!maybe.$) {
-			var value = maybe.a;
-			return value;
-		} else {
-			return _default;
-		}
-	});
-var $lattyware$elm_fontawesome$FontAwesome$Icon$internalView = function (_v0) {
-	var icon = _v0.dL;
-	var attributes = _v0.bI;
-	var transforms = _v0.b$;
-	var role = _v0.c1;
-	var id = _v0.bO;
-	var title = _v0.fx;
-	var outer = _v0.bs;
-	var alwaysId = A2($elm$core$Maybe$withDefault, icon.cH, id);
-	var titleId = alwaysId + '-title';
-	var semantics = A2(
-		$elm$core$Maybe$withDefault,
-		A2($elm$html$Html$Attributes$attribute, 'aria-hidden', 'true'),
-		A2(
-			$elm$core$Maybe$map,
-			$elm$core$Basics$always(
-				A2($elm$html$Html$Attributes$attribute, 'aria-labelledby', titleId)),
-			title));
-	var _v1 = A2(
-		$elm$core$Maybe$withDefault,
-		_Utils_Tuple2(icon.eA, icon.dH),
-		A2(
-			$elm$core$Maybe$map,
-			function (o) {
-				return _Utils_Tuple2(o.eA, o.dH);
-			},
-			outer));
-	var width = _v1.a;
-	var height = _v1.b;
-	var classes = _List_fromArray(
-		[
-			'svg-inline--fa',
-			'fa-' + icon.cH,
-			'fa-w-' + $elm$core$String$fromInt(
-			$elm$core$Basics$ceiling((width / height) * 16))
-		]);
-	var svgTransform = A2(
-		$elm$core$Maybe$map,
-		A2($lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$transformForSvg, width, icon.eA),
-		$lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$meaningfulTransform(transforms));
-	var contents = function () {
-		var resolvedSvgTransform = A2(
-			$elm$core$Maybe$withDefault,
-			A3($lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$transformForSvg, width, icon.eA, $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$meaninglessTransform),
-			svgTransform);
-		return A2(
-			$elm$core$Maybe$withDefault,
-			_List_fromArray(
-				[
-					A2($lattyware$elm_fontawesome$FontAwesome$Icon$viewWithTransform, svgTransform, icon)
-				]),
-			A2(
-				$elm$core$Maybe$map,
-				A3($lattyware$elm_fontawesome$FontAwesome$Icon$viewMaskedWithTransform, alwaysId, resolvedSvgTransform, icon),
-				outer));
-	}();
-	var potentiallyTitledContents = A2(
-		$elm$core$Maybe$withDefault,
-		contents,
-		A2(
-			$elm$core$Maybe$map,
-			A2($lattyware$elm_fontawesome$FontAwesome$Icon$titledContents, titleId, contents),
-			title));
-	return A2(
-		$elm$svg$Svg$svg,
-		$elm$core$List$concat(
-			_List_fromArray(
-				[
-					_List_fromArray(
-					[
-						A2($elm$html$Html$Attributes$attribute, 'role', role),
-						A2($elm$html$Html$Attributes$attribute, 'xmlns', 'http://www.w3.org/2000/svg'),
-						$elm$svg$Svg$Attributes$viewBox(
-						'0 0 ' + ($elm$core$String$fromInt(width) + (' ' + $elm$core$String$fromInt(height)))),
-						semantics
-					]),
-					A2($elm$core$List$map, $elm$svg$Svg$Attributes$class, classes),
-					attributes
-				])),
-		potentiallyTitledContents);
-};
-var $lattyware$elm_fontawesome$FontAwesome$Icon$view = function (presentation) {
-	return $lattyware$elm_fontawesome$FontAwesome$Icon$internalView(presentation);
-};
-var $lattyware$elm_fontawesome$FontAwesome$Icon$viewStyled = function (styles) {
-	return A2(
-		$elm$core$Basics$composeR,
-		$lattyware$elm_fontawesome$FontAwesome$Icon$present,
-		A2(
-			$elm$core$Basics$composeR,
-			$lattyware$elm_fontawesome$FontAwesome$Icon$styled(styles),
-			$lattyware$elm_fontawesome$FontAwesome$Icon$view));
-};
 var $author$project$Utils$Alert$icn = function (type_) {
 	switch (type_) {
 		case 0:
@@ -8223,8 +8526,8 @@ var $author$project$GossipProtocol$GossipProtocol$sequencePermittedOn = F3(
 		};
 		var isCallPermitted = F3(
 			function (_v2, currentGraph, callHistory) {
-				var from = _v2.as;
-				var to = _v2.a8;
+				var from = _v2.av;
+				var to = _v2.a9;
 				var rels = relations(currentGraph);
 				return (!_Utils_eq(from, to)) && (A2(
 					$elm$core$List$any,
@@ -8261,47 +8564,37 @@ var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
 var $author$project$Main$callSequenceView = function (model) {
 	var permitted = function () {
-		var _v0 = _Utils_Tuple2(model.C, model.ag);
+		var _v0 = _Utils_Tuple2(model.A, model.at);
 		if ((!_v0.a.$) && (!_v0.b.$)) {
 			var graph = _v0.a.a;
 			var sequence = _v0.b.a;
-			return A3($author$project$GossipProtocol$GossipProtocol$sequencePermittedOn, model.W, graph, sequence);
+			return A3($author$project$GossipProtocol$GossipProtocol$sequencePermittedOn, model.X, graph, sequence);
 		} else {
 			return false;
 		}
 	}();
 	return A2(
 		$elm$html$Html$section,
-		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$id('sequences')
+			]),
 		_List_fromArray(
 			[
 				A2(
-				$elm$html$Html$h2,
+				$elm$html$Html$header,
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Call sequence')
+						A2(
+						$elm$html$Html$h2,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Call sequence')
+							])),
+						A2($author$project$Main$helpButtonView, 'Call Sequences', $author$project$Main$callSequenceHelpView)
 					])),
-				A2(
-				$elm$html$Html$p,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text('You can enter a text representation of a call sequence on the gossip graph above here. This sequence is taken as the call history.')
-					])),
-				permitted ? A2(
-				$author$project$Utils$Alert$render,
-				0,
-				'This sequence is permitted under the “' + (A2(
-					$elm$core$Maybe$withDefault,
-					'?',
-					A2($elm$core$Dict$get, model.y, $author$project$GossipProtocol$Conditions$Predefined$name)) + '” protocol.')) : A2(
-				$author$project$Utils$Alert$render,
-				1,
-				'This sequence is not permitted under the “' + (A2(
-					$elm$core$Maybe$withDefault,
-					'?',
-					A2($elm$core$Dict$get, model.y, $author$project$GossipProtocol$Conditions$Predefined$name)) + '” protocol.')),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
@@ -8316,11 +8609,79 @@ var $author$project$Main$callSequenceView = function (model) {
 							[
 								$elm$html$Html$Attributes$type_('text'),
 								$elm$html$Html$Attributes$id('call-sequence-input'),
-								$elm$html$Html$Attributes$value(model.aX),
+								$elm$html$Html$Attributes$class(
+								(permitted && (!$elm$core$String$isEmpty(model.ah))) ? 'permitted' : ($elm$core$String$isEmpty(model.ah) ? '' : 'not-permitted')),
+								$elm$html$Html$Attributes$value(model.ah),
 								$elm$html$Html$Events$onInput($author$project$Main$ChangeCallSequence),
 								$elm$html$Html$Attributes$placeholder('Call sequence input')
 							]),
 						_List_Nil),
+						$elm$core$String$isEmpty(model.ah) ? A2(
+						$elm$html$Html$button,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$disabled(true),
+								$elm$html$Html$Attributes$class('help'),
+								$elm$html$Html$Attributes$id('call-sequence-validity')
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text(' ')
+							])) : (permitted ? A2(
+						$elm$html$Html$button,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('help permitted'),
+								$elm$html$Html$Attributes$id('call-sequence-validity'),
+								$elm$html$Html$Events$onClick(
+								A2(
+									$author$project$Main$ShowModal,
+									'Call sequence permissibility',
+									A2(
+										$author$project$Main$callSequencePermissibilityHelpView,
+										A2(
+											$elm$core$Maybe$withDefault,
+											'?',
+											A2($elm$core$Dict$get, model.z, $author$project$GossipProtocol$Conditions$Predefined$name)),
+										permitted)))
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$lattyware$elm_fontawesome$FontAwesome$Icon$viewStyled,
+								_List_fromArray(
+									[
+										A2($elm$html$Html$Attributes$style, 'color', 'green')
+									]),
+								$lattyware$elm_fontawesome$FontAwesome$Solid$check)
+							])) : A2(
+						$elm$html$Html$button,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('help not-permitted'),
+								$elm$html$Html$Attributes$id('call-sequence-validity'),
+								$elm$html$Html$Events$onClick(
+								A2(
+									$author$project$Main$ShowModal,
+									'Call sequence permissibility',
+									A2(
+										$author$project$Main$callSequencePermissibilityHelpView,
+										A2(
+											$elm$core$Maybe$withDefault,
+											'?',
+											A2($elm$core$Dict$get, model.z, $author$project$GossipProtocol$Conditions$Predefined$name)),
+										permitted)))
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$lattyware$elm_fontawesome$FontAwesome$Icon$viewStyled,
+								_List_fromArray(
+									[
+										A2($elm$html$Html$Attributes$style, 'color', 'red')
+									]),
+								$lattyware$elm_fontawesome$FontAwesome$Solid$times)
+							]))),
 						A2(
 						$elm$html$Html$button,
 						_List_fromArray(
@@ -8342,16 +8703,60 @@ var $author$project$Main$callSequenceView = function (model) {
 					[
 						$elm$html$Html$Attributes$class('call-list')
 					]),
-				A2($author$project$CallSequence$Renderer$render, model.ag, model.ap))
+				A2($author$project$CallSequence$Renderer$render, model.at, model.ar))
 			]));
 };
-var $author$project$Main$InsertExampleGraph = function (a) {
-	return {$: 5, a: a};
-};
-var $author$project$Main$TimeTravel = function (a) {
-	return {$: 4, a: a};
-};
-var $elm$html$Html$br = _VirtualDom_node('br');
+var $author$project$Utils$Alert$Information = 0;
+var $author$project$Main$canonicalRepresentationInfoView = _List_fromArray(
+	[
+		A2(
+		$elm$html$Html$p,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('The '),
+				A2(
+				$elm$html$Html$strong,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('canonical representation')
+					])),
+				$elm$html$Html$text(' of the input represents the same graph as the one generated from the input string.\n            However, it has renamed all agents so the first agent is called '),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('A')
+					])),
+				$elm$html$Html$text(', the second '),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('B')
+					])),
+				$elm$html$Html$text(', and so on. For example, the input string '),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Xqv Qvx Vxq')
+					])),
+				$elm$html$Html$text(' becomes '),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Abc aBc abC')
+					])),
+				$elm$html$Html$text('.')
+			]))
+	]);
 var $lattyware$elm_fontawesome$FontAwesome$Solid$chalkboard = A5(
 	$lattyware$elm_fontawesome$FontAwesome$Icon$Icon,
 	'fas',
@@ -8378,7 +8783,7 @@ var $lattyware$elm_fontawesome$FontAwesome$Solid$feather = A5(
 		['M467.14 44.84c-62.55-62.48-161.67-64.78-252.28 25.73-78.61 78.52-60.98 60.92-85.75 85.66-60.46 60.39-70.39 150.83-63.64 211.17l178.44-178.25c6.26-6.25 16.4-6.25 22.65 0s6.25 16.38 0 22.63L7.04 471.03c-9.38 9.37-9.38 24.57 0 33.94 9.38 9.37 24.6 9.37 33.98 0l66.1-66.03C159.42 454.65 279 457.11 353.95 384h-98.19l147.57-49.14c49.99-49.93 36.38-36.18 46.31-46.86h-97.78l131.54-43.8c45.44-74.46 34.31-148.84-16.26-199.36z']));
 var $author$project$GossipGraph$Relation$isOfKind = F2(
 	function (relation, kind) {
-		return _Utils_eq(relation.dS, kind) || ((relation.dS === 1) && (!kind));
+		return _Utils_eq(relation.dW, kind) || ((relation.dW === 1) && (!kind));
 	});
 var $elm_community$intdict$IntDict$keys = function (dict) {
 	return A3(
@@ -8407,14 +8812,14 @@ var $author$project$GossipProtocol$GossipProtocol$isStronglyConnected = F2(
 							$elm$core$List$concatMap,
 							function (r) {
 								return _List_fromArray(
-									[r.as, r.a8]);
+									[r.av, r.a9]);
 							},
 							A2(
 								$elm$core$List$filter,
 								function (r) {
 									return A2($author$project$GossipGraph$Relation$isOfKind, r, kind);
 								},
-								$elm_community$intdict$IntDict$values(ctx.cN))))));
+								$elm_community$intdict$IntDict$values(ctx.cR))))));
 		};
 		return A3(
 			$elm_community$graph$Graph$fold,
@@ -8434,8 +8839,8 @@ var $elm_community$intdict$IntDict$map = F2(
 				var l = dict.a;
 				return A2(
 					$elm_community$intdict$IntDict$leaf,
-					l.dR,
-					A2(f, l.dR, l.ev));
+					l.dV,
+					A2(f, l.dV, l.ez));
 			default:
 				var i = dict.a;
 				return A3(
@@ -8495,13 +8900,13 @@ var $elm_community$intdict$IntDict$uniteWith = F3(
 								var r2 = _v0.b.a;
 								return A3(
 									$elm_community$intdict$IntDict$update,
-									r2.dR,
+									r2.dV,
 									function (l_) {
 										return A3(
 											mergeWith,
-											r2.dR,
+											r2.dV,
 											l_,
-											$elm$core$Maybe$Just(r2.ev));
+											$elm$core$Maybe$Just(r2.ez));
 									},
 									l);
 							default:
@@ -8570,12 +8975,12 @@ var $elm_community$intdict$IntDict$uniteWith = F3(
 			var l2 = _v0.a.a;
 			return A3(
 				$elm_community$intdict$IntDict$update,
-				l2.dR,
+				l2.dV,
 				function (r_) {
 					return A3(
 						mergeWith,
-						l2.dR,
-						$elm$core$Maybe$Just(l2.ev),
+						l2.dV,
+						$elm$core$Maybe$Just(l2.ez),
 						r_);
 				},
 				r);
@@ -8593,11 +8998,11 @@ var $elm_community$graph$Graph$symmetricClosure = function (edgeMerger) {
 			var edges_ = A3(
 				$elm_community$intdict$IntDict$uniteWith,
 				orderedEdgeMerger(nodeId),
-				ctx.cN,
+				ctx.cR,
 				ctx.l);
 			return _Utils_update(
 				ctx,
-				{l: edges_, cN: edges_});
+				{l: edges_, cR: edges_});
 		});
 	return A2(
 		$elm$core$Basics$composeR,
@@ -8624,14 +9029,14 @@ var $author$project$GossipProtocol$GossipProtocol$isWeaklyConnected = F2(
 							$elm$core$List$concatMap,
 							function (r) {
 								return _List_fromArray(
-									[r.as, r.a8]);
+									[r.av, r.a9]);
 							},
 							A2(
 								$elm$core$List$filter,
 								function (r) {
 									return A2($author$project$GossipGraph$Relation$isOfKind, r, kind);
 								},
-								$elm_community$intdict$IntDict$values(ctx.cN))))));
+								$elm_community$intdict$IntDict$values(ctx.cR))))));
 		};
 		return A3(
 			$elm_community$graph$Graph$fold,
@@ -8659,7 +9064,6 @@ var $lattyware$elm_fontawesome$FontAwesome$Solid$phone = A5(
 	_List_fromArray(
 		['M493.4 24.6l-104-24c-11.3-2.6-22.9 3.3-27.5 13.9l-48 112c-4.2 9.8-1.4 21.3 6.9 28l60.6 49.6c-36 76.7-98.9 140.5-177.2 177.2l-49.6-60.6c-6.8-8.3-18.2-11.1-28-6.9l-112 48C3.9 366.5-2 378.1.6 389.4l24 104C27.1 504.2 36.7 512 48 512c256.1 0 464-207.5 464-464 0-11.2-7.7-20.9-18.6-23.4z']));
 var $elm$html$Html$span = _VirtualDom_node('span');
-var $lattyware$elm_fontawesome$FontAwesome$Icon$viewIcon = A2($elm$core$Basics$composeR, $lattyware$elm_fontawesome$FontAwesome$Icon$present, $lattyware$elm_fontawesome$FontAwesome$Icon$view);
 var $author$project$Main$connectionInfoView = F2(
 	function (kind, graph) {
 		var weaklyConnected = A2(
@@ -8755,7 +9159,7 @@ var $author$project$Main$connectionInfoView = F2(
 							_List_fromArray(
 								[
 									$elm$html$Html$text(
-									'This relation is ' + ((stronglyConnected ? '' : 'not') + ' strongly connected'))
+									'This relation is ' + ((stronglyConnected ? '' : 'not') + ' strongly connected.'))
 								]))
 						])),
 					A2(
@@ -8785,52 +9189,154 @@ var $author$project$Main$connectionInfoView = F2(
 							_List_fromArray(
 								[
 									$elm$html$Html$text(
-									'This relation is ' + ((weaklyConnected ? '' : 'not') + ' weakly connected'))
+									'This relation is ' + ((weaklyConnected ? '' : 'not') + ' weakly connected.'))
 								]))
 						]))
 				]));
 	});
 var $lattyware$elm_fontawesome$FontAwesome$Attributes$fa7x = $elm$svg$Svg$Attributes$class('fa-7x');
-var $elm$html$Html$h3 = _VirtualDom_node('h3');
-var $elm$core$Elm$JsArray$foldl = _JsArray_foldl;
-var $elm$core$Elm$JsArray$indexedMap = _JsArray_indexedMap;
-var $elm$core$Array$indexedMap = F2(
-	function (func, _v0) {
-		var len = _v0.a;
-		var tree = _v0.c;
-		var tail = _v0.d;
-		var initialBuilder = {
-			u: _List_Nil,
-			q: 0,
-			t: A3(
-				$elm$core$Elm$JsArray$indexedMap,
-				func,
-				$elm$core$Array$tailIndex(len),
-				tail)
-		};
-		var helper = F2(
-			function (node, builder) {
-				if (!node.$) {
-					var subTree = node.a;
-					return A3($elm$core$Elm$JsArray$foldl, helper, builder, subTree);
-				} else {
-					var leaf = node.a;
-					var offset = builder.q * $elm$core$Array$branchFactor;
-					var mappedLeaf = $elm$core$Array$Leaf(
-						A3($elm$core$Elm$JsArray$indexedMap, func, offset, leaf));
-					return {
-						u: A2($elm$core$List$cons, mappedLeaf, builder.u),
-						q: builder.q + 1,
-						t: builder.t
-					};
-				}
-			});
-		return A2(
-			$elm$core$Array$builderToArray,
-			true,
-			A3($elm$core$Elm$JsArray$foldl, helper, initialBuilder, tree));
-	});
-var $elm$html$Html$li = _VirtualDom_node('li');
+var $elm$html$Html$Attributes$for = $elm$html$Html$Attributes$stringProperty('htmlFor');
+var $author$project$Main$InsertExampleGraph = function (a) {
+	return {$: 5, a: a};
+};
+var $author$project$Main$gossipGraphExamples = _List_fromArray(
+	[
+		A2(
+		$elm$html$Html$p,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('These are some examples')
+			])),
+		A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('input-group')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$type_('button'),
+						$elm$html$Html$Events$onClick(
+						$author$project$Main$InsertExampleGraph('Abc aBc abC'))
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Only numbers')
+					])),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$type_('button'),
+						$elm$html$Html$Events$onClick(
+						$author$project$Main$InsertExampleGraph('ABC ABC ABC'))
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('All Secrets')
+					])),
+				A2(
+				$elm$html$Html$button,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$type_('button'),
+						$elm$html$Html$Events$onClick(
+						$author$project$Main$InsertExampleGraph('Xyaz Axzy ZyAb BaZX Y'))
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Complex example')
+					]))
+			]))
+	]);
+var $elm$html$Html$a = _VirtualDom_node('a');
+var $elm$html$Html$Attributes$href = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'href',
+		_VirtualDom_noJavaScriptUri(url));
+};
+var $author$project$Main$gossipGraphHelpView = _List_fromArray(
+	[
+		A2(
+		$elm$html$Html$p,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('You can enter a text representation of a gossip graph here. Examples of valid input are '),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Abc aBc abC')
+					])),
+				$elm$html$Html$text(', '),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('A B C')
+					])),
+				$elm$html$Html$text(' and '),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('abC Abc aBc')
+					])),
+				$elm$html$Html$text('. The first unique uppercase letter of each segment is taken as the name of the agent represented by that segment. (So in the last example, the first agent is called “C”, the second “A” and the last “B”)')
+			])),
+		A2(
+		$elm$html$Html$p,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('\n            Knowing how agents are named, it becomes easier to read these strings. \n            They represent both the agents and relations between agents at the same time.\n            An uppercase letter represents a “secret” relation S, and a lowercase letter represents a “number” relation N.\n            For example, the string\n            '),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('A B C')
+					])),
+				$elm$html$Html$text('\n             contains the identity relation on S for the agents A, B and C.\n            Additionally, all agents who know another agent\'s secret are also assumed to know that agent\'s number.\n            ')
+			])),
+		A2(
+		$elm$html$Html$p,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('Lastly, the icons in the top-left corner provide some information about the current graph. When you hover over them, you are shown extra details.')
+			])),
+		A2(
+		$elm$html$Html$p,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('This notation is based on the notation in the appendix of '),
+				A2(
+				$elm$html$Html$a,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$href('https://arxiv.org/abs/1907.12321')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('van Ditmarsch et al. (2019)')
+					])),
+				$elm$html$Html$text('.')
+			])),
+		A2($author$project$Utils$Alert$render, 0, 'The next version of this application will allow an alternative input format: Instead of the letter-based format, a list-like format will be implemented. The string Ab aB will look like ([[0, 1], [0, 1]], [[0], [1]]).')
+	]);
+var $elm$html$Html$label = _VirtualDom_node('label');
 var $elm_community$typed_svg$TypedSvg$Types$Align = F2(
 	function (a, b) {
 		return {$: 0, a: a, b: b};
@@ -8848,16 +9354,16 @@ var $gampleman$elm_visualization$Force$entity = F2(
 		var radius = $elm$core$Basics$sqrt(index) * $gampleman$elm_visualization$Force$initialRadius;
 		var angle = index * $gampleman$elm_visualization$Force$initialAngle;
 		return {
-			bO: index,
-			ev: a,
-			ae: 0.0,
+			bP: index,
+			ez: a,
 			af: 0.0,
-			R: radius * $elm$core$Basics$cos(angle),
-			S: radius * $elm$core$Basics$sin(angle)
+			ag: 0.0,
+			S: radius * $elm$core$Basics$cos(angle),
+			T: radius * $elm$core$Basics$sin(angle)
 		};
 	});
 var $author$project$GossipGraph$Renderer$agentToEntity = function (agent) {
-	return A2($gampleman$elm_visualization$Force$entity, agent.bO, agent);
+	return A2($gampleman$elm_visualization$Force$entity, agent.bP, agent);
 };
 var $elm_community$typed_svg$TypedSvg$Core$attribute = $elm$virtual_dom$VirtualDom$attribute;
 var $elm_community$typed_svg$TypedSvg$Attributes$id = $elm_community$typed_svg$TypedSvg$Core$attribute('id');
@@ -8936,8 +9442,8 @@ var $elm_community$typed_svg$TypedSvg$Types$px = $elm_community$typed_svg$TypedS
 var $elm_community$typed_svg$TypedSvg$Attributes$refX = $elm_community$typed_svg$TypedSvg$Core$attribute('refX');
 var $elm_community$typed_svg$TypedSvg$Attributes$refY = $elm_community$typed_svg$TypedSvg$Core$attribute('refY');
 var $author$project$GossipGraph$Renderer$arrowHeads = function (settings) {
-	var width = settings.bd;
-	var height = settings.bd;
+	var width = settings.be;
+	var height = settings.be;
 	var yMid = height / 2;
 	return _List_fromArray(
 		[
@@ -9016,8 +9522,8 @@ var $elm_community$typed_svg$TypedSvg$Attributes$class = function (names) {
 		A2($elm$core$String$join, ' ', names));
 };
 var $gampleman$elm_visualization$Force$isCompleted = function (_v0) {
-	var alpha = _v0.aP;
-	var minAlpha = _v0.cE;
+	var alpha = _v0.aS;
+	var minAlpha = _v0.cI;
 	return _Utils_cmp(alpha, minAlpha) < 1;
 };
 var $gampleman$elm_visualization$Force$State = $elm$core$Basics$identity;
@@ -9433,19 +9939,19 @@ var $elm$core$Dict$update = F3(
 	});
 var $ianmackenzie$elm_geometry$BoundingBox2d$maxX = function (_v0) {
 	var boundingBox = _v0;
-	return boundingBox.aZ;
+	return boundingBox.a_;
 };
 var $ianmackenzie$elm_geometry$BoundingBox2d$maxY = function (_v0) {
 	var boundingBox = _v0;
-	return boundingBox.a_;
+	return boundingBox.a$;
 };
 var $ianmackenzie$elm_geometry$BoundingBox2d$minX = function (_v0) {
 	var boundingBox = _v0;
-	return boundingBox.a$;
+	return boundingBox.a0;
 };
 var $ianmackenzie$elm_geometry$BoundingBox2d$minY = function (_v0) {
 	var boundingBox = _v0;
-	return boundingBox.a0;
+	return boundingBox.a1;
 };
 var $ianmackenzie$elm_units$Quantity$Quantity = $elm$core$Basics$identity;
 var $ianmackenzie$elm_units$Quantity$minus = F2(
@@ -9473,8 +9979,8 @@ var $ianmackenzie$elm_geometry$Point2d$distanceFrom = F2(
 	function (_v0, _v1) {
 		var p1 = _v0;
 		var p2 = _v1;
-		var deltaY = p2.S - p1.S;
-		var deltaX = p2.R - p1.R;
+		var deltaY = p2.T - p1.T;
+		var deltaX = p2.S - p1.S;
 		var largestComponent = A2(
 			$elm$core$Basics$max,
 			$elm$core$Basics$abs(deltaX),
@@ -9493,7 +9999,7 @@ var $ianmackenzie$elm_geometry$Vector2d$from = F2(
 	function (_v0, _v1) {
 		var p1 = _v0;
 		var p2 = _v1;
-		return {R: p2.R - p1.R, S: p2.S - p1.S};
+		return {S: p2.S - p1.S, T: p2.T - p1.T};
 	});
 var $ianmackenzie$elm_units$Pixels$inPixels = function (_v0) {
 	var numPixels = _v0;
@@ -9505,13 +10011,13 @@ var $ianmackenzie$elm_geometry$Vector2d$length = function (_v0) {
 	var v = _v0;
 	var largestComponent = A2(
 		$elm$core$Basics$max,
-		$elm$core$Basics$abs(v.R),
-		$elm$core$Basics$abs(v.S));
+		$elm$core$Basics$abs(v.S),
+		$elm$core$Basics$abs(v.T));
 	if (!largestComponent) {
 		return $ianmackenzie$elm_units$Quantity$zero;
 	} else {
-		var scaledY = v.S / largestComponent;
-		var scaledX = v.R / largestComponent;
+		var scaledY = v.T / largestComponent;
+		var scaledX = v.S / largestComponent;
 		var scaledLength = $elm$core$Basics$sqrt((scaledX * scaledX) + (scaledY * scaledY));
 		return scaledLength * largestComponent;
 	}
@@ -9520,7 +10026,7 @@ var $ianmackenzie$elm_geometry$Vector2d$plus = F2(
 	function (_v0, _v1) {
 		var v2 = _v0;
 		var v1 = _v1;
-		return {R: v1.R + v2.R, S: v1.S + v2.S};
+		return {S: v1.S + v2.S, T: v1.T + v2.T};
 	});
 var $ianmackenzie$elm_units$Quantity$ratio = F2(
 	function (_v0, _v1) {
@@ -9532,15 +10038,15 @@ var $ianmackenzie$elm_units_prefixed$Units$Quantity$ratio = $ianmackenzie$elm_un
 var $ianmackenzie$elm_geometry$Vector2d$scaleBy = F2(
 	function (k, _v0) {
 		var v = _v0;
-		return {R: k * v.R, S: k * v.S};
+		return {S: k * v.S, T: k * v.T};
 	});
 var $ianmackenzie$elm_geometry$Vector2d$sumHelp = F3(
 	function (sumX, sumY, vectors) {
 		sumHelp:
 		while (true) {
 			if (vectors.b) {
-				var x = vectors.a.R;
-				var y = vectors.a.S;
+				var x = vectors.a.S;
+				var y = vectors.a.T;
 				var rest = vectors.b;
 				var $temp$sumX = sumX + x,
 					$temp$sumY = sumY + y,
@@ -9550,19 +10056,19 @@ var $ianmackenzie$elm_geometry$Vector2d$sumHelp = F3(
 				vectors = $temp$vectors;
 				continue sumHelp;
 			} else {
-				return {R: sumX, S: sumY};
+				return {S: sumX, T: sumY};
 			}
 		}
 	});
 var $ianmackenzie$elm_geometry$Vector2d$sum = function (vectors) {
 	return A3($ianmackenzie$elm_geometry$Vector2d$sumHelp, 0, 0, vectors);
 };
-var $ianmackenzie$elm_geometry$Vector2d$zero = {R: 0, S: 0};
+var $ianmackenzie$elm_geometry$Vector2d$zero = {S: 0, T: 0};
 var $gampleman$elm_visualization$Force$ManyBody$applyForce = F4(
 	function (alpha, theta, qtree, vertex) {
 		var isFarAway = function (treePart) {
-			var distance = A2($ianmackenzie$elm_geometry$Point2d$distanceFrom, vertex.fg, treePart.dn.fg);
-			var _v2 = $ianmackenzie$elm_geometry$BoundingBox2d$dimensions(treePart.eH);
+			var distance = A2($ianmackenzie$elm_geometry$Point2d$distanceFrom, vertex.fk, treePart.dr.fk);
+			var _v2 = $ianmackenzie$elm_geometry$BoundingBox2d$dimensions(treePart.eL);
 			var width = _v2.a;
 			return _Utils_cmp(
 				A2($ianmackenzie$elm_units_prefixed$Units$Quantity$ratio, width, distance),
@@ -9570,14 +10076,14 @@ var $gampleman$elm_visualization$Force$ManyBody$applyForce = F4(
 		};
 		var calculateVelocity = F2(
 			function (target, source) {
-				var delta = A2($ianmackenzie$elm_geometry$Vector2d$from, target.fg, source.fg);
+				var delta = A2($ianmackenzie$elm_geometry$Vector2d$from, target.fk, source.fk);
 				var len = $ianmackenzie$elm_units_prefixed$Units$Pixels$inPixels(
 					$ianmackenzie$elm_geometry$Vector2d$length(delta));
-				var weight = (source.fs * alpha) / A2($elm$core$Basics$pow, len, 2);
+				var weight = (source.fw * alpha) / A2($elm$core$Basics$pow, len, 2);
 				return $elm$core$Basics$isNaN(weight) ? $ianmackenzie$elm_geometry$Vector2d$zero : A2($ianmackenzie$elm_geometry$Vector2d$scaleBy, weight, delta);
 			});
 		var useAggregate = function (treePart) {
-			return A2(calculateVelocity, vertex, treePart.dn);
+			return A2(calculateVelocity, vertex, treePart.dr);
 		};
 		switch (qtree.$) {
 			case 0:
@@ -9589,12 +10095,12 @@ var $gampleman$elm_visualization$Force$ManyBody$applyForce = F4(
 				} else {
 					var applyForceFromPoint = F2(
 						function (point, accum) {
-							return _Utils_eq(point.dR, vertex.dR) ? accum : A2(
+							return _Utils_eq(point.dV, vertex.dV) ? accum : A2(
 								$ianmackenzie$elm_geometry$Vector2d$plus,
 								A2(calculateVelocity, vertex, point),
 								accum);
 						});
-					var _v1 = leaf.eK;
+					var _v1 = leaf.eO;
 					var first = _v1.a;
 					var rest = _v1.b;
 					return A3(
@@ -9614,17 +10120,17 @@ var $gampleman$elm_visualization$Force$ManyBody$applyForce = F4(
 					return $ianmackenzie$elm_geometry$Vector2d$sum(
 						_List_fromArray(
 							[
-								helper(node.e9),
-								helper(node.e7),
-								helper(node.fo),
-								helper(node.fu)
+								helper(node.fd),
+								helper(node.fb),
+								helper(node.fs),
+								helper(node.fy)
 							]));
 				}
 		}
 	});
 var $ianmackenzie$elm_geometry$Point2d$coordinates = function (_v0) {
 	var p = _v0;
-	return _Utils_Tuple2(p.R, p.S);
+	return _Utils_Tuple2(p.S, p.T);
 };
 var $ianmackenzie$elm_units$Quantity$divideBy = F2(
 	function (divisor, _v0) {
@@ -9644,12 +10150,12 @@ var $ianmackenzie$elm_geometry$Point2d$xy = F2(
 	function (_v0, _v1) {
 		var x = _v0;
 		var y = _v1;
-		return {R: x, S: y};
+		return {S: x, T: y};
 	});
 var $gampleman$elm_visualization$Force$ManyBody$constructSuperPoint = F2(
 	function (first, rest) {
-		var initialStrength = first.fs;
-		var initialPoint = $ianmackenzie$elm_geometry$Point2d$coordinates(first.fg);
+		var initialStrength = first.fw;
+		var initialPoint = $ianmackenzie$elm_geometry$Point2d$coordinates(first.fk);
 		var folder = F2(
 			function (point, _v3) {
 				var _v4 = _v3.a;
@@ -9657,14 +10163,14 @@ var $gampleman$elm_visualization$Force$ManyBody$constructSuperPoint = F2(
 				var accumY = _v4.b;
 				var strength = _v3.b;
 				var size = _v3.c;
-				var _v2 = $ianmackenzie$elm_geometry$Point2d$coordinates(point.fg);
+				var _v2 = $ianmackenzie$elm_geometry$Point2d$coordinates(point.fk);
 				var x = _v2.a;
 				var y = _v2.b;
 				return _Utils_Tuple3(
 					_Utils_Tuple2(
 						A2($ianmackenzie$elm_units_prefixed$Units$Quantity$plus, x, accumX),
 						A2($ianmackenzie$elm_units_prefixed$Units$Quantity$plus, y, accumY)),
-					strength + point.fs,
+					strength + point.fw,
 					size + 1);
 			});
 		var _v0 = A3(
@@ -9678,18 +10184,18 @@ var $gampleman$elm_visualization$Force$ManyBody$constructSuperPoint = F2(
 		var totalStrength = _v0.b;
 		var totalSize = _v0.c;
 		return {
-			fg: A2(
+			fk: A2(
 				$ianmackenzie$elm_geometry$Point2d$xy,
 				A2($ianmackenzie$elm_units_prefixed$Units$Quantity$divideBy, totalSize, totalX),
 				A2($ianmackenzie$elm_units_prefixed$Units$Quantity$divideBy, totalSize, totalY)),
-			fs: totalStrength
+			fw: totalStrength
 		};
 	});
 var $gampleman$elm_visualization$Force$ManyBody$config = {
-	eL: $gampleman$elm_visualization$Force$ManyBody$constructSuperPoint,
-	eM: $gampleman$elm_visualization$Force$ManyBody$constructSuperPoint,
-	fB: function ($) {
-		return $.fg;
+	eP: $gampleman$elm_visualization$Force$ManyBody$constructSuperPoint,
+	eQ: $gampleman$elm_visualization$Force$ManyBody$constructSuperPoint,
+	fE: function ($) {
+		return $.fk;
 	}
 };
 var $gampleman$elm_visualization$Force$QuadTree$Empty = {$: 0};
@@ -9714,11 +10220,11 @@ var $ianmackenzie$elm_units$Quantity$lessThanOrEqualTo = F2(
 	});
 var $ianmackenzie$elm_geometry$Point2d$xCoordinate = function (_v0) {
 	var p = _v0;
-	return p.R;
+	return p.S;
 };
 var $ianmackenzie$elm_geometry$Point2d$yCoordinate = function (_v0) {
 	var p = _v0;
-	return p.S;
+	return p.T;
 };
 var $ianmackenzie$elm_geometry$BoundingBox2d$contains = F2(
 	function (point, boundingBox) {
@@ -9758,11 +10264,11 @@ var $ianmackenzie$elm_units$Quantity$min = F2(
 		return A2($elm$core$Basics$min, x, y);
 	});
 var $ianmackenzie$elm_geometry$BoundingBox2d$fromExtrema = function (given) {
-	return (A2($ianmackenzie$elm_units$Quantity$lessThanOrEqualTo, given.aZ, given.a$) && A2($ianmackenzie$elm_units$Quantity$lessThanOrEqualTo, given.a_, given.a0)) ? given : {
-		aZ: A2($ianmackenzie$elm_units$Quantity$max, given.a$, given.aZ),
+	return (A2($ianmackenzie$elm_units$Quantity$lessThanOrEqualTo, given.a_, given.a0) && A2($ianmackenzie$elm_units$Quantity$lessThanOrEqualTo, given.a$, given.a1)) ? given : {
 		a_: A2($ianmackenzie$elm_units$Quantity$max, given.a0, given.a_),
-		a$: A2($ianmackenzie$elm_units$Quantity$min, given.a$, given.aZ),
-		a0: A2($ianmackenzie$elm_units$Quantity$min, given.a0, given.a_)
+		a$: A2($ianmackenzie$elm_units$Quantity$max, given.a1, given.a$),
+		a0: A2($ianmackenzie$elm_units$Quantity$min, given.a0, given.a_),
+		a1: A2($ianmackenzie$elm_units$Quantity$min, given.a1, given.a$)
 	};
 };
 var $ianmackenzie$elm_units_prefixed$Units$Quantity$minus = $ianmackenzie$elm_units$Quantity$minus;
@@ -9778,11 +10284,11 @@ var $ianmackenzie$elm_units$Quantity$interpolateFrom = F3(
 	});
 var $ianmackenzie$elm_geometry$BoundingBox2d$midX = function (_v0) {
 	var boundingBox = _v0;
-	return A3($ianmackenzie$elm_units$Quantity$interpolateFrom, boundingBox.a$, boundingBox.aZ, 0.5);
+	return A3($ianmackenzie$elm_units$Quantity$interpolateFrom, boundingBox.a0, boundingBox.a_, 0.5);
 };
 var $ianmackenzie$elm_geometry$BoundingBox2d$midY = function (_v0) {
 	var boundingBox = _v0;
-	return A3($ianmackenzie$elm_units$Quantity$interpolateFrom, boundingBox.a0, boundingBox.a_, 0.5);
+	return A3($ianmackenzie$elm_units$Quantity$interpolateFrom, boundingBox.a1, boundingBox.a$, 0.5);
 };
 var $ianmackenzie$elm_geometry$BoundingBox2d$centerPoint = function (boundingBox) {
 	return A2(
@@ -9801,28 +10307,28 @@ var $gampleman$elm_visualization$Force$QuadTree$quadrant = F2(
 		var midX = _v1.a;
 		var midY = _v1.b;
 		var _v2 = $ianmackenzie$elm_geometry$BoundingBox2d$extrema(boundingBox);
-		var minX = _v2.a$;
-		var minY = _v2.a0;
-		var maxX = _v2.aZ;
-		var maxY = _v2.a_;
+		var minX = _v2.a0;
+		var minY = _v2.a1;
+		var maxX = _v2.a_;
+		var maxY = _v2.a$;
 		return A2($ianmackenzie$elm_units_prefixed$Units$Quantity$greaterThanOrEqualTo, midY, y) ? (A2($ianmackenzie$elm_units_prefixed$Units$Quantity$greaterThanOrEqualTo, midX, x) ? 0 : 1) : (A2($ianmackenzie$elm_units_prefixed$Units$Quantity$greaterThanOrEqualTo, midX, x) ? 2 : 3);
 	});
 var $ianmackenzie$elm_geometry$BoundingBox2d$singleton = function (point) {
 	return {
-		aZ: $ianmackenzie$elm_geometry$Point2d$xCoordinate(point),
-		a_: $ianmackenzie$elm_geometry$Point2d$yCoordinate(point),
-		a$: $ianmackenzie$elm_geometry$Point2d$xCoordinate(point),
-		a0: $ianmackenzie$elm_geometry$Point2d$yCoordinate(point)
+		a_: $ianmackenzie$elm_geometry$Point2d$xCoordinate(point),
+		a$: $ianmackenzie$elm_geometry$Point2d$yCoordinate(point),
+		a0: $ianmackenzie$elm_geometry$Point2d$xCoordinate(point),
+		a1: $ianmackenzie$elm_geometry$Point2d$yCoordinate(point)
 	};
 };
 var $gampleman$elm_visualization$Force$QuadTree$singleton = F2(
 	function (toPoint, vertex) {
 		return $gampleman$elm_visualization$Force$QuadTree$Leaf(
 			{
-				dn: 0,
-				eH: $ianmackenzie$elm_geometry$BoundingBox2d$singleton(
+				dr: 0,
+				eL: $ianmackenzie$elm_geometry$BoundingBox2d$singleton(
 					toPoint(vertex)),
-				eK: _Utils_Tuple2(vertex, _List_Nil)
+				eO: _Utils_Tuple2(vertex, _List_Nil)
 			});
 	});
 var $ianmackenzie$elm_geometry$BoundingBox2d$union = F2(
@@ -9830,10 +10336,10 @@ var $ianmackenzie$elm_geometry$BoundingBox2d$union = F2(
 		var b2 = $ianmackenzie$elm_geometry$BoundingBox2d$extrema(secondBox);
 		var b1 = $ianmackenzie$elm_geometry$BoundingBox2d$extrema(firstBox);
 		return {
-			aZ: A2($ianmackenzie$elm_units$Quantity$max, b1.aZ, b2.aZ),
 			a_: A2($ianmackenzie$elm_units$Quantity$max, b1.a_, b2.a_),
-			a$: A2($ianmackenzie$elm_units$Quantity$min, b1.a$, b2.a$),
-			a0: A2($ianmackenzie$elm_units$Quantity$min, b1.a0, b2.a0)
+			a$: A2($ianmackenzie$elm_units$Quantity$max, b1.a$, b2.a$),
+			a0: A2($ianmackenzie$elm_units$Quantity$min, b1.a0, b2.a0),
+			a1: A2($ianmackenzie$elm_units$Quantity$min, b1.a1, b2.a1)
 		};
 	});
 var $gampleman$elm_visualization$Force$QuadTree$insertBy = F3(
@@ -9842,31 +10348,31 @@ var $gampleman$elm_visualization$Force$QuadTree$insertBy = F3(
 			case 0:
 				return $gampleman$elm_visualization$Force$QuadTree$Leaf(
 					{
-						dn: 0,
-						eH: $ianmackenzie$elm_geometry$BoundingBox2d$singleton(
+						dr: 0,
+						eL: $ianmackenzie$elm_geometry$BoundingBox2d$singleton(
 							toPoint(vertex)),
-						eK: _Utils_Tuple2(vertex, _List_Nil)
+						eO: _Utils_Tuple2(vertex, _List_Nil)
 					});
 			case 1:
 				var leaf = qtree.a;
 				var maxSize = 32;
-				var _v1 = leaf.eK;
+				var _v1 = leaf.eO;
 				var first = _v1.a;
 				var rest = _v1.b;
 				var newSize = 2 + $elm$core$List$length(rest);
 				if (_Utils_cmp(newSize, maxSize) > -1) {
 					var initial = $gampleman$elm_visualization$Force$QuadTree$Node(
 						{
-							dn: 0,
-							eH: A2(
+							dr: 0,
+							eL: A2(
 								$ianmackenzie$elm_geometry$BoundingBox2d$union,
-								leaf.eH,
+								leaf.eL,
 								$ianmackenzie$elm_geometry$BoundingBox2d$singleton(
 									toPoint(vertex))),
-							e7: $gampleman$elm_visualization$Force$QuadTree$Empty,
-							e9: $gampleman$elm_visualization$Force$QuadTree$Empty,
-							fo: $gampleman$elm_visualization$Force$QuadTree$Empty,
-							fu: $gampleman$elm_visualization$Force$QuadTree$Empty
+							fb: $gampleman$elm_visualization$Force$QuadTree$Empty,
+							fd: $gampleman$elm_visualization$Force$QuadTree$Empty,
+							fs: $gampleman$elm_visualization$Force$QuadTree$Empty,
+							fy: $gampleman$elm_visualization$Force$QuadTree$Empty
 						});
 					return A3(
 						$elm$core$List$foldl,
@@ -9876,13 +10382,13 @@ var $gampleman$elm_visualization$Force$QuadTree$insertBy = F3(
 				} else {
 					return $gampleman$elm_visualization$Force$QuadTree$Leaf(
 						{
-							dn: 0,
-							eH: A2(
+							dr: 0,
+							eL: A2(
 								$ianmackenzie$elm_geometry$BoundingBox2d$union,
-								leaf.eH,
+								leaf.eL,
 								$ianmackenzie$elm_geometry$BoundingBox2d$singleton(
 									toPoint(vertex))),
-							eK: _Utils_Tuple2(
+							eO: _Utils_Tuple2(
 								vertex,
 								A2($elm$core$List$cons, first, rest))
 						});
@@ -9890,124 +10396,124 @@ var $gampleman$elm_visualization$Force$QuadTree$insertBy = F3(
 			default:
 				var node = qtree.a;
 				var point = toPoint(vertex);
-				if (A2($ianmackenzie$elm_geometry$BoundingBox2d$contains, point, node.eH)) {
-					var _v2 = A2($gampleman$elm_visualization$Force$QuadTree$quadrant, node.eH, point);
+				if (A2($ianmackenzie$elm_geometry$BoundingBox2d$contains, point, node.eL)) {
+					var _v2 = A2($gampleman$elm_visualization$Force$QuadTree$quadrant, node.eL, point);
 					switch (_v2) {
 						case 0:
 							return $gampleman$elm_visualization$Force$QuadTree$Node(
 								{
-									dn: node.dn,
-									eH: node.eH,
-									e7: A3($gampleman$elm_visualization$Force$QuadTree$insertBy, toPoint, vertex, node.e7),
-									e9: node.e9,
-									fo: node.fo,
-									fu: node.fu
+									dr: node.dr,
+									eL: node.eL,
+									fb: A3($gampleman$elm_visualization$Force$QuadTree$insertBy, toPoint, vertex, node.fb),
+									fd: node.fd,
+									fs: node.fs,
+									fy: node.fy
 								});
 						case 2:
 							return $gampleman$elm_visualization$Force$QuadTree$Node(
 								{
-									dn: node.dn,
-									eH: node.eH,
-									e7: node.e7,
-									e9: node.e9,
-									fo: A3($gampleman$elm_visualization$Force$QuadTree$insertBy, toPoint, vertex, node.fo),
-									fu: node.fu
+									dr: node.dr,
+									eL: node.eL,
+									fb: node.fb,
+									fd: node.fd,
+									fs: A3($gampleman$elm_visualization$Force$QuadTree$insertBy, toPoint, vertex, node.fs),
+									fy: node.fy
 								});
 						case 1:
 							return $gampleman$elm_visualization$Force$QuadTree$Node(
 								{
-									dn: node.dn,
-									eH: node.eH,
-									e7: node.e7,
-									e9: A3($gampleman$elm_visualization$Force$QuadTree$insertBy, toPoint, vertex, node.e9),
-									fo: node.fo,
-									fu: node.fu
+									dr: node.dr,
+									eL: node.eL,
+									fb: node.fb,
+									fd: A3($gampleman$elm_visualization$Force$QuadTree$insertBy, toPoint, vertex, node.fd),
+									fs: node.fs,
+									fy: node.fy
 								});
 						default:
 							return $gampleman$elm_visualization$Force$QuadTree$Node(
 								{
-									dn: node.dn,
-									eH: node.eH,
-									e7: node.e7,
-									e9: node.e9,
-									fo: node.fo,
-									fu: A3($gampleman$elm_visualization$Force$QuadTree$insertBy, toPoint, vertex, node.fu)
+									dr: node.dr,
+									eL: node.eL,
+									fb: node.fb,
+									fd: node.fd,
+									fs: node.fs,
+									fy: A3($gampleman$elm_visualization$Force$QuadTree$insertBy, toPoint, vertex, node.fy)
 								});
 					}
 				} else {
-					var _v3 = $ianmackenzie$elm_geometry$BoundingBox2d$extrema(node.eH);
-					var minX = _v3.a$;
-					var minY = _v3.a0;
-					var maxX = _v3.aZ;
-					var maxY = _v3.a_;
-					var _v4 = $ianmackenzie$elm_geometry$BoundingBox2d$dimensions(node.eH);
+					var _v3 = $ianmackenzie$elm_geometry$BoundingBox2d$extrema(node.eL);
+					var minX = _v3.a0;
+					var minY = _v3.a1;
+					var maxX = _v3.a_;
+					var maxY = _v3.a$;
+					var _v4 = $ianmackenzie$elm_geometry$BoundingBox2d$dimensions(node.eL);
 					var width = _v4.a;
 					var height = _v4.b;
-					var _v5 = A2($gampleman$elm_visualization$Force$QuadTree$quadrant, node.eH, point);
+					var _v5 = A2($gampleman$elm_visualization$Force$QuadTree$quadrant, node.eL, point);
 					switch (_v5) {
 						case 0:
 							return $gampleman$elm_visualization$Force$QuadTree$Node(
 								{
-									dn: 0,
-									eH: $ianmackenzie$elm_geometry$BoundingBox2d$fromExtrema(
+									dr: 0,
+									eL: $ianmackenzie$elm_geometry$BoundingBox2d$fromExtrema(
 										{
-											aZ: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$plus, width, maxX),
-											a_: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$plus, height, maxY),
-											a$: minX,
-											a0: minY
+											a_: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$plus, width, maxX),
+											a$: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$plus, height, maxY),
+											a0: minX,
+											a1: minY
 										}),
-									e7: A2($gampleman$elm_visualization$Force$QuadTree$singleton, toPoint, vertex),
-									e9: $gampleman$elm_visualization$Force$QuadTree$Empty,
-									fo: $gampleman$elm_visualization$Force$QuadTree$Empty,
-									fu: qtree
+									fb: A2($gampleman$elm_visualization$Force$QuadTree$singleton, toPoint, vertex),
+									fd: $gampleman$elm_visualization$Force$QuadTree$Empty,
+									fs: $gampleman$elm_visualization$Force$QuadTree$Empty,
+									fy: qtree
 								});
 						case 2:
 							return $gampleman$elm_visualization$Force$QuadTree$Node(
 								{
-									dn: 0,
-									eH: $ianmackenzie$elm_geometry$BoundingBox2d$fromExtrema(
+									dr: 0,
+									eL: $ianmackenzie$elm_geometry$BoundingBox2d$fromExtrema(
 										{
-											aZ: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$plus, width, maxX),
-											a_: maxY,
-											a$: minX,
-											a0: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$minus, height, minY)
+											a_: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$plus, width, maxX),
+											a$: maxY,
+											a0: minX,
+											a1: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$minus, height, minY)
 										}),
-									e7: $gampleman$elm_visualization$Force$QuadTree$Empty,
-									e9: qtree,
-									fo: A2($gampleman$elm_visualization$Force$QuadTree$singleton, toPoint, vertex),
-									fu: $gampleman$elm_visualization$Force$QuadTree$Empty
+									fb: $gampleman$elm_visualization$Force$QuadTree$Empty,
+									fd: qtree,
+									fs: A2($gampleman$elm_visualization$Force$QuadTree$singleton, toPoint, vertex),
+									fy: $gampleman$elm_visualization$Force$QuadTree$Empty
 								});
 						case 1:
 							return $gampleman$elm_visualization$Force$QuadTree$Node(
 								{
-									dn: 0,
-									eH: $ianmackenzie$elm_geometry$BoundingBox2d$fromExtrema(
+									dr: 0,
+									eL: $ianmackenzie$elm_geometry$BoundingBox2d$fromExtrema(
 										{
-											aZ: maxX,
-											a_: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$plus, height, maxY),
-											a$: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$minus, width, minX),
-											a0: minY
+											a_: maxX,
+											a$: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$plus, height, maxY),
+											a0: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$minus, width, minX),
+											a1: minY
 										}),
-									e7: $gampleman$elm_visualization$Force$QuadTree$Empty,
-									e9: A2($gampleman$elm_visualization$Force$QuadTree$singleton, toPoint, vertex),
-									fo: qtree,
-									fu: $gampleman$elm_visualization$Force$QuadTree$Empty
+									fb: $gampleman$elm_visualization$Force$QuadTree$Empty,
+									fd: A2($gampleman$elm_visualization$Force$QuadTree$singleton, toPoint, vertex),
+									fs: qtree,
+									fy: $gampleman$elm_visualization$Force$QuadTree$Empty
 								});
 						default:
 							return $gampleman$elm_visualization$Force$QuadTree$Node(
 								{
-									dn: 0,
-									eH: $ianmackenzie$elm_geometry$BoundingBox2d$fromExtrema(
+									dr: 0,
+									eL: $ianmackenzie$elm_geometry$BoundingBox2d$fromExtrema(
 										{
-											aZ: maxX,
-											a_: maxY,
-											a$: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$minus, width, minX),
-											a0: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$minus, height, minY)
+											a_: maxX,
+											a$: maxY,
+											a0: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$minus, width, minX),
+											a1: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$minus, height, minY)
 										}),
-									e7: qtree,
-									e9: $gampleman$elm_visualization$Force$QuadTree$Empty,
-									fo: $gampleman$elm_visualization$Force$QuadTree$Empty,
-									fu: A2($gampleman$elm_visualization$Force$QuadTree$singleton, toPoint, vertex)
+									fb: qtree,
+									fd: $gampleman$elm_visualization$Force$QuadTree$Empty,
+									fs: $gampleman$elm_visualization$Force$QuadTree$Empty,
+									fy: A2($gampleman$elm_visualization$Force$QuadTree$singleton, toPoint, vertex)
 								});
 					}
 				}
@@ -10042,37 +10548,37 @@ var $gampleman$elm_visualization$Force$QuadTree$getAggregate = function (qtree) 
 		case 0:
 			return $elm$core$Maybe$Nothing;
 		case 1:
-			var aggregate = qtree.a.dn;
+			var aggregate = qtree.a.dr;
 			return $elm$core$Maybe$Just(aggregate);
 		default:
-			var aggregate = qtree.a.dn;
+			var aggregate = qtree.a.dr;
 			return $elm$core$Maybe$Just(aggregate);
 	}
 };
 var $gampleman$elm_visualization$Force$QuadTree$performAggregate = F2(
 	function (config, vanillaQuadTree) {
-		var combineAggregates = config.eL;
-		var combineVertices = config.eM;
+		var combineAggregates = config.eP;
+		var combineVertices = config.eQ;
 		switch (vanillaQuadTree.$) {
 			case 0:
 				return $gampleman$elm_visualization$Force$QuadTree$Empty;
 			case 1:
 				var leaf = vanillaQuadTree.a;
-				var _v1 = leaf.eK;
+				var _v1 = leaf.eO;
 				var first = _v1.a;
 				var rest = _v1.b;
 				return $gampleman$elm_visualization$Force$QuadTree$Leaf(
 					{
-						dn: A2(combineVertices, first, rest),
-						eH: leaf.eH,
-						eK: _Utils_Tuple2(first, rest)
+						dr: A2(combineVertices, first, rest),
+						eL: leaf.eL,
+						eO: _Utils_Tuple2(first, rest)
 					});
 			default:
 				var node = vanillaQuadTree.a;
-				var newSw = A2($gampleman$elm_visualization$Force$QuadTree$performAggregate, config, node.fu);
-				var newSe = A2($gampleman$elm_visualization$Force$QuadTree$performAggregate, config, node.fo);
-				var newNw = A2($gampleman$elm_visualization$Force$QuadTree$performAggregate, config, node.e9);
-				var newNe = A2($gampleman$elm_visualization$Force$QuadTree$performAggregate, config, node.e7);
+				var newSw = A2($gampleman$elm_visualization$Force$QuadTree$performAggregate, config, node.fy);
+				var newSe = A2($gampleman$elm_visualization$Force$QuadTree$performAggregate, config, node.fs);
+				var newNw = A2($gampleman$elm_visualization$Force$QuadTree$performAggregate, config, node.fd);
+				var newNe = A2($gampleman$elm_visualization$Force$QuadTree$performAggregate, config, node.fb);
 				var subresults = A2(
 					$elm$core$List$filterMap,
 					$gampleman$elm_visualization$Force$QuadTree$getAggregate,
@@ -10085,12 +10591,12 @@ var $gampleman$elm_visualization$Force$QuadTree$performAggregate = F2(
 					var xs = subresults.b;
 					return $gampleman$elm_visualization$Force$QuadTree$Node(
 						{
-							dn: A2(combineAggregates, x, xs),
-							eH: node.eH,
-							e7: newNe,
-							e9: newNw,
-							fo: newSe,
-							fu: newSw
+							dr: A2(combineAggregates, x, xs),
+							eL: node.eL,
+							fb: newNe,
+							fd: newNw,
+							fs: newSe,
+							fy: newSw
 						});
 				}
 		}
@@ -10103,16 +10609,16 @@ var $gampleman$elm_visualization$Force$ManyBody$manyBody = F3(
 			A2(
 				$gampleman$elm_visualization$Force$QuadTree$fromList,
 				function ($) {
-					return $.fg;
+					return $.fk;
 				},
 				vertices));
 		var updateVertex = function (vertex) {
 			return _Utils_update(
 				vertex,
 				{
-					bG: A2(
+					bH: A2(
 						$ianmackenzie$elm_geometry$Vector2d$plus,
-						vertex.bG,
+						vertex.bH,
 						A4($gampleman$elm_visualization$Force$ManyBody$applyForce, alpha, theta, withAggregates, vertex))
 				});
 		};
@@ -10120,7 +10626,7 @@ var $gampleman$elm_visualization$Force$ManyBody$manyBody = F3(
 	});
 var $ianmackenzie$elm_geometry$Point2d$pixels = F2(
 	function (x, y) {
-		return {R: x, S: y};
+		return {S: x, T: y};
 	});
 var $ianmackenzie$elm_geometry$Vector2d$toPixels = function (_v0) {
 	var vectorComponents = _v0;
@@ -10133,17 +10639,17 @@ var $gampleman$elm_visualization$Force$ManyBody$wrapper = F4(
 			function (_v1) {
 				var key = _v1.a;
 				var point = _v1.b;
-				var x = point.R;
-				var y = point.S;
+				var x = point.S;
+				var y = point.T;
 				var strength = A2(
 					$elm$core$Maybe$withDefault,
 					0,
 					A2($elm$core$Dict$get, key, strengths));
 				return {
-					dR: key,
-					fg: A2($ianmackenzie$elm_geometry$Point2d$pixels, x, y),
-					fs: strength,
-					bG: $ianmackenzie$elm_geometry$Vector2d$zero
+					dV: key,
+					fk: A2($ianmackenzie$elm_geometry$Point2d$pixels, x, y),
+					fw: strength,
+					bH: $ianmackenzie$elm_geometry$Vector2d$zero
 				};
 			},
 			$elm$core$Dict$toList(points));
@@ -10153,11 +10659,11 @@ var $gampleman$elm_visualization$Force$ManyBody$wrapper = F4(
 					return $elm$core$Maybe$Nothing;
 				} else {
 					var point = maybePoint.a;
-					var dv = $ianmackenzie$elm_geometry$Vector2d$toPixels(newVertex.bG);
+					var dv = $ianmackenzie$elm_geometry$Vector2d$toPixels(newVertex.bH);
 					return $elm$core$Maybe$Just(
 						_Utils_update(
 							point,
-							{ae: point.ae + dv.R, af: point.af + dv.S}));
+							{af: point.af + dv.S, ag: point.ag + dv.T}));
 				}
 			});
 		var newVertices = A3($gampleman$elm_visualization$Force$ManyBody$manyBody, alpha, theta, vertices);
@@ -10165,7 +10671,7 @@ var $gampleman$elm_visualization$Force$ManyBody$wrapper = F4(
 			function (newVertex, pointsDict) {
 				return A3(
 					$elm$core$Dict$update,
-					newVertex.dR,
+					newVertex.dV,
 					updater(newVertex),
 					pointsDict);
 			});
@@ -10184,7 +10690,7 @@ var $gampleman$elm_visualization$Force$applyForce = F3(
 						function (_v2, ent, _v3) {
 							var sx0 = _v3.a;
 							var sy0 = _v3.b;
-							return _Utils_Tuple2(sx0 + ent.R, sy0 + ent.S);
+							return _Utils_Tuple2(sx0 + ent.S, sy0 + ent.T);
 						}),
 					_Utils_Tuple2(0, 0),
 					entities);
@@ -10198,7 +10704,7 @@ var $gampleman$elm_visualization$Force$applyForce = F3(
 						function (_v4, ent) {
 							return _Utils_update(
 								ent,
-								{R: ent.R - sx, S: ent.S - sy});
+								{S: ent.S - sx, T: ent.T - sy});
 						}),
 					entities);
 			case 1:
@@ -10215,19 +10721,19 @@ var $gampleman$elm_visualization$Force$applyForce = F3(
 							$elm$core$List$foldl,
 							F2(
 								function (_v5, ents) {
-									var source = _v5.fq;
-									var target = _v5.fw;
-									var distance = _v5.eR;
-									var strength = _v5.fs;
-									var bias = _v5.b5;
+									var source = _v5.fu;
+									var target = _v5.fA;
+									var distance = _v5.eV;
+									var strength = _v5.fw;
+									var bias = _v5.b8;
 									var _v6 = _Utils_Tuple2(
 										A2($elm$core$Dict$get, source, ents),
 										A2($elm$core$Dict$get, target, ents));
 									if ((!_v6.a.$) && (!_v6.b.$)) {
 										var sourceNode = _v6.a.a;
 										var targetNode = _v6.b.a;
-										var y = ((targetNode.S + targetNode.af) - sourceNode.S) - sourceNode.af;
-										var x = ((targetNode.R + targetNode.ae) - sourceNode.R) - sourceNode.ae;
+										var y = ((targetNode.T + targetNode.ag) - sourceNode.T) - sourceNode.ag;
+										var x = ((targetNode.S + targetNode.af) - sourceNode.S) - sourceNode.af;
 										var d = $elm$core$Basics$sqrt(
 											A2($elm$core$Basics$pow, x, 2) + A2($elm$core$Basics$pow, y, 2));
 										var l = (((d - distance) / d) * alpha) * strength;
@@ -10238,7 +10744,7 @@ var $gampleman$elm_visualization$Force$applyForce = F3(
 												function (tn) {
 													return _Utils_update(
 														tn,
-														{ae: tn.ae + ((x * l) * (1 - bias)), af: tn.af + ((y * l) * (1 - bias))});
+														{af: tn.af + ((x * l) * (1 - bias)), ag: tn.ag + ((y * l) * (1 - bias))});
 												}),
 											A3(
 												$elm$core$Dict$update,
@@ -10247,7 +10753,7 @@ var $gampleman$elm_visualization$Force$applyForce = F3(
 													function (sn) {
 														return _Utils_update(
 															sn,
-															{ae: sn.ae - ((x * l) * bias), af: sn.af - ((y * l) * bias)});
+															{af: sn.af - ((x * l) * bias), ag: sn.ag - ((y * l) * bias)});
 													}),
 												ents));
 									} else {
@@ -10288,25 +10794,25 @@ var $gampleman$elm_visualization$Force$tick = F2(
 		var updateEntity = function (ent) {
 			return _Utils_update(
 				ent,
-				{ae: ent.ae * state.bH, af: ent.af * state.bH, R: ent.R + (ent.ae * state.bH), S: ent.S + (ent.af * state.bH)});
+				{af: ent.af * state.bI, ag: ent.ag * state.bI, S: ent.S + (ent.af * state.bI), T: ent.T + (ent.ag * state.bI)});
 		};
 		var dictNodes = A3(
 			$elm$core$List$foldl,
 			function (node) {
-				return A2($elm$core$Dict$insert, node.bO, node);
+				return A2($elm$core$Dict$insert, node.bP, node);
 			},
 			$elm$core$Dict$empty,
 			nodes);
-		var alpha = state.aP + ((state.dp - state.aP) * state.b1);
+		var alpha = state.aS + ((state.dt - state.aS) * state.b4);
 		var newNodes = A3(
 			$elm$core$List$foldl,
 			$gampleman$elm_visualization$Force$applyForce(alpha),
 			dictNodes,
-			state.dF);
+			state.dJ);
 		return _Utils_Tuple2(
 			_Utils_update(
 				state,
-				{aP: alpha}),
+				{aS: alpha}),
 			A2(
 				$elm$core$List$map,
 				updateEntity,
@@ -10345,8 +10851,8 @@ var $gampleman$elm_visualization$Force$customLinks = F2(
 			$elm$core$List$foldr,
 			F2(
 				function (_v1, d) {
-					var source = _v1.fq;
-					var target = _v1.fw;
+					var source = _v1.fu;
+					var target = _v1.fA;
 					return A3(
 						$elm$core$Dict$update,
 						target,
@@ -10385,22 +10891,22 @@ var $gampleman$elm_visualization$Force$customLinks = F2(
 			A2(
 				$elm$core$List$map,
 				function (_v0) {
-					var source = _v0.fq;
-					var target = _v0.fw;
-					var distance = _v0.eR;
-					var strength = _v0.fs;
+					var source = _v0.fu;
+					var target = _v0.fA;
+					var distance = _v0.eV;
+					var strength = _v0.fw;
 					return {
-						b5: count(source) / (count(source) + count(target)),
-						eR: distance,
-						fq: source,
-						fs: A2(
+						b8: count(source) / (count(source) + count(target)),
+						eV: distance,
+						fu: source,
+						fw: A2(
 							$elm$core$Maybe$withDefault,
 							1 / A2(
 								$elm$core$Basics$min,
 								count(source),
 								count(target)),
 							strength),
-						fw: target
+						fA: target
 					};
 				},
 				list));
@@ -10418,9 +10924,9 @@ var $elm_community$graph$Graph$edges = function (graph) {
 				F2(
 					function (node2, e) {
 						return $elm$core$List$cons(
-							{as: node1, e3: e, a8: node2});
+							{av: node1, e7: e, a9: node2});
 					}),
-				ctx.cN);
+				ctx.cR);
 		});
 	return A3(
 		flippedFoldl,
@@ -10434,17 +10940,17 @@ var $author$project$GossipGraph$Renderer$getLinks = function (graph) {
 		$elm$core$List$map,
 		function (edge) {
 			return {
-				eR: 150,
-				fq: edge.as,
-				fs: $elm$core$Maybe$Just(2),
-				fw: edge.a8
+				eV: 150,
+				fu: edge.av,
+				fw: $elm$core$Maybe$Just(3),
+				fA: edge.a9
 			};
 		},
 		A2(
 			$elm$core$List$filter,
 			function (_v0) {
-				var from = _v0.as;
-				var to = _v0.a8;
+				var from = _v0.av;
+				var to = _v0.a9;
 				return !_Utils_eq(from, to);
 			},
 			$elm_community$graph$Graph$edges(graph)));
@@ -10472,7 +10978,7 @@ var $elm_community$graph$Graph$insert = F2(
 	function (nodeContext, graph) {
 		return A3(
 			$elm_community$graph$Graph$update,
-			nodeContext.d1.bO,
+			nodeContext.d5.bP,
 			$elm$core$Basics$always(
 				$elm$core$Maybe$Just(nodeContext)),
 			graph);
@@ -10481,31 +10987,21 @@ var $elm_community$graph$Graph$mapNodes = function (f) {
 	return A2(
 		$elm_community$graph$Graph$fold,
 		function (_v0) {
-			var node = _v0.d1;
+			var node = _v0.d5;
 			var incoming = _v0.l;
-			var outgoing = _v0.cN;
+			var outgoing = _v0.cR;
 			return $elm_community$graph$Graph$insert(
 				{
 					l: incoming,
-					d1: {
-						bO: node.bO,
-						e3: f(node.e3)
+					d5: {
+						bP: node.bP,
+						e7: f(node.e7)
 					},
-					cN: outgoing
+					cR: outgoing
 				});
 		},
 		$elm_community$graph$Graph$empty);
 };
-var $elm_community$graph$Graph$nodes = A2(
-	$elm$core$Basics$composeR,
-	$elm_community$graph$Graph$unGraph,
-	A2(
-		$elm$core$Basics$composeR,
-		$elm_community$intdict$IntDict$values,
-		$elm$core$List$map(
-			function ($) {
-				return $.d1;
-			})));
 var $elm_community$typed_svg$TypedSvg$TypesToStrings$scaleToString = function (scale) {
 	switch (scale) {
 		case 0:
@@ -10560,26 +11056,26 @@ var $elm$core$Basics$asin = _Basics_asin;
 var $author$project$GossipGraph$Renderer$radialOffsetValue = F4(
 	function (source, target, xoff, yoff) {
 		var _v0 = _Utils_Tuple2(
-			_Utils_cmp(source.R, target.R) > 0,
-			_Utils_cmp(source.S, target.S) > 0);
+			_Utils_cmp(source.S, target.S) > 0,
+			_Utils_cmp(source.T, target.T) > 0);
 		if (_v0.a) {
 			if (_v0.b) {
-				return _Utils_Tuple2(source.R - xoff, source.S - yoff);
+				return _Utils_Tuple2(source.S - xoff, source.T - yoff);
 			} else {
-				return _Utils_Tuple2(source.R - xoff, source.S + yoff);
+				return _Utils_Tuple2(source.S - xoff, source.T + yoff);
 			}
 		} else {
 			if (_v0.b) {
-				return _Utils_Tuple2(source.R + xoff, source.S - yoff);
+				return _Utils_Tuple2(source.S + xoff, source.T - yoff);
 			} else {
-				return _Utils_Tuple2(source.R + xoff, source.S + yoff);
+				return _Utils_Tuple2(source.S + xoff, source.T + yoff);
 			}
 		}
 	});
 var $author$project$GossipGraph$Renderer$radialOffset = F4(
 	function (source, target, sourceOffset, targetOffset) {
-		var dy = $elm$core$Basics$abs(source.S - target.S);
-		var dx = $elm$core$Basics$abs(source.R - target.R);
+		var dy = $elm$core$Basics$abs(source.T - target.T);
+		var dx = $elm$core$Basics$abs(source.S - target.S);
 		var hyp = $elm$core$Basics$sqrt((dx * dx) + (dy * dy));
 		var angle = $elm$core$Basics$asin(dy / hyp);
 		var sourceOffsetX = sourceOffset * $elm$core$Basics$cos(angle);
@@ -10681,8 +11177,8 @@ var $elm_community$typed_svg$TypedSvg$Attributes$y2 = function (position) {
 };
 var $author$project$GossipGraph$Renderer$renderEdgeDirected = F4(
 	function (settings, extraAttributes, source, target) {
-		var r2 = settings.aH + (2 * settings.bd);
-		var r1 = settings.aH;
+		var r2 = settings.aK + (2 * settings.be);
+		var r1 = settings.aK;
 		var _v0 = A4($author$project$GossipGraph$Renderer$radialOffset, source, target, r1, r2);
 		var src = _v0.a;
 		var tgt = _v0.b;
@@ -10692,7 +11188,7 @@ var $author$project$GossipGraph$Renderer$renderEdgeDirected = F4(
 				_List_fromArray(
 					[
 						$elm_community$typed_svg$TypedSvg$Attributes$strokeWidth(
-						$elm_community$typed_svg$TypedSvg$Types$px(settings.bM)),
+						$elm_community$typed_svg$TypedSvg$Types$px(settings.bN)),
 						$elm_community$typed_svg$TypedSvg$Attributes$stroke(
 						$elm_community$typed_svg$TypedSvg$Types$Paint($avh4$elm_color$Color$black)),
 						$elm_community$typed_svg$TypedSvg$Attributes$markerEnd('url(#arrow-head-end)'),
@@ -10731,8 +11227,8 @@ var $author$project$GossipGraph$Renderer$angularOffset = F3(
 	function (_v0, offset, node) {
 		var x = _v0.a;
 		var y = _v0.b;
-		var dy = y - node.S;
-		var dx = x - node.R;
+		var dy = y - node.T;
+		var dx = x - node.S;
 		var _v1 = $elm$core$Basics$toPolar(
 			_Utils_Tuple2(dx, dy));
 		var r = _v1.a;
@@ -10742,12 +11238,12 @@ var $author$project$GossipGraph$Renderer$angularOffset = F3(
 			_Utils_Tuple2(r, newAngle));
 		var newX = _v2.a;
 		var newY = _v2.b;
-		return _Utils_Tuple2(node.R + newX, node.S + newY);
+		return _Utils_Tuple2(node.S + newX, node.T + newY);
 	});
 var $author$project$GossipGraph$Renderer$renderEdgeOffset = F4(
 	function (settings, extraAttributes, source, target) {
-		var r2 = settings.aH + (2 * settings.bd);
-		var r1 = settings.aH;
+		var r2 = settings.aK + (2 * settings.be);
+		var r1 = settings.aK;
 		var _v0 = A4($author$project$GossipGraph$Renderer$radialOffset, source, target, r1, r2);
 		var newSource = _v0.a;
 		var newTarget = _v0.b;
@@ -10759,7 +11255,7 @@ var $author$project$GossipGraph$Renderer$renderEdgeOffset = F4(
 				_List_fromArray(
 					[
 						$elm_community$typed_svg$TypedSvg$Attributes$strokeWidth(
-						$elm_community$typed_svg$TypedSvg$Types$px(settings.bM)),
+						$elm_community$typed_svg$TypedSvg$Types$px(settings.bN)),
 						$elm_community$typed_svg$TypedSvg$Attributes$stroke(
 						$elm_community$typed_svg$TypedSvg$Types$Paint($avh4$elm_color$Color$black)),
 						$elm_community$typed_svg$TypedSvg$Attributes$markerEnd('url(#arrow-head-end)'),
@@ -10784,29 +11280,29 @@ var $author$project$GossipGraph$Renderer$renderEdge = F3(
 				A2(
 					$gampleman$elm_visualization$Force$entity,
 					0,
-					{bO: -1, cH: '?'})),
+					{bP: -1, cL: '?'})),
 			$elm$core$Maybe$map(
 				A2(
 					$elm$core$Basics$composeR,
 					function ($) {
-						return $.d1;
+						return $.d5;
 					},
 					function ($) {
-						return $.e3;
+						return $.e7;
 					})));
 		var source = retrieveEntity(
-			A2($elm_community$graph$Graph$get, edge.as, graph));
+			A2($elm_community$graph$Graph$get, edge.av, graph));
 		var target = retrieveEntity(
-			A2($elm_community$graph$Graph$get, edge.a8, graph));
-		var dashed = (!edge.e3.dS) ? _List_fromArray(
+			A2($elm_community$graph$Graph$get, edge.a9, graph));
+		var dashed = (!edge.e7.dW) ? _List_fromArray(
 			[
 				$elm_community$typed_svg$TypedSvg$Attributes$strokeDasharray(
-				$elm$core$String$fromFloat(settings.bM * 2))
+				$elm$core$String$fromFloat(settings.bN * 2))
 			]) : _List_Nil;
 		return A2(
 			$elm$core$List$any,
 			function (e) {
-				return _Utils_eq(edge.as, e.a8) && _Utils_eq(edge.a8, e.as);
+				return _Utils_eq(edge.av, e.a9) && _Utils_eq(edge.a9, e.av);
 			},
 			$elm_community$graph$Graph$edges(graph)) ? A4($author$project$GossipGraph$Renderer$renderEdgeOffset, settings, dashed, source, target) : A4($author$project$GossipGraph$Renderer$renderEdgeDirected, settings, dashed, source, target);
 	});
@@ -10886,7 +11382,7 @@ var $author$project$GossipGraph$Renderer$renderNode = F2(
 					_List_fromArray(
 						[
 							$elm_community$typed_svg$TypedSvg$Attributes$r(
-							$elm_community$typed_svg$TypedSvg$Types$px(settings.aH)),
+							$elm_community$typed_svg$TypedSvg$Types$px(settings.aK)),
 							$elm_community$typed_svg$TypedSvg$Attributes$fill(
 							$elm_community$typed_svg$TypedSvg$Types$Paint($avh4$elm_color$Color$white)),
 							$elm_community$typed_svg$TypedSvg$Attributes$stroke(
@@ -10894,9 +11390,9 @@ var $author$project$GossipGraph$Renderer$renderNode = F2(
 							$elm_community$typed_svg$TypedSvg$Attributes$strokeWidth(
 							$elm_community$typed_svg$TypedSvg$Types$px(1)),
 							$elm_community$typed_svg$TypedSvg$Attributes$cx(
-							$elm_community$typed_svg$TypedSvg$Types$px(node.e3.R)),
+							$elm_community$typed_svg$TypedSvg$Types$px(node.e7.S)),
 							$elm_community$typed_svg$TypedSvg$Attributes$cy(
-							$elm_community$typed_svg$TypedSvg$Types$px(node.e3.S))
+							$elm_community$typed_svg$TypedSvg$Types$px(node.e7.T))
 						]),
 					_List_fromArray(
 						[
@@ -10906,7 +11402,7 @@ var $author$project$GossipGraph$Renderer$renderNode = F2(
 							_List_fromArray(
 								[
 									$elm_community$typed_svg$TypedSvg$Core$text(
-									$elm$core$String$fromChar(node.e3.ev.cH))
+									$elm$core$String$fromChar(node.e7.ez.cL))
 								]))
 						])),
 					A2(
@@ -10915,39 +11411,39 @@ var $author$project$GossipGraph$Renderer$renderNode = F2(
 						[
 							$elm_community$typed_svg$TypedSvg$Attributes$textAnchor(2),
 							$elm_community$typed_svg$TypedSvg$Attributes$x(
-							$elm_community$typed_svg$TypedSvg$Types$px(node.e3.R)),
+							$elm_community$typed_svg$TypedSvg$Types$px(node.e7.S)),
 							$elm_community$typed_svg$TypedSvg$Attributes$y(
-							$elm_community$typed_svg$TypedSvg$Types$px(node.e3.S)),
+							$elm_community$typed_svg$TypedSvg$Types$px(node.e7.T)),
 							$elm_community$typed_svg$TypedSvg$Attributes$dy(
-							$elm_community$typed_svg$TypedSvg$Types$px(settings.aH / 3))
+							$elm_community$typed_svg$TypedSvg$Types$px(settings.aK / 3))
 						]),
 					_List_fromArray(
 						[
 							$elm_community$typed_svg$TypedSvg$Core$text(
-							$elm$core$String$fromChar(node.e3.ev.cH))
+							$elm$core$String$fromChar(node.e7.ez.cL))
 						]))
 				]));
 	});
 var $gampleman$elm_visualization$Force$simulation = function (forces) {
 	return {
-		aP: 1.0,
-		b1: 1 - A2($elm$core$Basics$pow, 0.001, 1 / 300),
-		dp: 0.0,
-		dF: forces,
-		cE: 0.001,
-		bH: 0.6
+		aS: 1.0,
+		b4: 1 - A2($elm$core$Basics$pow, 0.001, 1 / 300),
+		dt: 0.0,
+		dJ: forces,
+		cI: 0.001,
+		bI: 0.6
 	};
 };
 var $elm_community$typed_svg$TypedSvg$svg = $elm_community$typed_svg$TypedSvg$Core$node('svg');
 var $author$project$GossipGraph$Renderer$updateContextWithValue = F2(
 	function (nodeCtx, value) {
-		var node = nodeCtx.d1;
+		var node = nodeCtx.d5;
 		return _Utils_update(
 			nodeCtx,
 			{
-				d1: _Utils_update(
+				d5: _Utils_update(
 					node,
-					{e3: value})
+					{e7: value})
 			});
 	});
 var $author$project$GossipGraph$Renderer$updateGraphWithList = function () {
@@ -10962,7 +11458,7 @@ var $author$project$GossipGraph$Renderer$updateGraphWithList = function () {
 			function (node, graph) {
 				return A3(
 					$elm_community$graph$Graph$update,
-					node.bO,
+					node.bP,
 					graphUpdater(node),
 					graph);
 			}));
@@ -10988,7 +11484,7 @@ var $author$project$GossipGraph$Renderer$renderGraph = F2(
 			[
 				A2(
 				$gampleman$elm_visualization$Force$customLinks,
-				1,
+				3,
 				$author$project$GossipGraph$Renderer$getLinks(entityGraph)),
 				A2(
 				$gampleman$elm_visualization$Force$manyBodyStrength,
@@ -10996,10 +11492,10 @@ var $author$project$GossipGraph$Renderer$renderGraph = F2(
 				A2(
 					$elm$core$List$map,
 					function ($) {
-						return $.bO;
+						return $.bP;
 					},
 					$elm_community$graph$Graph$nodes(entityGraph))),
-				A2($gampleman$elm_visualization$Force$center, settings.b8 / 2, settings.b7 / 2)
+				A2($gampleman$elm_visualization$Force$center, settings.cb / 2, settings.ca / 2)
 			]);
 		var computedGraph = A2(
 			$author$project$GossipGraph$Renderer$updateGraphWithList,
@@ -11010,14 +11506,14 @@ var $author$project$GossipGraph$Renderer$renderGraph = F2(
 				A2(
 					$elm$core$List$map,
 					function (n) {
-						return n.e3;
+						return n.e7;
 					},
 					$elm_community$graph$Graph$nodes(entityGraph))));
 		return A2(
 			$elm_community$typed_svg$TypedSvg$svg,
 			_List_fromArray(
 				[
-					A4($elm_community$typed_svg$TypedSvg$Attributes$viewBox, 0, 0, settings.b8, settings.b7),
+					A4($elm_community$typed_svg$TypedSvg$Attributes$viewBox, 0, 0, settings.cb, settings.ca),
 					A2(
 					$elm_community$typed_svg$TypedSvg$Attributes$preserveAspectRatio,
 					A2($elm_community$typed_svg$TypedSvg$Types$Align, 1, 1),
@@ -11043,7 +11539,7 @@ var $author$project$GossipGraph$Renderer$renderGraph = F2(
 						A2(
 							$elm$core$List$filter,
 							function (e) {
-								return !_Utils_eq(e.as, e.a8);
+								return !_Utils_eq(e.av, e.a9);
 							},
 							$elm_community$graph$Graph$edges(computedGraph)))),
 					A2(
@@ -11091,7 +11587,7 @@ var $author$project$GossipProtocol$GossipProtocol$isSunGraph = function (graph) 
 				F2(
 					function (ctx, acc) {
 						return $elm_community$intdict$IntDict$isEmpty(
-							A2($elm_community$intdict$IntDict$remove, ctx.d1.bO, ctx.cN)) ? A2($elm$core$List$cons, ctx.d1.bO, acc) : acc;
+							A2($elm_community$intdict$IntDict$remove, ctx.d5.bP, ctx.cR)) ? A2($elm$core$List$cons, ctx.d5.bP, acc) : acc;
 					}),
 				_List_Nil,
 				g));
@@ -11147,87 +11643,61 @@ var $author$project$Main$sunInfoView = function (graph) {
 						_List_fromArray(
 							[
 								$elm$html$Html$text(
-								'The graph is ' + ((isSunGraph ? '' : 'not') + ' a sun graph'))
+								'This graph is ' + ((isSunGraph ? '' : 'not') + ' a sun graph.'))
 							]))
 					]))
 			]));
 };
-var $elm$html$Html$ul = _VirtualDom_node('ul');
 var $author$project$Main$gossipGraphView = function (model) {
+	var graphIsValid = function () {
+		var _v1 = _Utils_Tuple2(
+			$elm$core$String$isEmpty(model.ai),
+			model.A);
+		if ((!_v1.a) && (!_v1.b.$)) {
+			return true;
+		} else {
+			return false;
+		}
+	}();
 	return A2(
 		$elm$html$Html$section,
-		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$id('graph')
+			]),
 		_List_fromArray(
 			[
 				A2(
-				$elm$html$Html$h2,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Gossip graph')
-					])),
-				A2(
-				$elm$html$Html$p,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text('You can enter a text representation of a gossip graph here. A gossip graph is represented as follows:')
-					])),
-				A2(
-				$elm$html$Html$ul,
+				$elm$html$Html$header,
 				_List_Nil,
 				_List_fromArray(
 					[
 						A2(
-						$elm$html$Html$li,
+						$elm$html$Html$h2,
 						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Agents are represented by string segments, i.e. letter sequences separated by spaces')
+								$elm$html$Html$text('Gossip graph')
 							])),
-						A2(
-						$elm$html$Html$li,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text('Relations and agent names are represented by upper- and lowercase letters. A lowercase letter represents a number relation and an uppercase letter represents a secret relation.')
-							])),
-						A2(
-						$elm$html$Html$li,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text('The position of the string segment represents which agent the relations belongs to. For example, the string “A B” tells us that the first agent knows the secret of A and the second knows the secret of B.')
-							])),
-						A2(
-						$elm$html$Html$li,
-						_List_Nil,
-						_List_fromArray(
-							[
-								$elm$html$Html$text('The names of the agents are based on the relations that are present. In the example above, the names in the relations are “A“ and “B“, so we know that the first agent is called “A“ and the second is called “B“.')
-							]))
+						A2($author$project$Main$helpButtonView, 'Gossip Graphs', $author$project$Main$gossipGraphHelpView)
 					])),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$id('graph-input-examples')
+						$elm$html$Html$Attributes$class('columns')
 					]),
 				_List_fromArray(
 					[
 						A2(
-						$elm$html$Html$h3,
-						_List_Nil,
+						$elm$html$Html$label,
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Examples')
-							])),
-						A2(
-						$elm$html$Html$p,
-						_List_Nil,
+								$elm$html$Html$Attributes$for('gossip-graph-input')
+							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Click one of the buttons to load an example gossip graph.')
+								$elm$html$Html$text('Gossip graph input')
 							])),
 						A2(
 						$elm$html$Html$div,
@@ -11238,76 +11708,62 @@ var $author$project$Main$gossipGraphView = function (model) {
 						_List_fromArray(
 							[
 								A2(
-								$elm$html$Html$button,
+								$elm$html$Html$input,
 								_List_fromArray(
 									[
-										$elm$html$Html$Attributes$type_('button'),
-										$elm$html$Html$Events$onClick(
-										$author$project$Main$InsertExampleGraph('Abc aBc abC'))
+										$elm$html$Html$Attributes$type_('text'),
+										$elm$html$Html$Attributes$id('gossip-graph-input'),
+										$elm$html$Html$Attributes$value(model.ai),
+										$elm$html$Html$Events$onInput($author$project$Main$ChangeGossipGraph),
+										$elm$html$Html$Attributes$placeholder('Gossip graph representation')
 									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Number relations')
-									])),
+								_List_Nil),
 								A2(
 								$elm$html$Html$button,
 								_List_fromArray(
 									[
 										$elm$html$Html$Attributes$type_('button'),
 										$elm$html$Html$Events$onClick(
-										$author$project$Main$InsertExampleGraph('ABC ABC ABC'))
+										A2($author$project$Main$ShowModal, 'Gossip Graph input examples', $author$project$Main$gossipGraphExamples))
 									]),
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Secret relations')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$type_('button'),
-										$elm$html$Html$Events$onClick(
-										$author$project$Main$InsertExampleGraph('Abc ABC C'))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Mixed relations')
-									])),
-								A2(
-								$elm$html$Html$button,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$type_('button'),
-										$elm$html$Html$Events$onClick(
-										$author$project$Main$InsertExampleGraph('ABCDE aBcd abCE cDe aE'))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Complex example')
+										$elm$html$Html$text('Examples')
 									]))
-							]))
-					])),
-				A2(
-				$elm$html$Html$div,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('input-group')
-					]),
-				_List_fromArray(
-					[
+							])),
 						A2(
-						$elm$html$Html$input,
+						$elm$html$Html$label,
 						_List_fromArray(
 							[
-								$elm$html$Html$Attributes$type_('text'),
-								$elm$html$Html$Attributes$id('gossip-graph-input'),
-								$elm$html$Html$Attributes$value(model.aG),
-								$elm$html$Html$Events$onInput($author$project$Main$ChangeGossipGraph),
-								$elm$html$Html$Attributes$placeholder('Gossip graph representation')
+								$elm$html$Html$Attributes$for('canonical-graph-input')
 							]),
-						_List_Nil)
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Canonical representation')
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('input-group')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$input,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$type_('text'),
+										$elm$html$Html$Attributes$id('canonical-graph-input'),
+										$elm$html$Html$Attributes$disabled(true),
+										$elm$html$Html$Attributes$value(model.bL),
+										$elm$html$Html$Attributes$placeholder('Canonical representation')
+									]),
+								_List_Nil),
+								A2($author$project$Main$helpButtonView, 'Canonical Representation', $author$project$Main$canonicalRepresentationInfoView)
+							]))
 					])),
-				$elm$core$String$isEmpty(model.aG) ? A2(
+				$elm$core$String$isEmpty(model.ai) ? A2(
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
@@ -11337,9 +11793,9 @@ var $author$project$Main$gossipGraphView = function (model) {
 					]),
 				_List_fromArray(
 					[
-						A2($author$project$GossipGraph$Renderer$render, model.C, model.ci),
+						A2($author$project$GossipGraph$Renderer$render, model.A, model.cm),
 						function () {
-						var _v0 = model.C;
+						var _v0 = model.A;
 						if (!_v0.$) {
 							return A2(
 								$elm$html$Html$div,
@@ -11349,9 +11805,9 @@ var $author$project$Main$gossipGraphView = function (model) {
 									]),
 								_List_fromArray(
 									[
-										A2($author$project$Main$connectionInfoView, 0, model.C),
-										A2($author$project$Main$connectionInfoView, 1, model.C),
-										$author$project$Main$sunInfoView(model.C)
+										A2($author$project$Main$connectionInfoView, 0, model.A),
+										A2($author$project$Main$connectionInfoView, 1, model.A),
+										$author$project$Main$sunInfoView(model.A)
 									]));
 						} else {
 							return A2($elm$html$Html$div, _List_Nil, _List_Nil);
@@ -11362,192 +11818,534 @@ var $author$project$Main$gossipGraphView = function (model) {
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$id('graph-history')
+						$elm$html$Html$Attributes$id('export-buttons'),
+						$elm$html$Html$Attributes$class('input-group right')
 					]),
 				_List_fromArray(
 					[
 						A2(
-						$elm$html$Html$h3,
+						$elm$html$Html$button,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$disabled(!graphIsValid),
+								$elm$html$Html$Events$onClick(
+								A2(
+									$author$project$Main$ShowModal,
+									'Coming soon',
+									_List_fromArray(
+										[
+											A2(
+											$elm$html$Html$p,
+											_List_Nil,
+											_List_fromArray(
+												[
+													A2($author$project$Utils$Alert$render, 0, 'This feature is coming soon.')
+												]))
+										])))
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Generate LaTeX file')
+							])),
+						A2(
+						$elm$html$Html$button,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$disabled(!graphIsValid),
+								$elm$html$Html$Events$onClick(
+								A2(
+									$author$project$Main$ShowModal,
+									'Coming soon',
+									_List_fromArray(
+										[
+											A2(
+											$elm$html$Html$p,
+											_List_Nil,
+											_List_fromArray(
+												[
+													A2($author$project$Utils$Alert$render, 0, 'This feature is coming soon.')
+												]))
+										])))
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Copy GraphViz DOT code')
+							]))
+					]))
+			]));
+};
+var $elm$html$Html$h1 = _VirtualDom_node('h1');
+var $author$project$Main$headerHelpView = _List_fromArray(
+	[
+		A2(
+		$elm$html$Html$p,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('Gossip protocols are protocols that determine how gossips (a.k.a. secrets) can spread in gossip graphs.\n            A gossip graph is a set of nodes representing agents and a set of edges representing relations.\n            A relation can be either a '),
+				A2(
+				$elm$html$Html$strong,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('number relation')
+					])),
+				$elm$html$Html$text(' (meaning that an agent knows the phone number of another agent) or '),
+				A2(
+				$elm$html$Html$strong,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('secret relation')
+					])),
+				$elm$html$Html$text(' (meaning that an agent knows the secret of the other agent).')
+			])),
+		A2(
+		$elm$html$Html$p,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('Using this tool, you can model gossip graphs and execute gossip protocols on them.')
+			]))
+	]);
+var $author$project$Main$headerView = A2(
+	$elm$html$Html$header,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$id('header')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$div,
+			_List_Nil,
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$h1,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Tools for Gossip')
+						])),
+					A2(
+					$elm$html$Html$p,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('subtitle')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Bachelor\'s project')
+						])),
+					A2(
+					$elm$html$Html$p,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('subtitle')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('R.A. Meffert ('),
+							A2(
+							$elm$html$Html$a,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$href('mailto:r.a.meffert@student.rug.nl')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('r.a.meffert@student.rug.nl')
+								])),
+							$elm$html$Html$text(')')
+						])),
+					A2(
+					$elm$html$Html$p,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('subtitle')
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Supervisor: B.R.M. Gattinger')
+						]))
+				])),
+			A2($author$project$Main$helpButtonView, 'Tools for Gossip', $author$project$Main$headerHelpView)
+		]));
+var $author$project$Main$TimeTravel = function (a) {
+	return {$: 4, a: a};
+};
+var $author$project$Main$historyHelpView = _List_fromArray(
+	[
+		A2(
+		$elm$html$Html$p,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('This section shows the history of calls that have been made. You can click any of the calls to time-travel to that state of the gossip graph.')
+			])),
+		A2($author$project$Utils$Alert$render, 0, 'In the next version of this application, it will be possible to generate the execution tree for the current protocol here.')
+	]);
+var $elm$core$Elm$JsArray$foldl = _JsArray_foldl;
+var $elm$core$Elm$JsArray$indexedMap = _JsArray_indexedMap;
+var $elm$core$Array$indexedMap = F2(
+	function (func, _v0) {
+		var len = _v0.a;
+		var tree = _v0.c;
+		var tail = _v0.d;
+		var initialBuilder = {
+			u: _List_Nil,
+			q: 0,
+			t: A3(
+				$elm$core$Elm$JsArray$indexedMap,
+				func,
+				$elm$core$Array$tailIndex(len),
+				tail)
+		};
+		var helper = F2(
+			function (node, builder) {
+				if (!node.$) {
+					var subTree = node.a;
+					return A3($elm$core$Elm$JsArray$foldl, helper, builder, subTree);
+				} else {
+					var leaf = node.a;
+					var offset = builder.q * $elm$core$Array$branchFactor;
+					var mappedLeaf = $elm$core$Array$Leaf(
+						A3($elm$core$Elm$JsArray$indexedMap, func, offset, leaf));
+					return {
+						u: A2($elm$core$List$cons, mappedLeaf, builder.u),
+						q: builder.q + 1,
+						t: builder.t
+					};
+				}
+			});
+		return A2(
+			$elm$core$Array$builderToArray,
+			true,
+			A3($elm$core$Elm$JsArray$foldl, helper, initialBuilder, tree));
+	});
+var $author$project$Main$historyView = function (model) {
+	return A2(
+		$elm$html$Html$section,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$id('history')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$header,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$h2,
 						_List_Nil,
 						_List_fromArray(
 							[
 								$elm$html$Html$text('Call history')
 							])),
-						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('call-list')
-							]),
-						($elm$core$Array$length(model.aR) > 0) ? A2(
-							$elm$core$List$cons,
-							A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('call'),
-										$elm$html$Html$Events$onClick(
-										$author$project$Main$TimeTravel(0))
-									]),
-								_List_fromArray(
-									[
-										$elm$html$Html$text('Initial graph')
-									])),
-							$elm$core$Array$toList(
-								A2(
-									$elm$core$Array$indexedMap,
-									F2(
-										function (i, call) {
-											var _v1 = _Utils_Tuple2(
-												A2(
-													$author$project$GossipGraph$Agent$fromId,
-													A2($elm$core$Result$withDefault, _List_Nil, model.ap),
-													call.as),
-												A2(
-													$author$project$GossipGraph$Agent$fromId,
-													A2($elm$core$Result$withDefault, _List_Nil, model.ap),
-													call.a8));
-											if ((!_v1.a.$) && (!_v1.b.$)) {
-												var from = _v1.a.a;
-												var to = _v1.b.a;
-												return A2(
-													$elm$html$Html$div,
-													_List_fromArray(
-														[
-															$elm$html$Html$Attributes$class('call'),
-															$elm$html$Html$Events$onClick(
-															$author$project$Main$TimeTravel(i + 1))
-														]),
-													_List_fromArray(
-														[
-															$elm$html$Html$text(
-															$elm$core$String$fromChar(from.cH) + (' 📞 ' + $elm$core$String$fromChar(to.cH)))
-														]));
-											} else {
-												return A2(
-													$elm$html$Html$div,
-													_List_fromArray(
-														[
-															$elm$html$Html$Attributes$class('call')
-														]),
-													_List_fromArray(
-														[
-															$elm$html$Html$text('❌')
-														]));
-											}
-										}),
-									model.aR))) : _List_fromArray(
-							[
-								$elm$html$Html$text('No calls have been made yet.')
-							]))
+						A2($author$project$Main$helpButtonView, 'Call history', $author$project$Main$historyHelpView)
 					])),
-				(!$elm$core$String$isEmpty(model.aG)) ? A2(
+				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$id('canonical-representation')
+						$elm$html$Html$Attributes$class('call-list')
+					]),
+				($elm$core$Array$length(model.x) > 0) ? A2(
+					$elm$core$List$cons,
+					A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('call'),
+								$elm$html$Html$Events$onClick(
+								$author$project$Main$TimeTravel(0))
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Initial graph')
+							])),
+					$elm$core$Array$toList(
+						A2(
+							$elm$core$Array$indexedMap,
+							F2(
+								function (i, call) {
+									var _v0 = _Utils_Tuple2(
+										A2(
+											$author$project$GossipGraph$Agent$fromId,
+											A2($elm$core$Result$withDefault, _List_Nil, model.ar),
+											call.av),
+										A2(
+											$author$project$GossipGraph$Agent$fromId,
+											A2($elm$core$Result$withDefault, _List_Nil, model.ar),
+											call.a9));
+									if ((!_v0.a.$) && (!_v0.b.$)) {
+										var from = _v0.a.a;
+										var to = _v0.b.a;
+										return A2(
+											$elm$html$Html$div,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$class('call'),
+													$elm$html$Html$Events$onClick(
+													$author$project$Main$TimeTravel(i + 1))
+												]),
+											_List_fromArray(
+												[
+													$elm$html$Html$text(
+													$elm$core$String$fromChar(from.cL) + (' 📞 ' + $elm$core$String$fromChar(to.cL)))
+												]));
+									} else {
+										return A2(
+											$elm$html$Html$div,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$class('call')
+												]),
+											_List_fromArray(
+												[
+													$elm$html$Html$text('❌')
+												]));
+									}
+								}),
+							model.x))) : _List_fromArray(
+					[
+						$elm$html$Html$text('No calls have been made yet.')
+					]))
+			]));
+};
+var $author$project$Main$HideModal = {$: 7};
+var $elm$html$Html$h4 = _VirtualDom_node('h4');
+var $author$project$Main$modalView = function (model) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Events$onClick($author$project$Main$HideModal),
+				$elm$html$Html$Attributes$class(
+				'modal-overlay' + (model.ax.b3 ? ' visible' : ''))
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('modal-window')
 					]),
 				_List_fromArray(
 					[
 						A2(
-						$elm$html$Html$h3,
-						_List_Nil,
+						$elm$html$Html$header,
 						_List_fromArray(
 							[
-								$elm$html$Html$text('Canonical representation')
+								$elm$html$Html$Attributes$class('modal-header')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$h4,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text(model.ax.b_)
+									])),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$type_('button'),
+										$elm$html$Html$Attributes$title('Close window'),
+										$elm$html$Html$Events$onClick($author$project$Main$HideModal)
+									]),
+								_List_fromArray(
+									[
+										$lattyware$elm_fontawesome$FontAwesome$Icon$viewIcon($lattyware$elm_fontawesome$FontAwesome$Solid$times)
+									]))
 							])),
-						$elm$html$Html$text('“' + (model.bK + '”')),
-						A2($elm$html$Html$br, _List_Nil, _List_Nil),
-						$elm$html$Html$text('The gossip graph represented with “normalized” agent names, that is, agents are named starting with “A” for the first agent and following the alphabet.')
-					])) : $elm$html$Html$text('')
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('modal-content')
+							]),
+						model.ax.cd)
+					]))
 			]));
 };
-var $elm$html$Html$h1 = _VirtualDom_node('h1');
-var $elm$html$Html$header = _VirtualDom_node('header');
-var $elm$html$Html$strong = _VirtualDom_node('strong');
-var $author$project$Main$headerView = A2(
-	$elm$html$Html$header,
-	_List_Nil,
-	_List_fromArray(
-		[
-			A2(
-			$elm$html$Html$h1,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text('Tools for Gossip')
-				])),
-			A2(
-			$elm$html$Html$p,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('subtitle')
-				]),
-			_List_fromArray(
-				[
-					$elm$html$Html$text('Bachelor\'s Project, R.A. Meffert — Supervisor: B.R.M. Gattinger')
-				])),
-			A2(
-			$elm$html$Html$p,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text('Gossip protocols are protocols that determine how gossips (a.k.a. secrets) can spread in gossip graphs. \n                A gossip graph is a set of nodes representing agents and a set of edges representing relations. \n                A relation can be either a '),
-					A2(
-					$elm$html$Html$strong,
-					_List_Nil,
-					_List_fromArray(
-						[
-							$elm$html$Html$text('number relation')
-						])),
-					$elm$html$Html$text(' (meaning that an agent knows the phone number of another agent) or '),
-					A2(
-					$elm$html$Html$strong,
-					_List_Nil,
-					_List_fromArray(
-						[
-							$elm$html$Html$text('secret relation')
-						])),
-					$elm$html$Html$text(' (meaning that an agent knows the secret of the other agent).')
-				])),
-			A2(
-			$elm$html$Html$p,
-			_List_Nil,
-			_List_fromArray(
-				[
-					$elm$html$Html$text('Using this tool, you can model gossip graphs and execute gossip protocols on them.')
-				]))
-		]));
-var $elm$html$Html$main_ = _VirtualDom_node('main');
 var $author$project$Main$ChangeProtocol = function (a) {
 	return {$: 2, a: a};
 };
-var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$html$Html$blockquote = _VirtualDom_node('blockquote');
 var $elm$html$Html$cite = _VirtualDom_node('cite');
+var $elm$html$Html$sup = _VirtualDom_node('sup');
 var $author$project$GossipProtocol$Conditions$Predefined$explanation = $elm$core$Dict$fromList(
 	_List_fromArray(
 		[
-			_Utils_Tuple2('any', 'Until every agent knows all secrets, choose different agents x and y, such that x knows the number of y, and let x call y.'),
-			_Utils_Tuple2('tok', 'Until every agent knows all secrets, choose different agents x and y with x ≠ y, such that x knows y’s number and either x has not been in prior calls or the last call involving x was to x, and let x call y.'),
-			_Utils_Tuple2('spi', 'Until every agent knows all secrets, choose different agents x and y, such that x knows y’s number and either x has not been in prior calls or the last call involving x was from x, and let x call y.'),
-			_Utils_Tuple2('wco', 'Until every agent knows all secrets, choose different agents x and y, such that x knows the number of y and x did not call y before, and let x call y.'),
-			_Utils_Tuple2('co', 'Until every agent knows all secrets, choose different agents x and y, such that x knows the number of y and there was no prior call between x and y, and let x call y.'),
-			_Utils_Tuple2('lns', 'Until every agent knows all secrets, choose different agents x and y, such that x knows the number of y but not the secret of y, and let x call y.')
+			_Utils_Tuple2(
+			'any',
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Until every agent knows all secrets, choose different agents x and y, such that x knows the number of y, and let x call y.')
+						])),
+					A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Represented by the boolean formula ⊤.')
+						]))
+				])),
+			_Utils_Tuple2(
+			'tok',
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Until every agent knows all secrets, choose different agents x and y with x ≠ y, such that x knows y’s number and either x has not been in prior calls or the last call involving x was to x, and let x call y.')
+						])),
+					A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Represented by the boolean formula σₓ = ϵ ∨ σₓ = t;zx.')
+						]))
+				])),
+			_Utils_Tuple2(
+			'spi',
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Until every agent knows all secrets, choose different agents x and y, such that x knows y’s number and either x has not been in prior calls or the last call involving x was from x, and let x call y.')
+						])),
+					A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Represented by the boolean formula σₓ = ϵ ∨ σₓ = t;xz.')
+						]))
+				])),
+			_Utils_Tuple2(
+			'wco',
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Until every agent knows all secrets, choose different agents x and y, such that x knows the number of y and x did not call y before, and let x call y.')
+						])),
+					A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Represented by the boolean formula xy ∉ σₓ ∧ yx ∉ σₓ.')
+						]))
+				])),
+			_Utils_Tuple2(
+			'co',
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Until every agent knows all secrets, choose different agents x and y, such that x knows the number of y and there was no prior call between x and y, and let x call y.')
+						])),
+					A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Represented by the boolean formula xy ∉ σₓ.')
+						]))
+				])),
+			_Utils_Tuple2(
+			'lns',
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Until every agent knows all secrets, choose different agents x and y, such that x knows the number of y but not the secret of y, and let x call y.')
+						])),
+					A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Represented by the boolean formula ¬S'),
+							A2(
+							$elm$html$Html$sup,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('σ')
+								])),
+							$elm$html$Html$text('xy.')
+						]))
+				]))
 		]));
 var $elm$html$Html$footer = _VirtualDom_node('footer');
-var $elm$html$Html$Attributes$href = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'href',
-		_VirtualDom_noJavaScriptUri(url));
-};
+var $elm$html$Html$h3 = _VirtualDom_node('h3');
 var $elm$html$Html$option = _VirtualDom_node('option');
+var $author$project$Main$protocolHelpView = _List_fromArray(
+	[
+		A2(
+		$elm$html$Html$p,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('This section allows you to select one of the gossip protocols as defined by '),
+				A2(
+				$elm$html$Html$a,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$href('https://doi.org/10/cvpm')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('van Ditmarsch et al. (2018)')
+					])),
+				$elm$html$Html$text('. When you have selected a protocol, the possible calls for that protocol and the current gossip graph, together with the call history, will be shown. '),
+				$elm$html$Html$text('Clicking the '),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$lattyware$elm_fontawesome$FontAwesome$Icon$viewIcon($lattyware$elm_fontawesome$FontAwesome$Solid$question)
+					])),
+				$elm$html$Html$text(' icon will tell you the rules of the selected protocol.')
+			])),
+		A2($author$project$Utils$Alert$render, 0, 'In the next version of this application, you will be able to define custom gossip protocols using the constituents defined by van Ditmarsch et al. (2018).')
+	]);
 var $elm$html$Html$select = _VirtualDom_node('select');
 var $author$project$GossipGraph$Call$fromTuple = function (_v0) {
 	var x = _v0.a;
 	var y = _v0.b;
-	return {as: x, a8: y};
+	return {av: x, a9: y};
 };
 var $author$project$GossipProtocol$GossipProtocol$selectCalls = F3(
 	function (graph, condition, sequence) {
@@ -11556,15 +12354,15 @@ var $author$project$GossipProtocol$GossipProtocol$selectCalls = F3(
 				var localRelations = A2(
 					$elm$core$List$filter,
 					function (_v0) {
-						var from = _v0.as;
-						var to = _v0.a8;
+						var from = _v0.av;
+						var to = _v0.a9;
 						return !_Utils_eq(from, to);
 					},
 					$author$project$GossipGraph$Relation$fromNodeContext(context));
 				var relationPairs = A2(
 					$elm$core$List$map,
 					function (r) {
-						return _Utils_Tuple2(r.as, r.a8);
+						return _Utils_Tuple2(r.av, r.a9);
 					},
 					localRelations);
 				return _Utils_ap(
@@ -11582,196 +12380,204 @@ var $author$project$GossipProtocol$GossipProtocol$selectCalls = F3(
 		return A3($elm_community$graph$Graph$fold, calls, _List_Nil, graph);
 	});
 var $author$project$Main$protocolView = function (model) {
+	var protocolExplanation = function () {
+		var _v1 = A2($elm$core$Dict$get, model.z, $author$project$GossipProtocol$Conditions$Predefined$explanation);
+		if (!_v1.$) {
+			var explanation = _v1.a;
+			return _List_fromArray(
+				[
+					A2(
+					$elm$html$Html$blockquote,
+					_List_Nil,
+					_List_fromArray(
+						[
+							A2($elm$html$Html$p, _List_Nil, explanation),
+							A2(
+							$elm$html$Html$footer,
+							_List_Nil,
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$cite,
+									_List_Nil,
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Based on '),
+											A2(
+											$elm$html$Html$a,
+											_List_fromArray(
+												[
+													$elm$html$Html$Attributes$href('https://doi.org/10/cvpm')
+												]),
+											_List_fromArray(
+												[
+													$elm$html$Html$text('van Ditmarsch et al. (2018)')
+												]))
+										]))
+								]))
+						]))
+				]);
+		} else {
+			return (model.z === 'custom') ? _List_fromArray(
+				[
+					A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Custom')
+						]))
+				]) : _List_fromArray(
+				[
+					A2(
+					$elm$html$Html$p,
+					_List_Nil,
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Unknown protocol')
+						]))
+				]);
+		}
+	}();
 	return A2(
 		$elm$html$Html$section,
-		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$id('protocols')
+			]),
 		_List_fromArray(
 			[
 				A2(
-				$elm$html$Html$h2,
+				$elm$html$Html$header,
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text('Protocols')
-					])),
-				A2(
-				$elm$html$Html$p,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text('If you select a protocol, you\'ll be presented with the calls that can be made given the current gossip graph, the call history and that protocol.')
+						A2(
+						$elm$html$Html$h2,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Gossip Protocols')
+							])),
+						A2($author$project$Main$helpButtonView, 'Gossip Protocols', $author$project$Main$protocolHelpView)
 					])),
 				A2(
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('columns')
+						$elm$html$Html$Attributes$class('input-group')
 					]),
 				_List_fromArray(
 					[
-						$elm$core$String$isEmpty(model.aG) ? A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('call-list')
-							]),
-						_List_fromArray(
-							[
-								A2($author$project$Utils$Alert$render, 1, ' If there are no agents, no calls can be made.')
-							])) : A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('call-list')
-							]),
-						function () {
-							var _v0 = _Utils_Tuple3(model.ag, model.ap, model.C);
-							if (((!_v0.a.$) && (!_v0.b.$)) && (!_v0.c.$)) {
-								var sequence = _v0.a.a;
-								var agents = _v0.b.a;
-								var graph = _v0.c.a;
-								var calls = A3($author$project$GossipProtocol$GossipProtocol$selectCalls, graph, model.W, sequence);
-								return $elm$core$List$isEmpty(calls) ? _List_fromArray(
-									[
-										$elm$html$Html$text('No more calls are possible.')
-									]) : A2(
-									$elm$core$List$map,
-									$author$project$GossipGraph$Call$render(agents),
-									calls);
-							} else {
-								return _List_fromArray(
-									[
-										A2($author$project$Utils$Alert$render, 0, 'The call sequence below is impossible. I\'ll start looking for possible calls again when I understand the call sequence!')
-									]);
-							}
-						}()),
 						A2(
-						$elm$html$Html$div,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$class('info')
-							]),
+						$elm$html$Html$select,
 						_List_fromArray(
 							[
 								A2(
-								$elm$html$Html$div,
-								_List_fromArray(
-									[
-										$elm$html$Html$Attributes$class('input-group')
-									]),
-								_List_fromArray(
-									[
-										A2(
-										$elm$html$Html$select,
-										_List_fromArray(
-											[
-												A2(
-												$elm$html$Html$Events$on,
-												'change',
-												A2($elm$json$Json$Decode$map, $author$project$Main$ChangeProtocol, $elm$html$Html$Events$targetValue))
-											]),
-										_Utils_ap(
-											A2(
-												$elm$core$List$map,
-												function (k) {
-													return A2(
-														$elm$html$Html$option,
-														_List_fromArray(
-															[
-																$elm$html$Html$Attributes$value(k)
-															]),
-														_List_fromArray(
-															[
-																$elm$html$Html$text(
-																A2(
-																	$elm$core$Maybe$withDefault,
-																	'?',
-																	A2($elm$core$Dict$get, k, $author$project$GossipProtocol$Conditions$Predefined$name)))
-															]));
-												},
-												$elm$core$Dict$keys($author$project$GossipProtocol$Conditions$Predefined$name)),
-											_List_fromArray(
-												[
-													A2(
-													$elm$html$Html$option,
-													_List_fromArray(
-														[
-															$elm$html$Html$Attributes$value('custom')
-														]),
-													_List_fromArray(
-														[
-															$elm$html$Html$text('Custom')
-														]))
-												])))
-									])),
-								function () {
-								var _v1 = A2($elm$core$Dict$get, model.y, $author$project$GossipProtocol$Conditions$Predefined$explanation);
-								if (!_v1.$) {
-									var explanation = _v1.a;
+								$elm$html$Html$Events$on,
+								'change',
+								A2($elm$json$Json$Decode$map, $author$project$Main$ChangeProtocol, $elm$html$Html$Events$targetValue))
+							]),
+						_Utils_ap(
+							A2(
+								$elm$core$List$map,
+								function (k) {
 									return A2(
-										$elm$html$Html$blockquote,
-										_List_Nil,
+										$elm$html$Html$option,
 										_List_fromArray(
 											[
+												$elm$html$Html$Attributes$value(k)
+											]),
+										_List_fromArray(
+											[
+												$elm$html$Html$text(
 												A2(
-												$elm$html$Html$p,
-												_List_Nil,
-												_List_fromArray(
-													[
-														$elm$html$Html$text(explanation)
-													])),
-												A2(
-												$elm$html$Html$footer,
-												_List_Nil,
-												_List_fromArray(
-													[
-														$elm$html$Html$text('—'),
-														A2(
-														$elm$html$Html$cite,
-														_List_Nil,
-														_List_fromArray(
-															[
-																A2(
-																$elm$html$Html$a,
-																_List_fromArray(
-																	[
-																		$elm$html$Html$Attributes$href('https://doi.org/10/cvpm')
-																	]),
-																_List_fromArray(
-																	[
-																		$elm$html$Html$text('van Ditmarsch et al. (2018)')
-																	]))
-															]))
-													]))
+													$elm$core$Maybe$withDefault,
+													'?',
+													A2($elm$core$Dict$get, k, $author$project$GossipProtocol$Conditions$Predefined$name)))
 											]));
-								} else {
-									return (model.y === 'custom') ? $elm$html$Html$text('Custom') : $elm$html$Html$text('I have no clue.');
-								}
-							}()
-							]))
-					]))
+								},
+								$elm$core$Dict$keys($author$project$GossipProtocol$Conditions$Predefined$name)),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$option,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$value('custom'),
+											$elm$html$Html$Attributes$disabled(true)
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Custom')
+										]))
+								]))),
+						A2(
+						$author$project$Main$helpButtonView,
+						'Current protocol: ' + A2(
+							$elm$core$Maybe$withDefault,
+							'?',
+							A2($elm$core$Dict$get, model.z, $author$project$GossipProtocol$Conditions$Predefined$name)),
+						protocolExplanation)
+					])),
+				A2(
+				$elm$html$Html$h3,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Possible calls')
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('call-list')
+					]),
+				function () {
+					var _v0 = _Utils_Tuple2(model.ar, model.A);
+					if ((!_v0.a.$) && (!_v0.b.$)) {
+						var agents = _v0.a.a;
+						var graph = _v0.b.a;
+						var calls = A3(
+							$author$project$GossipProtocol$GossipProtocol$selectCalls,
+							graph,
+							model.X,
+							$elm$core$Array$toList(model.x));
+						return $elm$core$String$isEmpty(model.ai) ? _List_fromArray(
+							[
+								$elm$html$Html$text('None')
+							]) : ($elm$core$List$isEmpty(calls) ? _List_fromArray(
+							[
+								$elm$html$Html$text('All possible calls have been made.')
+							]) : A2(
+							$elm$core$List$map,
+							$author$project$GossipGraph$Call$render(agents),
+							calls));
+					} else {
+						return _List_fromArray(
+							[
+								A2($author$project$Utils$Alert$render, 0, 'The call sequence below is impossible. I\'ll start looking for possible calls again when I understand the call sequence!')
+							]);
+					}
+				}())
 			]));
 };
 var $author$project$Main$view = function (model) {
 	return {
-		eG: _List_fromArray(
+		eK: _List_fromArray(
 			[
-				A2(
-				$elm$html$Html$main_,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$author$project$Main$headerView,
-						$author$project$Main$gossipGraphView(model),
-						$author$project$Main$protocolView(model),
-						$author$project$Main$callSequenceView(model)
-					]))
+				$author$project$Main$headerView,
+				$author$project$Main$gossipGraphView(model),
+				$author$project$Main$historyView(model),
+				$author$project$Main$protocolView(model),
+				$author$project$Main$callSequenceView(model),
+				$author$project$Main$modalView(model)
 			]),
-		fx: 'Tools for Gossip'
+		b_: 'Tools for Gossip'
 	};
 };
 var $author$project$Main$main = $elm$browser$Browser$document(
-	{e1: $author$project$Main$init, ft: $author$project$Main$subscriptions, fE: $author$project$Main$update, fF: $author$project$Main$view});
+	{e5: $author$project$Main$init, fx: $author$project$Main$subscriptions, fH: $author$project$Main$update, fI: $author$project$Main$view});
 /*
 _Platform_export({'Main':{'init':$author$project$Main$main(
 	$elm$json$Json$Decode$succeed(0))(0)}});}(this));

@@ -3,10 +3,28 @@
   flex-wrap: wrap;
 }
 .call-list .call {
-  padding: 0.325rem 0.75rem;
+  padding: 0.5rem 0.6rem;
+  margin-right: 0.6rem;
+  margin-bottom: 0.5rem;
   background-color: #c7dae9;
-  margin: 0.325rem;
   border-radius: 0.3rem;
   text-align: center;
   border: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+#sequences .input-group:focus-within #call-sequence-input:focus + #call-sequence-validity {
+  box-shadow: 0 0 0 4px steelblue;
+}
+
+#call-sequence-input:focus {
+  box-shadow: 6px 0 0 -2px white, 4px 0 0 #bfbfbf, 0 0 0 4px steelblue;
+}
+
+#call-sequence-validity {
+  display: none;
+}
+#call-sequence-validity.permitted, #call-sequence-validity.not-permitted {
+  display: block;
+  background-color: transparent;
+  border-left: none;
 }

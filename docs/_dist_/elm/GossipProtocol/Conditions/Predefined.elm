@@ -7,6 +7,8 @@ import CallSequence.CallSequence exposing (containing)
 import Dict exposing (Dict)
 import GossipProtocol.Conditions.Constituents exposing (..)
 import GossipProtocol.GossipProtocol exposing (ProtocolCondition)
+import Html exposing (Html, p, text)
+import Html exposing (sup)
 
 
 any : ProtocolCondition
@@ -67,13 +69,41 @@ name =
         ]
 
 
-explanation : Dict String String
+explanation : Dict String (List (Html msg))
 explanation =
     Dict.fromList
-        [ ( "any", "Until every agent knows all secrets, choose different agents x and y, such that x knows the number of y, and let x call y." )
-        , ( "tok", "Until every agent knows all secrets, choose different agents x and y with x ≠ y, such that x knows y’s number and either x has not been in prior calls or the last call involving x was to x, and let x call y." )
-        , ( "spi", "Until every agent knows all secrets, choose different agents x and y, such that x knows y’s number and either x has not been in prior calls or the last call involving x was from x, and let x call y." )
-        , ( "wco", "Until every agent knows all secrets, choose different agents x and y, such that x knows the number of y and x did not call y before, and let x call y." )
-        , ( "co", "Until every agent knows all secrets, choose different agents x and y, such that x knows the number of y and there was no prior call between x and y, and let x call y." )
-        , ( "lns", "Until every agent knows all secrets, choose different agents x and y, such that x knows the number of y but not the secret of y, and let x call y." )
+        [ ( "any"
+          , [ p [] [ text "Until every agent knows all secrets, choose different agents x and y, such that x knows the number of y, and let x call y." ]
+            , p [] [ text "Represented by the boolean formula ⊤." ]
+            ]
+          )
+        , ( "tok"
+          , [ p [] [ text "Until every agent knows all secrets, choose different agents x and y with x ≠ y, such that x knows y’s number and either x has not been in prior calls or the last call involving x was to x, and let x call y." ]
+            , p [] [ text "Represented by the boolean formula σₓ = ϵ ∨ σₓ = t;zx." ]
+            ]
+          )
+        , ( "spi"
+          , [ p [] [ text "Until every agent knows all secrets, choose different agents x and y, such that x knows y’s number and either x has not been in prior calls or the last call involving x was from x, and let x call y." ]
+            , p [] [ text "Represented by the boolean formula σₓ = ϵ ∨ σₓ = t;xz." ]
+            ]
+          )
+        , ( "wco"
+          , [ p [] [ text "Until every agent knows all secrets, choose different agents x and y, such that x knows the number of y and x did not call y before, and let x call y." ]
+            , p [] [ text "Represented by the boolean formula xy ∉ σₓ ∧ yx ∉ σₓ." ]
+            ]
+          )
+        , ( "co"
+          , [ p [] [ text "Until every agent knows all secrets, choose different agents x and y, such that x knows the number of y and there was no prior call between x and y, and let x call y." ]
+            , p [] [ text "Represented by the boolean formula xy ∉ σₓ." ]
+            ]
+          )
+        , ( "lns"
+          , [ p [] [ text "Until every agent knows all secrets, choose different agents x and y, such that x knows the number of y but not the secret of y, and let x call y." ]
+            , p [] 
+                [ text "Represented by the boolean formula ¬S"
+                , sup [] [ text "σ"]
+                , text "xy."
+                ]
+            ]
+          )
         ]
