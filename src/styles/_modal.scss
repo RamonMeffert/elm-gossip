@@ -27,7 +27,7 @@
         padding: 0;
         display: none;
         min-width: 25%;
-        max-width: calc(55ch + #{2 * v.$pad-v});
+        max-width: calc(60ch + #{2 * v.$pad-v});
         position: relative;
 
         .modal-header {
@@ -49,7 +49,7 @@
 
         .modal-content {
             max-height: 60vh;
-            overflow: scroll;
+            overflow-y: scroll;
             margin: 0 v.$pad-h v.$pad-v v.$pad-h;
             line-height: 150%;
 

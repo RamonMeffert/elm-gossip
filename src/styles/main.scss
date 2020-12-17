@@ -64,6 +64,13 @@ body {
 #graph {
     grid-column: 1 / 1;
     grid-row: 2 / span 3;
+    position: relative;
+
+    #export-buttons {
+        position: absolute;
+        bottom: v.$pad-v;
+        right: v.$pad-h;
+    }
 }
 
 #protocols {
@@ -170,6 +177,7 @@ hr {
 
     &:hover {
         flex-direction: column;
+        cursor: default;
         
         & > div {
             display: flex;

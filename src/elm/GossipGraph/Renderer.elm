@@ -74,7 +74,7 @@ renderGraph graph settings =
 
         forces : List (Force.Force Int)
         forces =
-            [ Force.customLinks 1 (getLinks entityGraph)
+            [ Force.customLinks 3 (getLinks entityGraph)
             , Force.manyBodyStrength 1000 <|
                 List.map .id <|
                     Graph.nodes entityGraph
@@ -144,7 +144,7 @@ getLinks :
 getLinks graph =
     Graph.edges graph
         |> List.filter (\{ from, to } -> from /= to)
-        |> List.map (\edge -> { source = edge.from, target = edge.to, distance = 150, strength = Just 2 })
+        |> List.map (\edge -> { source = edge.from, target = edge.to, distance = 150, strength = Just 3 })
 
 
 {-| Code for rendering a node.

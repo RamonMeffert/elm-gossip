@@ -81,7 +81,7 @@ init _ =
       , protocolName = "any"
       , graphSettings =
             { nodeRadius = 20
-            , edgeWidth = 2
+            , edgeWidth = 1.5
             , arrowLength = 6
             , canvasWidth = 800
             , canvasHeight = 400
@@ -99,7 +99,6 @@ init _ =
 subscriptions : Model -> Sub Message
 subscriptions _ =
     Sub.none
-
 
 
 -- UPDATE
@@ -210,6 +209,7 @@ update msg model =
                         , graphHistoryLocation = (\( _, _, h ) -> h) newGraph |> Array.length |> (-) 1
                         , callHistory = (\( h, _, _ ) -> h) newGraph
                         , inputCallSequence = ""
+                        , inputGossipGraph = (\( _, g, _ ) -> GossipGraph.Parser.toString g) newGraph
                         , callSequence = Ok []
                       }
                     , Cmd.none
@@ -225,6 +225,7 @@ update msg model =
                     ( { model
                         | protocolCondition = Predefined.any
                         , protocolName = protocolName
+                        , callHistory = Array.empty
                       }
                     , Cmd.none
                     )
@@ -233,6 +234,7 @@ update msg model =
                     ( { model
                         | protocolCondition = Predefined.tok
                         , protocolName = protocolName
+                        , callHistory = Array.empty
                       }
                     , Cmd.none
                     )
@@ -241,6 +243,7 @@ update msg model =
                     ( { model
                         | protocolCondition = Predefined.spi
                         , protocolName = protocolName
+                        , callHistory = Array.empty
                       }
                     , Cmd.none
                     )
@@ -249,6 +252,7 @@ update msg model =
                     ( { model
                         | protocolCondition = Predefined.co
                         , protocolName = protocolName
+                        , callHistory = Array.empty
                       }
                     , Cmd.none
                     )
@@ -257,6 +261,7 @@ update msg model =
                     ( { model
                         | protocolCondition = Predefined.wco
                         , protocolName = protocolName
+                        , callHistory = Array.empty
                       }
                     , Cmd.none
                     )
@@ -265,6 +270,7 @@ update msg model =
                     ( { model
                         | protocolCondition = Predefined.lns
                         , protocolName = protocolName
+                        , callHistory = Array.empty
                       }
                     , Cmd.none
                     )
@@ -272,6 +278,7 @@ update msg model =
                 "custom" ->
                     ( { model
                         | protocolName = protocolName
+                        , callHistory = Array.empty
                       }
                     , Cmd.none
                     )
@@ -280,6 +287,7 @@ update msg model =
                     ( { model
                         | protocolCondition = Predefined.any
                         , protocolName = "any"
+                        , callHistory = Array.empty
                       }
                     , Cmd.none
                     )
@@ -289,6 +297,7 @@ update msg model =
                 Just graph ->
                     ( { model
                         | graph = Ok graph
+                        , inputGossipGraph = GossipGraph.Parser.toString graph
                       }
                     , Cmd.none
                     )
@@ -416,8 +425,29 @@ canonicalRepresentationInfoView =
     ]
 
 
+gossipGraphExamples : List (Html Message)
+gossipGraphExamples =
+    [ p [] [ text "These are some examples" ]
+    , div [ class "input-group" ]
+        [ button [ type_ "button", onClick <| InsertExampleGraph "Abc aBc abC" ] [ text "Only numbers" ]
+        , button [ type_ "button", onClick <| InsertExampleGraph "ABC ABC ABC" ] [ text "All Secrets" ]
+        , button [ type_ "button", onClick <| InsertExampleGraph "Xyaz Axzy ZyAb BaZX Y" ] [ text "Complex example" ]
+        ]
+    ]
+
+
 gossipGraphView : Model -> Html Message
 gossipGraphView model =
+    let
+        graphIsValid = 
+            case (String.isEmpty model.inputGossipGraph, model.graph) of
+                (False, Ok _) ->
+                    True
+
+                _ ->
+                    False
+    in
+    
     section [ id "graph" ]
         [ header []
             [ h2 [] [ text "Gossip graph" ]
@@ -427,6 +457,7 @@ gossipGraphView model =
             [ label [ for "gossip-graph-input" ] [ text "Gossip graph input" ]
             , div [ class "input-group" ]
                 [ input [ type_ "text", id "gossip-graph-input", value model.inputGossipGraph, onInput ChangeGossipGraph, placeholder "Gossip graph representation" ] []
+                , button [ type_ "button", onClick <| ShowModal "Gossip Graph input examples" gossipGraphExamples ] [ text "Examples" ]
                 ]
             , label [ for "canonical-graph-input" ] [ text "Canonical representation" ]
             , div [ class "input-group" ]
@@ -454,6 +485,10 @@ gossipGraphView model =
                     Err _ ->
                         div [] []
                 ]
+        , div [ id "export-buttons", class "input-group right" ]
+            [ button [ disabled (not graphIsValid), onClick (ShowModal "Coming soon" [ p [] [ Alert.render Alert.Information "This feature is coming soon." ] ]) ] [ text "Generate LaTeX file" ]
+            , button [ disabled (not graphIsValid), onClick (ShowModal "Coming soon" [ p [] [ Alert.render Alert.Information "This feature is coming soon." ] ]) ] [ text "Copy GraphViz DOT code" ]
+            ]
         ]
 
 
@@ -543,7 +578,7 @@ connectionInfoView kind graph =
                             else
                                 "not"
                            )
-                        ++ " strongly connected"
+                        ++ " strongly connected."
                 ]
             ]
         , Html.div
@@ -563,7 +598,7 @@ connectionInfoView kind graph =
                             else
                                 "not"
                            )
-                        ++ " weakly connected"
+                        ++ " weakly connected."
                 ]
             ]
         ]
@@ -586,14 +621,14 @@ sunInfoView graph =
             [ Html.div [ class "icon" ] [ Icon.viewIcon Icon.sun ]
             , Html.span [ class "explanation" ]
                 [ text <|
-                    "The graph is "
+                    "This graph is "
                         ++ (if isSunGraph then
                                 ""
 
                             else
                                 "not"
                            )
-                        ++ " a sun graph"
+                        ++ " a sun graph."
                 ]
             ]
         ]

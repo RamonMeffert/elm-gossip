@@ -17,13 +17,26 @@
     }
 }
 
+#sequences .input-group {
+    &:focus-within {
+        #call-sequence-input:focus + #call-sequence-validity {
+            box-shadow: 0 0 0 4px steelblue;
+
+        }
+    }
+}
+
+#call-sequence-input:focus {
+    box-shadow: 6px 0 0 -2px white, 4px 0 0 darken(white, 25%), 0 0 0 4px steelblue;
+}
+
 #call-sequence-validity {
     display: none;
 
     &.permitted,
     &.not-permitted {
         display: block;
-        background-color: transparent !important;
+        background-color: transparent;
         border-left: none;
     }
 }

@@ -123,7 +123,7 @@ lexer s =
                                 String.fromList (c :: takeWhile (\x -> Char.isAlpha x) cs)
 
                             rest =
-                                charLexer (dropWhile (\x -> Char.isAlpha x) cs) (pos + 1 + String.length token)
+                                charLexer (dropWhile (\x -> Char.isAlpha x) cs) (pos + String.length token)
                         in
                         case rest of
                             Ok tokens ->
