@@ -126,5 +126,6 @@ atMost rel kind =
 
 isOfKind : Relation -> Kind -> Bool
 isOfKind relation kind =
-    relation.kind == kind ||
-    (relation.kind == Secret && kind == Number)
+    relation.kind
+        == kind
+        || (relation.kind == Secret && kind == Number)

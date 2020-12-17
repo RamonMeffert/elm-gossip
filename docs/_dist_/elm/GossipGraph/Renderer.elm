@@ -9,22 +9,18 @@ and <https://elm-visualization.netlify.app/forcedirectedgraph/>
 
 -- import GossipGraph.Parser
 
-import Browser
-import Color exposing (Color)
-import FontAwesome.Icon as Icon exposing (Icon)
-import FontAwesome.Solid as Icon
-import Force exposing (Entity, State, entity)
+import Color
+import Force exposing (Entity)
 import GossipGraph.Agent exposing (Agent)
 import GossipGraph.Relation exposing (Kind(..), Relation)
-import Graph exposing (Edge, Graph, Node, NodeContext, NodeId)
-import Html exposing (Html, div)
-import Html.Attributes
+import Graph exposing (Edge, Graph, Node, NodeContext)
+import Html exposing (Html)
 import TypedSvg exposing (circle, defs, g, line, marker, polygon, svg, text_, title)
-import TypedSvg.Attributes exposing (class, cx, cy, dy, fill, id, markerEnd, markerHeight, markerStart, markerWidth, orient, points, preserveAspectRatio, r, refX, refY, stroke, strokeDasharray, strokeWidth, textAnchor, viewBox, x, x1, x2, y, y1, y2)
+import TypedSvg.Attributes exposing (class, cx, cy, dy, fill, id, markerEnd, markerHeight, markerWidth, orient, points, preserveAspectRatio, r, refX, refY, stroke, strokeDasharray, strokeWidth, textAnchor, viewBox, x, x1, x2, y, y1, y2)
 import TypedSvg.Core exposing (Attribute, Svg, text)
 import TypedSvg.Types exposing (Align(..), AnchorAlignment(..), Length(..), MeetOrSlice(..), Paint(..), Scale(..), px)
-import Utils.General exposing (uncurry)
 import Utils.Alert as Alert
+
 
 
 -- MODEL
@@ -216,34 +212,6 @@ renderEdgeOffset settings extraAttributes source target =
         []
 
 
-{-| Simple monodirectional edge. Has an arrow head at both ends.
--}
-renderEdgeUndirected : GraphSettings -> List (Attribute msg) -> Entity -> Entity -> Svg msg
-renderEdgeUndirected settings extraAttributes source target =
-    let
-        r =
-            settings.nodeRadius + (2 * settings.arrowLength)
-
-        ( src, tgt ) =
-            radialOffset source target r r
-    in
-    line
-        ([ strokeWidth (px settings.edgeWidth)
-         , stroke <| Paint <| Color.black
-         , markerEnd "url(#arrow-head-end)"
-         , markerStart "url(#arrow-head-start)"
-         , x1 <| px (Tuple.first src)
-         , y1 <| px (Tuple.second src)
-         , x2 <| px (Tuple.first tgt)
-         , y2 <| px (Tuple.second tgt)
-         ]
-            ++ extraAttributes
-        )
-        []
-
-
-{-| Simple monodirectional edge. Has an arrow head at the end.
--}
 renderEdgeDirected : GraphSettings -> List (Attribute msg) -> Entity -> Entity -> Svg msg
 renderEdgeDirected settings extraAttributes source target =
     let
