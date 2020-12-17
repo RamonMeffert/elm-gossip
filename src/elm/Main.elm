@@ -25,6 +25,8 @@ import Html.Events exposing (..)
 import Json.Decode as Json
 import Tuple
 import Utils.Alert as Alert
+import TypedSvg.Attributes exposing (color)
+import Color
 
 
 
@@ -59,6 +61,7 @@ type alias Model =
     , graphHistory : Array (Graph Agent Relation)
     , graphHistoryLocation : Int
     , callHistory : Array Call
+    , modal : { visible : Bool, title : String, content : List (Html Message) }
     }
 
 
@@ -78,10 +81,15 @@ init _ =
       , protocolName = "any"
       , graphSettings =
             { nodeRadius = 20
-            , edgeWidth = 2
+            , edgeWidth = 1.5
             , arrowLength = 6
             , canvasWidth = 800
             , canvasHeight = 400
+            }
+      , modal =
+            { visible = False
+            , title = ""
+            , content = []
             }
       }
     , Cmd.none
@@ -91,7 +99,6 @@ init _ =
 subscriptions : Model -> Sub Message
 subscriptions _ =
     Sub.none
-
 
 
 -- UPDATE
@@ -104,6 +111,8 @@ type Message
     | ApplyCallSequence
     | TimeTravel Int
     | InsertExampleGraph String
+    | ShowModal String (List (Html Message))
+    | HideModal
 
 
 update : Message -> Model -> ( Model, Cmd Message )
@@ -200,6 +209,7 @@ update msg model =
                         , graphHistoryLocation = (\( _, _, h ) -> h) newGraph |> Array.length |> (-) 1
                         , callHistory = (\( h, _, _ ) -> h) newGraph
                         , inputCallSequence = ""
+                        , inputGossipGraph = (\( _, g, _ ) -> GossipGraph.Parser.toString g) newGraph
                         , callSequence = Ok []
                       }
                     , Cmd.none
@@ -215,6 +225,7 @@ update msg model =
                     ( { model
                         | protocolCondition = Predefined.any
                         , protocolName = protocolName
+                        , callHistory = Array.empty
                       }
                     , Cmd.none
                     )
@@ -223,6 +234,7 @@ update msg model =
                     ( { model
                         | protocolCondition = Predefined.tok
                         , protocolName = protocolName
+                        , callHistory = Array.empty
                       }
                     , Cmd.none
                     )
@@ -231,6 +243,7 @@ update msg model =
                     ( { model
                         | protocolCondition = Predefined.spi
                         , protocolName = protocolName
+                        , callHistory = Array.empty
                       }
                     , Cmd.none
                     )
@@ -239,6 +252,7 @@ update msg model =
                     ( { model
                         | protocolCondition = Predefined.co
                         , protocolName = protocolName
+                        , callHistory = Array.empty
                       }
                     , Cmd.none
                     )
@@ -247,6 +261,7 @@ update msg model =
                     ( { model
                         | protocolCondition = Predefined.wco
                         , protocolName = protocolName
+                        , callHistory = Array.empty
                       }
                     , Cmd.none
                     )
@@ -255,6 +270,7 @@ update msg model =
                     ( { model
                         | protocolCondition = Predefined.lns
                         , protocolName = protocolName
+                        , callHistory = Array.empty
                       }
                     , Cmd.none
                     )
@@ -262,6 +278,7 @@ update msg model =
                 "custom" ->
                     ( { model
                         | protocolName = protocolName
+                        , callHistory = Array.empty
                       }
                     , Cmd.none
                     )
@@ -270,6 +287,7 @@ update msg model =
                     ( { model
                         | protocolCondition = Predefined.any
                         , protocolName = "any"
+                        , callHistory = Array.empty
                       }
                     , Cmd.none
                     )
@@ -279,6 +297,7 @@ update msg model =
                 Just graph ->
                     ( { model
                         | graph = Ok graph
+                        , inputGossipGraph = GossipGraph.Parser.toString graph
                       }
                     , Cmd.none
                     )
@@ -289,54 +308,162 @@ update msg model =
         InsertExampleGraph graph ->
             update (ChangeGossipGraph graph) model
 
+        HideModal ->
+            ( { model
+                | modal = (\md -> { md | visible = False }) model.modal
+              }
+            , Cmd.none
+            )
+
+        ShowModal title content ->
+            ( { model
+                | modal = { visible = True, title = title, content = content }
+              }
+            , Cmd.none
+            )
+
 
 
 -- VIEW
 
 
-headerView : Html msg
-headerView =
-    header []
-        [ h1 [] [ text "Tools for Gossip" ]
-        , p [ class "subtitle" ] [ text "Bachelor's Project, R.A. Meffert — Supervisor: B.R.M. Gattinger" ]
-        , p []
-            [ text """Gossip protocols are protocols that determine how gossips (a.k.a. secrets) can spread in gossip graphs. 
-                A gossip graph is a set of nodes representing agents and a set of edges representing relations. 
-                A relation can be either a """
-            , strong [] [ text "number relation" ]
-            , text """ (meaning that an agent knows the phone number of another agent) or """
-            , strong [] [ text "secret relation" ]
-            , text """ (meaning that an agent knows the secret of the other agent)."""
-            ]
-        , p []
-            [ text "Using this tool, you can model gossip graphs and execute gossip protocols on them."
-            ]
+helpButtonView : String -> List (Html Message) -> Html Message
+helpButtonView title content =
+    button [ class "help", onClick (ShowModal title content) ] [ Icon.viewIcon Icon.question ]
+
+
+headerHelpView : List (Html msg)
+headerHelpView =
+    [ p []
+        [ text """Gossip protocols are protocols that determine how gossips (a.k.a. secrets) can spread in gossip graphs.
+            A gossip graph is a set of nodes representing agents and a set of edges representing relations.
+            A relation can be either a """
+        , strong [] [ text "number relation" ]
+        , text """ (meaning that an agent knows the phone number of another agent) or """
+        , strong [] [ text "secret relation" ]
+        , text """ (meaning that an agent knows the secret of the other agent)."""
         ]
+    , p []
+        [ text "Using this tool, you can model gossip graphs and execute gossip protocols on them."
+        ]
+    ]
+
+
+headerView : Html Message
+headerView =
+    header [ id "header" ]
+        [ div []
+            [ h1 [] [ text "Tools for Gossip" ]
+            , p [ class "subtitle" ]
+                [ text "Bachelor's project" ]
+            , p [ class "subtitle" ]
+                [ text "R.A. Meffert ("
+                , a [ href "mailto:r.a.meffert@student.rug.nl" ] [ text "r.a.meffert@student.rug.nl" ]
+                , text ")"
+                ]
+            , p [ class "subtitle" ]
+                [ text "Supervisor: B.R.M. Gattinger" ]
+            ]
+        , helpButtonView "Tools for Gossip" headerHelpView
+        ]
+
+
+gossipGraphHelpView : List (Html msg)
+gossipGraphHelpView =
+    [ p []
+        [ text "You can enter a text representation of a gossip graph here. Examples of valid input are "
+        , code [] [ text "Abc aBc abC" ]
+        , text ", "
+        , code [] [ text "A B C" ]
+        , text " and "
+        , code [] [ text "abC Abc aBc" ]
+        , text ". The first unique uppercase letter of each segment is taken as the name of the agent represented by that segment. (So in the last example, the first agent is called “C”, the second “A” and the last “B”)"
+        ]
+    , p []
+        [ text """
+            Knowing how agents are named, it becomes easier to read these strings. 
+            They represent both the agents and relations between agents at the same time.
+            An uppercase letter represents a “secret” relation S, and a lowercase letter represents a “number” relation N.
+            For example, the string
+            """
+        , code [] [ text "A B C" ]
+        , text """
+             contains the identity relation on S for the agents A, B and C.
+            Additionally, all agents who know another agent's secret are also assumed to know that agent's number.
+            """
+        ]
+    , p []
+        [ text
+            """Lastly, the icons in the top-left corner provide some information about the current graph. When you hover over them, you are shown extra details."""
+        ]
+    , p []
+        [ text "This notation is based on the notation in the appendix of "
+        , a [ href "https://arxiv.org/abs/1907.12321" ] [ text "van Ditmarsch et al. (2019)" ]
+        , text "."
+        ]
+    , Alert.render Alert.Information "The next version of this application will allow an alternative input format: Instead of the letter-based format, a list-like format will be implemented. The string Ab aB will look like ([[0, 1], [0, 1]], [[0], [1]])."
+    ]
+
+
+canonicalRepresentationInfoView : List (Html Message)
+canonicalRepresentationInfoView =
+    [ p []
+        [ text "The "
+        , strong [] [ text "canonical representation" ]
+        , text
+            """ of the input represents the same graph as the one generated from the input string.
+            However, it has renamed all agents so the first agent is called """
+        , code [] [ text "A" ]
+        , text ", the second "
+        , code [] [ text "B" ]
+        , text ", and so on. For example, the input string "
+        , code [] [ text "Xqv Qvx Vxq" ]
+        , text " becomes "
+        , code [] [ text "Abc aBc abC" ]
+        , text "."
+        ]
+    ]
+
+
+gossipGraphExamples : List (Html Message)
+gossipGraphExamples =
+    [ p [] [ text "These are some examples" ]
+    , div [ class "input-group" ]
+        [ button [ type_ "button", onClick <| InsertExampleGraph "Abc aBc abC" ] [ text "Only numbers" ]
+        , button [ type_ "button", onClick <| InsertExampleGraph "ABC ABC ABC" ] [ text "All Secrets" ]
+        , button [ type_ "button", onClick <| InsertExampleGraph "Xyaz Axzy ZyAb BaZX Y" ] [ text "Complex example" ]
+        ]
+    ]
 
 
 gossipGraphView : Model -> Html Message
 gossipGraphView model =
-    section []
-        [ h2 [] [ text "Gossip graph" ]
-        , p [] [ text "You can enter a text representation of a gossip graph here. A gossip graph is represented as follows:" ]
-        , ul []
-            [ li [] [ text "Agents are represented by string segments, i.e. letter sequences separated by spaces" ]
-            , li [] [ text "Relations and agent names are represented by upper- and lowercase letters. A lowercase letter represents a number relation and an uppercase letter represents a secret relation." ]
-            , li [] [ text "The position of the string segment represents which agent the relations belongs to. For example, the string “A B” tells us that the first agent knows the secret of A and the second knows the secret of B." ]
-            , li [] [ text "The names of the agents are based on the relations that are present. In the example above, the names in the relations are “A“ and “B“, so we know that the first agent is called “A“ and the second is called “B“." ]
+    let
+        graphIsValid = 
+            case (String.isEmpty model.inputGossipGraph, model.graph) of
+                (False, Ok _) ->
+                    True
+
+                _ ->
+                    False
+    in
+    
+    section [ id "graph" ]
+        [ header []
+            [ h2 [] [ text "Gossip graph" ]
+            , helpButtonView "Gossip Graphs" gossipGraphHelpView
             ]
-        , div [ id "graph-input-examples" ]
-            [ h3 [] [ text "Examples" ]
-            , p [] [ text "Click one of the buttons to load an example gossip graph." ]
+        , div [ class "columns" ]
+            [ label [ for "gossip-graph-input" ] [ text "Gossip graph input" ]
             , div [ class "input-group" ]
-                [ button [ type_ "button", onClick <| InsertExampleGraph "Abc aBc abC" ] [ text "Number relations" ]
-                , button [ type_ "button", onClick <| InsertExampleGraph "ABC ABC ABC" ] [ text "Secret relations" ]
-                , button [ type_ "button", onClick <| InsertExampleGraph "Abc ABC C" ] [ text "Mixed relations" ]
-                , button [ type_ "button", onClick <| InsertExampleGraph "ABCDE aBcd abCE cDe aE" ] [ text "Complex example" ]
+                [ input [ type_ "text", id "gossip-graph-input", value model.inputGossipGraph, onInput ChangeGossipGraph, placeholder "Gossip graph representation" ] []
+                , button [ type_ "button", onClick <| ShowModal "Gossip Graph input examples" gossipGraphExamples ] [ text "Examples" ]
                 ]
-            ]
-        , div [ class "input-group" ]
-            [ input [ type_ "text", id "gossip-graph-input", value model.inputGossipGraph, onInput ChangeGossipGraph, placeholder "Gossip graph representation" ] []
+            , label [ for "canonical-graph-input" ] [ text "Canonical representation" ]
+            , div [ class "input-group" ]
+                [ input [ type_ "text", id "canonical-graph-input", disabled True, value model.canonicalGossipGraph, placeholder "Canonical representation" ] []
+                , helpButtonView "Canonical Representation" canonicalRepresentationInfoView
+                ]
             ]
         , if String.isEmpty model.inputGossipGraph then
             div [ id "gossip-graph", class "empty" ]
@@ -358,41 +485,48 @@ gossipGraphView model =
                     Err _ ->
                         div [] []
                 ]
-        , div [ id "graph-history" ]
-            [ h3 [] [ text "Call history" ]
-            , div [ class "call-list" ]
-                (if Array.length model.callHistory > 0 then
-                    div [ class "call", onClick (TimeTravel 0) ] [ text "Initial graph" ]
-                        :: (Array.toList <|
-                                Array.indexedMap
-                                    (\i call ->
-                                        case ( Agent.fromId (Result.withDefault [] model.agents) call.from, Agent.fromId (Result.withDefault [] model.agents) call.to ) of
-                                            ( Ok from, Ok to ) ->
-                                                div [ class "call", onClick (TimeTravel (i + 1)) ]
-                                                    [ text (String.fromChar from.name ++ " 📞 " ++ String.fromChar to.name)
-                                                    ]
-
-                                            _ ->
-                                                div [ class "call" ]
-                                                    [ text "❌" ]
-                                    )
-                                    model.callHistory
-                           )
-
-                 else
-                    [ text "No calls have been made yet." ]
-                )
+        , div [ id "export-buttons", class "input-group right" ]
+            [ button [ disabled (not graphIsValid), onClick (ShowModal "Coming soon" [ p [] [ Alert.render Alert.Information "This feature is coming soon." ] ]) ] [ text "Generate LaTeX file" ]
+            , button [ disabled (not graphIsValid), onClick (ShowModal "Coming soon" [ p [] [ Alert.render Alert.Information "This feature is coming soon." ] ]) ] [ text "Copy GraphViz DOT code" ]
             ]
-        , if not <| String.isEmpty model.inputGossipGraph then
-            div [ id "canonical-representation" ]
-                [ h3 [] [ text "Canonical representation" ]
-                , text <| "“" ++ model.canonicalGossipGraph ++ "”"
-                , br [] []
-                , text "The gossip graph represented with “normalized” agent names, that is, agents are named starting with “A” for the first agent and following the alphabet."
-                ]
+        ]
 
-          else
-            text ""
+
+historyHelpView : List (Html msg)
+historyHelpView =
+    [ p [] [ text "This section shows the history of calls that have been made. You can click any of the calls to time-travel to that state of the gossip graph." ]
+    , Alert.render Alert.Information "In the next version of this application, it will be possible to generate the execution tree for the current protocol here."
+    ]
+
+historyView : Model -> Html Message
+historyView model =
+    section [ id "history" ]
+        [ header [] 
+            [ h2 [] [ text "Call history" ]
+            , helpButtonView "Call history" historyHelpView
+            ]
+        , div [ class "call-list" ]
+            (if Array.length model.callHistory > 0 then
+                div [ class "call", onClick (TimeTravel 0) ] [ text "Initial graph" ]
+                    :: (Array.toList <|
+                            Array.indexedMap
+                                (\i call ->
+                                    case ( Agent.fromId (Result.withDefault [] model.agents) call.from, Agent.fromId (Result.withDefault [] model.agents) call.to ) of
+                                        ( Ok from, Ok to ) ->
+                                            div [ class "call", onClick (TimeTravel (i + 1)) ]
+                                                [ text (String.fromChar from.name ++ " 📞 " ++ String.fromChar to.name)
+                                                ]
+
+                                        _ ->
+                                            div [ class "call" ]
+                                                [ text "❌" ]
+                                )
+                                model.callHistory
+                       )
+
+             else
+                [ text "No calls have been made yet." ]
+            )
         ]
 
 
@@ -444,7 +578,7 @@ connectionInfoView kind graph =
                             else
                                 "not"
                            )
-                        ++ " strongly connected"
+                        ++ " strongly connected."
                 ]
             ]
         , Html.div
@@ -464,7 +598,7 @@ connectionInfoView kind graph =
                             else
                                 "not"
                            )
-                        ++ " weakly connected"
+                        ++ " weakly connected."
                 ]
             ]
         ]
@@ -487,17 +621,72 @@ sunInfoView graph =
             [ Html.div [ class "icon" ] [ Icon.viewIcon Icon.sun ]
             , Html.span [ class "explanation" ]
                 [ text <|
-                    "The graph is "
+                    "This graph is "
                         ++ (if isSunGraph then
                                 ""
 
                             else
                                 "not"
                            )
-                        ++ " a sun graph"
+                        ++ " a sun graph."
                 ]
             ]
         ]
+
+
+callSequenceHelpView : List (Html msg)
+callSequenceHelpView =
+    [ p [] 
+        [ text 
+            """This input allows you to enter a call sequence and see if it is allowed under the current protocol. 
+            The input has to look like """
+        , code [] [ text "ab;cd" ]
+        , text 
+            """. This represents two calls: One from agent """
+        , code [] [ text "A" ]
+        , text " to agent "
+        , code [] [ text "B" ]
+        , text ", and one from agent "
+        , code [] [ text "C" ]
+        , text " to agent "
+        , code [] [ text "D" ]
+        , text ". You can use semicolons ("
+        , code [] [ text ";" ]
+        , text "), commas ("
+        , code [] [ text "," ]
+        , text ") or spaces "
+        , code [] [ text "⎵" ]
+        , text " as separators between calls."
+        ]
+    , p [] 
+        [ text "Once you have entered a sequence, a symbol ("
+        , code [] [Icon.viewStyled [style "color" "red"] Icon.times]
+        , text " or "
+        , code [] [Icon.viewStyled [style "color" "green"] Icon.check]
+        , text ") represents whether the call sequence is permissible. "
+        , text "If the sequence is permissible, you can click the "
+        , code [] [ text "Execute" ]
+        , text 
+            """ button to execute the call sequence on the gossip graph. 
+            The list of calls will then be made, and the graph will be changed accordingly,
+            and the call sequence will be added to the call history."""
+        ]
+    ]
+
+
+callSequencePermissibilityHelpView : String -> Bool -> List (Html msg)
+callSequencePermissibilityHelpView protocolName permitted = 
+    [ p [] 
+        [ text <| "The current call sequence is " ++ (if not permitted then "not" else "") ++ " permitted under the "
+        , code [] [text protocolName]
+        , text " protocol."
+        ]
+    , p [] 
+        [ text "You can see which calls are possible from the current graph in the " 
+        , strong [] [ text "Gossip Protocols" ]
+        , text " section."
+        ]
+    ]
 
 
 callSequenceView : Model -> Html Message
@@ -512,17 +701,53 @@ callSequenceView model =
                 _ ->
                     False
     in
-    section []
-        [ h2 [] [ text "Call sequence" ]
-        , p [] [ text "You can enter a text representation of a call sequence on the gossip graph above here. This sequence is taken as the call history." ]
-        , if permitted then
-            -- TODO: move this to CallSequence.Renderer.render
-            Alert.render Alert.Information <| "This sequence is permitted under the “" ++ (Dict.get model.protocolName Predefined.name |> Maybe.withDefault "?") ++ "” protocol."
-
-          else
-            Alert.render Alert.Warning <| "This sequence is not permitted under the “" ++ (Dict.get model.protocolName Predefined.name |> Maybe.withDefault "?") ++ "” protocol."
+    section [ id "sequences" ]
+        [ header []
+            [ h2 [] [ text "Call sequence" ]
+            , helpButtonView "Call Sequences" callSequenceHelpView
+            ]
         , div [ class "input-group" ]
-            [ input [ type_ "text", id "call-sequence-input", value model.inputCallSequence, onInput ChangeCallSequence, placeholder "Call sequence input" ] []
+            [ input
+                [ type_ "text"
+                , id "call-sequence-input"
+                , class
+                    (if permitted && not (String.isEmpty model.inputCallSequence) then
+                        "permitted"
+
+                     else if String.isEmpty model.inputCallSequence then
+                        ""
+
+                     else
+                        "not-permitted"
+                    )
+                , value model.inputCallSequence
+                , onInput ChangeCallSequence
+                , placeholder "Call sequence input"
+                ]
+                []
+            , if String.isEmpty model.inputCallSequence then
+                button [ disabled True, class "help", id "call-sequence-validity" ] [ text " " ]
+              
+              else if permitted then
+                button 
+                    [ class "help permitted"
+                    , id "call-sequence-validity"
+                    , onClick <| ShowModal 
+                        "Call sequence permissibility"
+                        (callSequencePermissibilityHelpView (Maybe.withDefault "?" <| Dict.get model.protocolName Predefined.name) permitted)
+                    ]
+                    [ Icon.viewStyled [style "color" "green"]  Icon.check ]
+              
+              else
+                button 
+                    [ class "help not-permitted"
+                    , id "call-sequence-validity"
+                    , onClick <| ShowModal 
+                        "Call sequence permissibility"
+                        (callSequencePermissibilityHelpView (Maybe.withDefault "?" <| Dict.get model.protocolName Predefined.name) permitted)
+                    ]
+                    [ Icon.viewStyled [style "color" "red"] Icon.times ]
+
             , button
                 [ type_ "button"
                 , onClick ApplyCallSequence
@@ -545,60 +770,97 @@ callSequenceView model =
         ]
 
 
+protocolHelpView : List (Html msg)
+protocolHelpView =
+    [ p [] 
+        [ text "This section allows you to select one of the gossip protocols as defined by "
+        , a [ href "https://doi.org/10/cvpm" ] [ text "van Ditmarsch et al. (2018)" ]
+        , text ". When you have selected a protocol, the possible calls for that protocol and the current gossip graph, together with the call history, will be shown. "
+        , text "Clicking the "
+        , code [] [ Icon.viewIcon Icon.question ]
+        , text " icon will tell you the rules of the selected protocol."
+        ]
+    , Alert.render Alert.Information "In the next version of this application, you will be able to define custom gossip protocols using the constituents defined by van Ditmarsch et al. (2018)."
+    ] 
+
+
 protocolView : Model -> Html Message
 protocolView model =
-    section []
-        [ h2 [] [ text "Protocols" ]
-        , p [] [ text "If you select a protocol, you'll be presented with the calls that can be made given the current gossip graph, the call history and that protocol." ]
-        , div [ class "columns" ]
-            [ if String.isEmpty model.inputGossipGraph then
-                div [ class "call-list" ]
-                    [ Alert.render Alert.Warning " If there are no agents, no calls can be made."
+    let
+        protocolExplanation =
+            case Dict.get model.protocolName Predefined.explanation of
+                Just explanation ->
+                    [ blockquote []
+                        [ p [] explanation
+                        , footer []
+                            [ Html.cite [] [ text "Based on " , Html.a [ href "https://doi.org/10/cvpm" ] [ text "van Ditmarsch et al. (2018)" ] ]
+                            ]
+                        ]
                     ]
 
-              else
-                div [ class "call-list" ]
-                    (case ( model.callSequence, model.agents, model.graph ) of
-                        ( Ok sequence, Ok agents, Ok graph ) ->
-                            let
-                                calls =
-                                    GossipProtocol.selectCalls graph model.protocolCondition sequence
-                            in
-                            if List.isEmpty calls then
-                                [ text "No more calls are possible." ]
+                Nothing ->
+                    if model.protocolName == "custom" then
+                        [ p [] [ text "Custom" ] ]
 
-                            else
-                                List.map (Call.render agents) calls
+                    else
+                        [ p [] [ text "Unknown protocol" ] ]
+    in
+    section [ id "protocols" ]
+        [ header []
+            [ h2 [] [ text "Gossip Protocols" ]
+            , helpButtonView "Gossip Protocols" protocolHelpView
+            ]
+        , div [ class "input-group" ]
+            [ select [ on "change" (Json.map ChangeProtocol targetValue) ]
+                (List.map (\k -> option [ value k ] [ text <| Maybe.withDefault "?" <| Dict.get k Predefined.name ]) (Dict.keys Predefined.name)
+                    ++ [ option [ value "custom", disabled True ] [ text "Custom" ] ]
+                )
+            , helpButtonView ("Current protocol: " ++ (Maybe.withDefault "?" <| Dict.get model.protocolName Predefined.name)) protocolExplanation
+            ]
+        , h3 [] [ text "Possible calls" ]
+        , div [ class "call-list" ]
+            (case ( model.agents, model.graph ) of
+                ( Ok agents, Ok graph ) ->
+                    let
+                        calls =
+                            GossipProtocol.selectCalls graph model.protocolCondition (Array.toList model.callHistory)
+                    in
+                    if String.isEmpty model.inputGossipGraph then
+                        [ text "None" ]
 
-                        _ ->
-                            -- TODO: propagate errors from model.callSequence, .agents, .graph instead of the error below
-                            [ Alert.render Alert.Information "The call sequence below is impossible. I'll start looking for possible calls again when I understand the call sequence!"
-                            ]
-                    )
-            , div [ class "info" ]
-                [ div [ class "input-group" ]
-                    [ select [ on "change" (Json.map ChangeProtocol targetValue) ]
-                        (List.map (\k -> option [ value k ] [ text <| Maybe.withDefault "?" <| Dict.get k Predefined.name ]) (Dict.keys Predefined.name)
-                            ++ [ option [ value "custom" ] [ text "Custom" ] ]
-                        )
+                    else if List.isEmpty calls then
+                        [ text "All possible calls have been made." ]
+
+                    else
+                        List.map (Call.render agents) calls
+
+                _ ->
+                    -- TODO: propagate errors from model.callSequence, .agents, .graph instead of the error below
+                    [ Alert.render Alert.Information "The call sequence below is impossible. I'll start looking for possible calls again when I understand the call sequence!"
                     ]
-                , case Dict.get model.protocolName Predefined.explanation of
-                    Just explanation ->
-                        blockquote []
-                            [ p [] [ text explanation ]
-                            , footer []
-                                [ text "—"
-                                , Html.cite [] [ Html.a [ href "https://doi.org/10/cvpm" ] [ text "van Ditmarsch et al. (2018)" ] ]
-                                ]
-                            ]
+            )
+        ]
 
-                    Nothing ->
-                        if model.protocolName == "custom" then
-                            text "Custom"
 
-                        else
-                            text "I have no clue."
+modalView : Model -> Html Message
+modalView model =
+    div
+        [ onClick HideModal
+        , class <|
+            "modal-overlay"
+                ++ (if model.modal.visible then
+                        " visible"
+
+                    else
+                        ""
+                   )
+        ]
+        [ div [ class "modal-window" ]
+            [ header [ class "modal-header" ]
+                [ h4 [] [ text model.modal.title ]
+                , button [ type_ "button", title "Close window", onClick HideModal ] [ Icon.viewIcon Icon.times ]
                 ]
+            , div [ class "modal-content" ] model.modal.content
             ]
         ]
 
@@ -607,11 +869,11 @@ view : Model -> Document Message
 view model =
     { title = "Tools for Gossip"
     , body =
-        [ main_ []
-            [ headerView
-            , gossipGraphView model
-            , protocolView model
-            , callSequenceView model
-            ]
+        [ headerView
+        , gossipGraphView model
+        , historyView model
+        , protocolView model
+        , callSequenceView model
+        , modalView model
         ]
     }

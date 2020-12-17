@@ -5,6 +5,12 @@
 .alert {
     @include m.box;
     display: flex;
+    width: 100%;
+    box-sizing: border-box;
+
+    &:not(:last-child) {
+        margin-bottom: v.$pad-v;
+    }
 
     .icon {
         padding-inline-end: v.$pad-h;

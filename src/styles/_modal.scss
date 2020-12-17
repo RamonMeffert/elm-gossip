@@ -1,0 +1,65 @@
+@use 'variables'as v;
+@use 'mixins'as m;
+
+.modal-overlay {
+    position: absolute;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    display: none;
+    z-index: 999;
+
+    &.visible {
+        background-color: rgba(0,0,0,0.4);
+        display: flex;
+
+        .modal-window {
+            display: block;
+            box-shadow: 0 .2rem 1rem rgba(0,0,0,0.4);
+            background-color: white;
+        }
+    }
+
+    .modal-window {
+        @include m.box;
+        padding: 0;
+        display: none;
+        min-width: 25%;
+        max-width: calc(60ch + #{2 * v.$pad-v});
+        position: relative;
+
+        .modal-header {
+            // border-bottom: 2px solid darken(white, 15%);
+            display: flex;
+            align-items: center;
+            margin: 0;
+            padding: v.$pad-v / 2 v.$pad-h / 2 v.$pad-v / 2 v.$pad-h;
+
+            button {
+                border: none;
+                background-color: transparent;
+    
+                &:hover {
+                    background-color: darken(white, 10%);
+                }                
+            }
+        }
+
+        .modal-content {
+            max-height: 60vh;
+            overflow-y: scroll;
+            margin: 0 v.$pad-h v.$pad-v v.$pad-h;
+            line-height: 150%;
+
+            p:first-child {
+                margin-top: 0;
+            }
+
+            p:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+}
