@@ -1,12 +1,11 @@
-module CallSequence.Parser exposing (parse, Error)
-
+module CallSequence.Parser exposing (Error, parse)
 
 {-| LL(1) parser for call sequences.
 -}
 
+import CallSequence.CallSequence exposing (CallSequence)
 import GossipGraph.Agent as Agent exposing (Agent)
 import GossipGraph.Call as Call exposing (Call)
-import CallSequence.CallSequence exposing (CallSequence)
 import Utils.List exposing (dropWhile, takeWhile)
 
 
