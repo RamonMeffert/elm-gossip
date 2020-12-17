@@ -82,7 +82,7 @@ whitespace =
 -}
 separators : List Char
 separators =
-    [ ';' ]
+    [ ';', ',', ' ' ]
 
 
 {-| Converts an input string to a set of tagged tokens if the input string is

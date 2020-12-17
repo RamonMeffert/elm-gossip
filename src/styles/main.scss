@@ -6,28 +6,86 @@
 @use 'mixins'as m;
 @use 'input';
 @use 'alert';
+@use 'modal';
 @use 'sass:color';
 
-header {
-    margin-bottom: v.$pad-v;
+html {
+    width: 100%;
+    height: 100%;
 }
 
-main {
-    width: 1000px;
-    margin: 2rem auto 0 auto;
-    padding: v.$pad-v v.$pad-h;
-    background-color: white;
+body {
+    display: grid;
+    grid-template-columns: 65fr 35fr;
+    grid-template-rows: 5rem auto auto auto;
+    width: 100%;
+    height: 100%;
+    padding: v.$pad-h v.$pad-h;
+    box-sizing: border-box;
+    column-gap: v.$pad-h;
+    row-gap: v.$pad-v;
+    position: relative;
 
     section {
         @include m.box;
-        margin-bottom: v.$pad-v;
     }
+}
+
+#header {
+    @include m.box;
+    grid-column: 1 / span 1;
+    grid-row: 1 / span 1;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0;
+
+    div {
+        display: flex;
+        align-items: flex-end;
+
+        h1 {
+            margin-right: v.$pad-h;
+        }
+
+        p.subtitle {
+            font-size: 75%;
+            margin: 0;
+            color: gray;
+            margin-right: v.$pad-h / 2;
+
+            &:not(:last-of-type)::after {
+                margin-left: v.$pad-h / 2;
+                content: "•";
+            }
+        }
+    }
+}
+
+#graph {
+    grid-column: 1 / 1;
+    grid-row: 2 / span 3;
+}
+
+#protocols {
+    grid-column: 2 / 2;
+    grid-row: 1 / span 2;
+}
+
+#sequences {
+    grid-column: 2 / 2;
+    grid-row: 3 / span 1;
+}
+
+#history {
+    grid-column: 2 / 2;
+    grid-row: 4 / span 1;
 }
 
 #gossip-graph {
     width: 100%;
     box-sizing: border-box;
     position: relative;
+    margin-top: v.$pad-v;
 }
 
 #gossip-graph.empty {
@@ -115,9 +173,10 @@ hr {
         
         & > div {
             display: flex;
+            line-height: 150%;
 
             .icon {
-                margin-right: v.$pad-h / 2;
+                margin-right: v.$pad-h / 3 * 2;
             }
         }
 
@@ -129,6 +188,18 @@ hr {
             width: 100%;
             height: 2px;
             margin: v.$pad-v / 2 0;
+        }
+    }
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: v.$pad-v;
+
+    h1, h2, h3, h4, h5, h6 {
+        &:last-of-type {
+            margin-bottom: 0;
         }
     }
 }

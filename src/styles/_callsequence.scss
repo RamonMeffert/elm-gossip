@@ -7,11 +7,23 @@
     flex-wrap: wrap;
 
     .call {
-        padding: v.$pad-v / 4 v.$pad-h / 2;
+        padding: v.$pad-v / 2 v.$pad-h / 2;
+        margin-right: v.$pad-h / 2;
+        margin-bottom: v.$pad-v / 2;
         background-color: v.$lightBlue;
-        margin: v.$pad-v / 4;
         border-radius: v.$border-radius;
         text-align: center;
         border: 2px solid rgba(0,0,0, 10%);
+    }
+}
+
+#call-sequence-validity {
+    display: none;
+
+    &.permitted,
+    &.not-permitted {
+        display: block;
+        background-color: transparent !important;
+        border-left: none;
     }
 }
