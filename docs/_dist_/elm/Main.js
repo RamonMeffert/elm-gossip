@@ -6372,9 +6372,13 @@ var $author$project$GossipGraph$Parser$lexer = F2(
 			0,
 			$elm$core$String$toList(string));
 	});
+var $author$project$GossipGraph$Relation$atLeast = F2(
+	function (kind, rel) {
+		return (!rel.dW) || (_Utils_eq(rel.dW, kind) || ((!kind) && (rel.dW === 1)));
+	});
 var $author$project$GossipGraph$Relation$knows = F4(
 	function (x, y, kind, relation) {
-		return _Utils_eq(relation.av, x) && (_Utils_eq(relation.a9, y) && _Utils_eq(relation.dW, kind));
+		return _Utils_eq(relation.av, x) && (_Utils_eq(relation.a9, y) && A2($author$project$GossipGraph$Relation$atLeast, kind, relation));
 	});
 var $author$project$GossipProtocol$Conditions$Constituents$knowsSecret = F3(
 	function (x, y, relations) {

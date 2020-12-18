@@ -63,7 +63,7 @@ toEdge rel =
 -}
 knows : AgentId -> AgentId -> Kind -> Relation -> Bool
 knows x y kind relation =
-    relation.from == x && relation.to == y && relation.kind == kind
+    relation.from == x && relation.to == y && atLeast kind relation
 
 
 {-| Takes a relation and produces its inverse
@@ -100,28 +100,9 @@ know the other agent's secret.
     atLeast Number y == True
 
 -}
-atLeast : Relation -> Kind -> Bool
-atLeast rel kind =
-    rel.kind == Number || rel.kind == kind || (rel.kind == Number && kind == Secret)
-
-
-{-| Utility function to determine whether a relation is at most a certain
-`Kind`—since N ⊆ S. All agents that know another agent's secret also know the
-other agent's number, but not all agents that know another agent's number also
-know the other agent's secret.
-
-    x = { from = 0, to = 1, kind = Number }
-    y = { from = 0, to = 1, kind = Secret }
-
-    atMost Secret x == True
-    atMost Secret y == True
-    atMost Number x == True
-    atMost Number y == False
-
--}
-atMost : Relation -> Kind -> Bool
-atMost rel kind =
-    rel.kind == kind || rel.kind == Number || (rel.kind == Secret && kind == Number)
+atLeast : Kind -> Relation -> Bool
+atLeast kind rel =
+    rel.kind == Number || rel.kind == kind || (kind == Number && rel.kind == Secret)
 
 
 isOfKind : Relation -> Kind -> Bool
