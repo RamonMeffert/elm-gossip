@@ -102,7 +102,7 @@ know the other agent's secret.
 -}
 atLeast : Kind -> Relation -> Bool
 atLeast kind rel =
-    rel.kind == Number || rel.kind == kind || (kind == Number && rel.kind == Secret)
+    kind == Number || rel.kind == kind || (kind == Number && rel.kind == Secret)
 
 
 isOfKind : Relation -> Kind -> Bool
