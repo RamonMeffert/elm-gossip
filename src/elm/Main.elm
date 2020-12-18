@@ -335,16 +335,15 @@ helpButtonView title content =
 headerHelpView : List (Html msg)
 headerHelpView =
     [ p []
-        [ text """Gossip protocols are protocols that determine how gossips (a.k.a. secrets) can spread in gossip graphs.
-            A gossip graph is a set of nodes representing agents and a set of edges representing relations.
-            A relation can be either a """
-        , strong [] [ text "number relation" ]
-        , text """ (meaning that an agent knows the phone number of another agent) or """
-        , strong [] [ text "secret relation" ]
-        , text """ (meaning that an agent knows the secret of the other agent)."""
+        [ text
+            """This application is intended as a tool to gain insight into dynamic gossip.
+            It allows you to visualise gossip graphs, execute different gossip protocols and see how calls influence the state of the gossip graph."""
         ]
     , p []
-        [ text "Using this tool, you can model gossip graphs and execute gossip protocols on them."
+        [ text
+            "This application was developed by Ramon Meffert ("
+        , a [ href "mailto:r.a.meffert@student.rug.nl" ] [ text "r.a.meffert@student.rug.nl" ]
+        , text ") as part of his bachelor's research project under supervision of Malvin Gattinger."
         ]
     ]
 
