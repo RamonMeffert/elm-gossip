@@ -6374,7 +6374,7 @@ var $author$project$GossipGraph$Parser$lexer = F2(
 	});
 var $author$project$GossipGraph$Relation$atLeast = F2(
 	function (kind, rel) {
-		return (!rel.dW) || (_Utils_eq(rel.dW, kind) || ((!kind) && (rel.dW === 1)));
+		return (!kind) || (_Utils_eq(rel.dW, kind) || ((!kind) && (rel.dW === 1)));
 	});
 var $author$project$GossipGraph$Relation$knows = F4(
 	function (x, y, kind, relation) {
@@ -11886,30 +11886,25 @@ var $author$project$Main$headerHelpView = _List_fromArray(
 		_List_Nil,
 		_List_fromArray(
 			[
-				$elm$html$Html$text('Gossip protocols are protocols that determine how gossips (a.k.a. secrets) can spread in gossip graphs.\n            A gossip graph is a set of nodes representing agents and a set of edges representing relations.\n            A relation can be either a '),
-				A2(
-				$elm$html$Html$strong,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text('number relation')
-					])),
-				$elm$html$Html$text(' (meaning that an agent knows the phone number of another agent) or '),
-				A2(
-				$elm$html$Html$strong,
-				_List_Nil,
-				_List_fromArray(
-					[
-						$elm$html$Html$text('secret relation')
-					])),
-				$elm$html$Html$text(' (meaning that an agent knows the secret of the other agent).')
+				$elm$html$Html$text('This application is intended as a tool to gain insight into dynamic gossip.\n            It allows you to visualise gossip graphs, execute different gossip protocols and see how calls influence the state of the gossip graph.')
 			])),
 		A2(
 		$elm$html$Html$p,
 		_List_Nil,
 		_List_fromArray(
 			[
-				$elm$html$Html$text('Using this tool, you can model gossip graphs and execute gossip protocols on them.')
+				$elm$html$Html$text('This application was developed by Ramon Meffert ('),
+				A2(
+				$elm$html$Html$a,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$href('mailto:r.a.meffert@student.rug.nl')
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('r.a.meffert@student.rug.nl')
+					])),
+				$elm$html$Html$text(') as part of his bachelor\'s research project under supervision of Malvin Gattinger.')
 			]))
 	]);
 var $author$project$Main$headerView = A2(
