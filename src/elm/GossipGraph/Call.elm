@@ -75,6 +75,15 @@ render agents call =
                 [ text "❌" ]
 
 
+renderString : List Agent -> Call -> String
+renderString agents call =
+    case ( Agent.fromId agents call.from, Agent.fromId agents call.to ) of
+        ( Ok from, Ok to ) ->
+            String.fromChar from.name ++ " 📞 " ++ String.fromChar to.name
+
+        _ ->
+            "❌"
+
 {-| Execute a call on a gossip graph
 
 Make sure the caller knows everything the receiver knows and vice versa. Since

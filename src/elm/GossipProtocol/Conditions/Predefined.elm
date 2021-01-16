@@ -68,6 +68,17 @@ name =
         , ( "lns", "Learn New Secrets" )
         ]
 
+condition : Dict String ProtocolCondition
+condition = 
+  Dict.fromList
+    [ ("any", any)
+    , ("tok", tok)
+    , ("spi", spi)
+    , ("co",  co)
+    , ("wco", wco)
+    , ("lns", lns)
+    ]
+
 
 explanation : Dict String (List (Html msg))
 explanation =

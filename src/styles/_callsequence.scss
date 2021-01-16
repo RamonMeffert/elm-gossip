@@ -5,21 +5,21 @@
 .call-list {
     display: flex;
     flex-wrap: wrap;
+}
 
-    .call {
-        padding: v.$pad-v / 2 v.$pad-h / 2;
-        margin-right: v.$pad-h / 2;
-        margin-bottom: v.$pad-v / 2;
-        background-color: v.$lightBlue;
-        border-radius: v.$border-radius;
-        text-align: center;
-        border: 2px solid rgba(0,0,0, 10%);
-    }
+.call {
+    padding: v.$pad-v / 2 v.$pad-h / 2;
+    margin-right: v.$pad-h / 2;
+    margin-bottom: v.$pad-v / 2;
+    background-color: v.$lightBlue;
+    border-radius: v.$border-radius;
+    text-align: center;
+    border: 2px solid rgba(0, 0, 0, 10%);
 }
 
 #sequences .input-group {
     &:focus-within {
-        #call-sequence-input:focus + #call-sequence-validity {
+        #call-sequence-input:focus+#call-sequence-validity {
             box-shadow: 0 0 0 4px steelblue;
 
         }
@@ -38,5 +38,126 @@
         display: block;
         background-color: transparent;
         border-left: none;
+    }
+}
+
+#execution-tree {
+    $nwd: 3.6rem; // node width
+    $nht: 2rem; // node height
+    $hsp: .8rem; // horizontal space between nodes
+    $vsp: .4rem; // vertical space between nodes
+    $ewd: 2px; // edge width
+
+    ul, li, div { 
+        margin: 0; 
+        padding: 0;
+        list-style: none;
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+    }
+
+    ul {
+        flex-direction: column;
+        position: relative;
+    }
+
+    .call {
+        width: $nwd;
+        height: $nht;
+        margin-left: $hsp;
+        margin-bottom: $vsp;
+        display: flex;
+        overflow: hidden;
+        align-items: center;
+        justify-content: center;
+        line-height: $nht;
+        cursor: default;
+
+        &.current {
+            background-color: greenyellow;
+        }
+    }
+
+    ul:not(:first-child) {
+        > li {
+            position: relative;
+
+            // Last items
+            &:last-child:not(:first-child) {
+                &::before {
+                    content: "";
+                    position: absolute;
+                    display: block;
+                    width: calc(#{$nwd / 2 + $hsp} + 3px);
+                    height: calc(#{$nht / 2 + $vsp} + 3px);
+                    left: calc(#{-$nwd / 2} - 3px);
+                    top: -$vsp;
+                    box-sizing: border-box;
+                    border-style: solid;
+                    border-width: 0 0 $ewd $ewd;
+                    border-bottom-left-radius: v.$border-radius * 2;
+                }
+            }
+
+            // Middle items
+            ~ li:not(:last-child) {
+                &::before {
+                    content: "";
+                    position: absolute;
+                    display: block;
+                    width: calc(#{$nwd / 2 + $hsp} + 3px);
+                    height: calc(#{$nht / 2 + $vsp} + 3px);
+                    left: calc(#{-$nwd / 2} - 3px);
+                    top: -$vsp;
+                    box-sizing: border-box;
+                    border-style: solid;
+                    border-width: 0 0 $ewd 0;
+                }
+
+                // edge stuff
+                &::after {
+                    content: "";
+                    position: absolute;
+                    display: block;
+                    width: $ewd;
+                    left: calc(#{-$nwd / 2} - 3px);
+                    height: 100%; //$nht + 2 * $vsp;
+                    top: -$vsp;
+                    background-color: black;
+                }
+            }
+
+            // First items
+            &:first-child {
+                &::before {
+                    content: "";
+                    position: absolute;
+                    display: block;
+                    width: $hsp;
+                    height: calc(#{$nht / 2 + $vsp} + 3px);
+                    left: 0;
+                    top: -$vsp;
+                    box-sizing: border-box;
+                    border-style: solid;
+                    border-width: 0 0 $ewd 0;
+                }
+            }
+
+            // Extra lines
+            ul:not(:first-child) {
+                // edge stuff
+                &::after {
+                    content: "";
+                    position: absolute;
+                    display: block;
+                    width: $ewd;
+                    left: calc(#{-$nwd / 2} - 3px);
+                    height: calc(100% - #{$nht * 2} - #{$vsp * 2});
+                    top: calc(#{$nht} + 4px);
+                    background-color: black;
+                }
+            }
+        }
     }
 }

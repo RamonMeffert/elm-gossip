@@ -16,7 +16,8 @@
             "elm-community/list-extra": "8.2.4",
             "elm-community/typed-svg": "6.0.0",
             "gampleman/elm-visualization": "2.1.2",
-            "lattyware/elm-fontawesome": "5.0.0"
+            "lattyware/elm-fontawesome": "5.0.0",
+            "zwilias/elm-rosetree": "1.5.0"
         },
         "indirect": {
             "avh4/elm-fifo": "1.0.4",
