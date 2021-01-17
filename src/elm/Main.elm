@@ -374,6 +374,20 @@ headerHelpView =
         , a [ href "mailto:r.a.meffert@student.rug.nl" ] [ text "r.a.meffert@student.rug.nl" ]
         , text ") as part of his bachelor's research project under supervision of Malvin Gattinger."
         ]
+    , p []
+        [ text "This tool is built on the following free software:" ]
+    , ul []
+        [ li [] [ a [ href "https://elm-lang.org/" ] [ text "Elm" ] , text ", a functional web language" ]
+        , li [] [ text "A number of ", a [ href "https://package.elm-lang.org/" ] [ text "Elm packages" ] , text " by the Elm commmunity" ]
+        , li [] [ a [ href "https://sass-lang.org/" ] [ text "Sass" ] , text " for better CSS" ]
+        , li [] [ a [ href "https://fontawesome.com/" ] [ text "FontAwesome" ] , text " for the interface icons" ]
+        , li [] [ a [ href "https://iconmonstr.com/" ] [ text "IconMonstr" ] , text " for the favicon" ]
+        ]
+    , p []
+        [ text "The source code is available on "
+        , a [ href "https://github.com/RamonMeffert/tools-for-gossip" ] [ text "GitHub" ]
+        , text ". Once finished, the accompanying thesis will also be made available."
+        ]
     ]
 
 
