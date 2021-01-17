@@ -1,12 +1,14 @@
 @use 'variables'as v;
 @use 'mixins'as m;
-@use 'sass:color' as c;
+@use 'theme';
+@use 'sass:color';
 
 .alert {
     @include m.box;
     display: flex;
     width: 100%;
     box-sizing: border-box;
+    color: theme.$baseTextColor;
 
     &:not(:last-child) {
         margin-bottom: v.$pad-v;
@@ -16,7 +18,7 @@
         padding-inline-end: v.$pad-h;
         display: flex;
         align-items: center;
-        color: rgba(0,0,0,0.7);
+        color: color.scale(theme.$baseTextColor, $alpha: -30%);
     }
 
     .content {
@@ -25,14 +27,14 @@
     }
 
     &.info {
-        background-color: v.$lightBlue;
+        background-color: theme.$lightBlue;
     }
 
     &.warning {
-        background-color: v.$lightYellow;
+        background-color: theme.$lightYellow;
     }
 
     &.error {
-        background-color: v.$lightRed;
+        background-color: theme.$lightRed;
     }
 }

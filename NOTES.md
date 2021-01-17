@@ -3,6 +3,26 @@
 This is a place where I collect notes on things (problems, ideas, ...) I come
 accross while working on this project.
 
+## Execution trees: New Thoughts
+
+January 12, 2020
+
+With the end of the project in sight—at least the formal part—I am now finally getting to the implementation of execution trees.
+Currently, calls are saved in a linear history.
+I am planning to take the code for that and change it to use trees instead (specifically, a rose tree).
+My idea is to start with the initial state of the graph as the first node.
+That is not different from what happens now.
+However, now whenever a call is made, the system should check if that call has already been made from the current state. 
+If so, then it should go to the resulting state.
+Otherwise, it should create a new branch (i.e. add a child to the current node).
+
+Ideally, the branch for the current state should be highlighted somehow.
+I am somewhat conflicted on how to change between existing states.
+The easiest way would be to take the call list (i.e. the route from the initial node to the selected node) and apply that call sequence.
+That is probably the route I am going to take, but it is not the most efficient.
+An easy optimization would be to find the route between the nodes and only traverse up to the first node from which the new node is reachable.
+This does assume that states are saved as well.
+
 ## Execution trees: processing, rendering and efficiency
 
 October 22, 2020

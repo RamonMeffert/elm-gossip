@@ -1,23 +1,26 @@
 @use 'sass:math';
 @use 'variables'as v;
+@use 'theme';
+@use 'sass:color';
 
 $-header:  -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 $-body: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 $-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
 $-base-size: 16px;
-$-type-scale: 1.15;
+$-type-scale: 1.1;
 
 body {
     font-size: $-base-size;
     font-family: $-body;
+    color: theme.$baseTextColor;
     
     p, li {
         line-height: $-base-size * 1.5;
     }
 
     code {
-        background-color: rgb(219, 219, 240);
-        border: 2px solid rgba(0,0,0, 10%);
+        background-color: theme.$codeBgColor;
+        border: 2px solid color.scale(theme.$baseTextColor, $alpha: -90%);
         font-family: $-mono;
         font-size: 85%;
         padding: v.$pad-v / 8 v.$pad-h / 3 v.$pad-v / 10;
@@ -32,7 +35,6 @@ body {
         font-size: $size;
         font-family: $-header;
         font-weight: bold;
-        // letter-spacing: -1px;
         margin-top: 0;
         margin-bottom: $size / 2;
     }
