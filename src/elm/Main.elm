@@ -115,7 +115,8 @@ type Message
     = ChangeGossipGraph String
     | ChangeCallSequence String
     | ChangeProtocol String
-    | ApplyCallSequence
+    | ExecuteCall Call
+    | ExecuteCallSequence
     | TimeTravel Int
     | InsertExampleGraph String
     | ShowModal String (List (Html Message))
@@ -195,7 +196,68 @@ update msg model =
             , Cmd.none
             )
 
-        ApplyCallSequence ->
+        ExecuteCall call ->
+            -- TODO: make this less of a copy of ExecuteCallSequence (extract some common code, clean up)
+            case model.graph of
+                Ok graph ->
+                    let
+                        highestIndex = model.history 
+                            |> Tree.flatten
+                            |> List.map (\n -> 
+                                case n of
+                                    Root ->
+                                        0
+                                    Node { index } ->
+                                        index
+                                    DeadEnd ->
+                                        -1
+                                )
+                            |> List.maximum
+                            |> Maybe.withDefault 0
+
+                        newGraph =
+                            { callHistory = 
+                                -- Apply the sequence to the current position in the tree
+                                Tree.Zipper.fromTree model.history
+                                |> Tree.Zipper.findFromRoot (\node -> 
+                                    case node of                                            
+                                        Node { index} ->
+                                            index == model.historyLocation
+
+                                        _ ->
+                                            False
+                                    )
+                                |> Maybe.withDefault (Tree.Zipper.fromTree model.history)
+                            , state = graph
+                            , index = highestIndex 
+                            }
+                            |> (\{ callHistory, state, index } ->
+                                    { callHistory = 
+                                        Tree.Zipper.mapTree (Tree.prependChild <| Tree.singleton (Node { call = call, index = index + 1, state = Call.execute state call })) callHistory 
+                                            |> (\z -> Maybe.withDefault callHistory (Tree.Zipper.firstChild z))
+                                    , state = Call.execute state call
+                                    , index = index + 1
+                                    }
+                                )
+                    in
+                    ( { model
+                        | graph = Ok <| newGraph.state
+                        , relations = Ok <| Graph.fold (\ctx acc -> acc ++ GossipGraph.Relation.fromNodeContext ctx) [] newGraph.state
+                        , historyLocation = newGraph.index
+                        , history = Tree.Zipper.toTree newGraph.callHistory
+                        , inputCallSequence = ""
+                        , inputGossipGraph = GossipGraph.Parser.toString newGraph.state
+                        , callSequence = Ok []
+                        , historyInitialGraph = if Graph.isEmpty model.historyInitialGraph then Result.withDefault Graph.empty model.graph else model.historyInitialGraph
+                      }
+                    , Cmd.none
+                    )
+                _ ->
+                    (model, Cmd.none)
+                    
+
+
+        ExecuteCallSequence ->
             case ( model.graph, model.callSequence ) of
                 ( Ok graph, Ok sequence ) ->
                     let
@@ -842,7 +904,7 @@ callSequenceView model =
 
             , button
                 [ type_ "button"
-                , onClick ApplyCallSequence
+                , onClick ExecuteCallSequence
                 , disabled <| not permitted
                 , title
                     (if permitted then
@@ -931,7 +993,7 @@ protocolView model =
                         [ text "All possible calls have been made." ]
 
                     else
-                        List.map (Call.render agents) calls
+                        List.map (\call -> div [ class "call", onClick (ExecuteCall call) ] [ text <| Call.renderString agents call ]) calls
 
                 _ ->
                     -- TODO: propagate errors from model.callSequence, .agents, .graph instead of the error below
