@@ -344,9 +344,18 @@ update msg model =
             ({ model | executionTreeDepth = String.toInt depth |> Maybe.withDefault 5 |> clamp 0 5 }, Cmd.none)
 
         GenerateExecutionTree ->
+            let
+                initialGraph =
+                    if Graph.isEmpty model.historyInitialGraph then
+                        Result.withDefault Graph.empty model.graph
+                    else
+                        model.historyInitialGraph
+            in
+            
             ( { model 
                 | modal = (\md -> { md | visible = False }) model.modal
-                , history = GossipProtocol.generateExecutionTree model.historyInitialGraph model.protocolCondition [] model.executionTreeDepth
+                , history = GossipProtocol.generateExecutionTree 1 initialGraph model.protocolCondition [] model.executionTreeDepth (Tree.singleton Root)
+                , historyInitialGraph = initialGraph
               }
             , Cmd.none)
 
@@ -535,7 +544,6 @@ gossipGraphView model =
 historyHelpView : List (Html msg)
 historyHelpView =
     [ p [] [ text "This section shows the history of calls that have been made. You can click any of the calls to time-travel to that state of the gossip graph." ]
-    , Alert.render Alert.Information "In the next version of this application, it will be possible to generate the execution tree for the current protocol here."
     ]
 
 historyView : Model -> Html Message
@@ -549,7 +557,7 @@ historyView model =
                         [ Icon.viewIcon Icon.asterisk ]
 
                 DeadEnd ->
-                    div [ class "call" ] 
+                    div [ class "dead-end", title "No more calls are possible"] 
                         [ Icon.viewIcon Icon.times ]
 
                 Node n ->
@@ -597,12 +605,20 @@ historyView model =
 executionTreeModalView : Model -> List (Html Message)
 executionTreeModalView model =
     [ p [] [ text "You can generate the execution tree up until a specified depth here. The execution tree will be generated starting from the initial graph." ]
+    , p [] [ text "If there already is a call history, the execution tree will be generated from that history's initial graph. Otherwise, the current graph will be taken as the initial graph." ]
     , label [ for "execution-depth" ] [ text "Depth" ]
     , div [ class "input-group", id "execution-depth" ] 
         [ input [ type_ "number", Html.Attributes.min "0", Html.Attributes.max "5", value (String.fromInt model.executionTreeDepth), onInput ChangeExecutionTreeDepth ] []
         , button [ type_ "button", onClick GenerateExecutionTree ] [ text "Generate" ]
         ]
-    , Alert.render Alert.Warning "This operation will overwrite the current call history!"
+    , Alert.render Alert.Warning "Depending on the size of the graph, this might generate a very large execution tree*. This might take some time! Clicking “Generate” will overwrite the current call history."
+    , p [ class "note " ]
+        [ text "* If you take a 3-agent graph where all agents know each others numbers, and assume the "
+        , code [] [ text "Any" ]
+        , text " protocol is selected, that means there are 6 calls to be made for every round, ending up with 6"
+        , sup [] [ text "d"]
+        , text " history nodes (where d is the depth). For d = 5, that means 7,776 nodes!"
+        ]
     ]
 
 

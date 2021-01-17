@@ -62,6 +62,10 @@
             p:last-child {
                 margin-bottom: 0;
             }
+
+            p.note {
+                color: color.scale(theme.$baseTextColor, $alpha: -50%);
+            }
         }
     }
 }

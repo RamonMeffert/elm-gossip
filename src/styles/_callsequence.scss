@@ -1,33 +1,44 @@
 @use 'variables' as v;
 @use 'sass:color';
 @use 'mixins' as m;
+@use 'theme';
 
 .call-list {
     display: flex;
     flex-wrap: wrap;
 }
 
-.call {
+.call, .dead-end {
     padding: v.$pad-v / 2 v.$pad-h / 2;
     margin-right: v.$pad-h / 2;
     margin-bottom: v.$pad-v / 2;
-    background-color: v.$lightBlue;
     border-radius: v.$border-radius;
     text-align: center;
-    border: 2px solid rgba(0, 0, 0, 10%);
+}
+
+.call {
+    background-color: theme.$lightBlue;
+    border: 2px solid color.scale(theme.$baseTextColor, $alpha: -85%);
+}
+
+.dead-end {
+    background-color: theme.$lightRed;
+    border: 2px solid color.scale(theme.$baseTextColor, $alpha: -85%);
 }
 
 #sequences .input-group {
     &:focus-within {
         #call-sequence-input:focus+#call-sequence-validity {
-            box-shadow: 0 0 0 4px steelblue;
+            box-shadow: 0 0 0 4px theme.$lightBlue;
 
         }
     }
 }
 
 #call-sequence-input:focus {
-    box-shadow: 6px 0 0 -2px white, 4px 0 0 darken(white, 25%), 0 0 0 4px steelblue;
+    box-shadow: 6px 0 0 -2px theme.$baseBgColor, 
+                4px 0 0 color.scale(theme.$baseTextColor, $alpha: -85%), 
+                0 0 0 4px theme.$lightBlue;
 }
 
 #call-sequence-validity {
@@ -95,10 +106,17 @@
         }
     }
 
-    ul:first-child {
-        .call {
-            margin-left: 0;
-        }
+    .dead-end {
+        width: $nwd;
+        height: $nht;
+        margin-left: $hsp;
+        margin-bottom: $vsp;
+        display: flex;
+        overflow: hidden;
+        align-items: center;
+        justify-content: center;
+        line-height: $nht;
+        cursor: default;
     }
 
     ul:not(:first-child) {

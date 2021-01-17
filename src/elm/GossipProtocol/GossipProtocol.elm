@@ -9,6 +9,10 @@ import IntDict
 import List.Extra exposing (mapAccumr)
 import Utils.List exposing (distinct)
 import Tree exposing (Tree)
+import Array
+import Tree
+import List
+import List
 
 
 {-| Protocol conditions
@@ -217,6 +221,37 @@ isStronglyConnected kind graph =
         graph
 
 
-generateExecutionTree : Graph Agent Relation -> ProtocolCondition -> CallSequence -> Int -> Tree HistoryNode
-generateExecutionTree graph condition sequence depth = 
-    Tree.singleton Root
+generateExecutionTree : Int -> Graph Agent Relation -> ProtocolCondition -> CallSequence -> Int -> Tree HistoryNode -> Tree HistoryNode
+generateExecutionTree index graph condition sequence depth state =
+    let
+        -- Select the calls that are possible on the current state of the graph
+        possibleCalls = selectCalls graph condition sequence |> Array.fromList |> Array.toIndexedList
+
+        nextIndex = index + List.length possibleCalls 
+
+        nextState =
+            if List.isEmpty possibleCalls then
+                Tree.prependChild (Tree.singleton DeadEnd) state
+            else
+                List.foldr 
+                ( \(ind, call) acc -> 
+                        Tree.prependChild (Tree.singleton (Node { call = call, index = index + ind, state = Call.execute graph call })) acc
+                ) 
+                state 
+                possibleCalls
+    in
+    if depth > 1 then
+        nextState
+            |> Tree.mapChildren 
+                ( List.indexedMap
+                    (\ind child ->
+                case Tree.label child of
+                    Node n ->
+                        generateExecutionTree (nextIndex * (ind + 1)) n.state condition sequence (depth - 1) child
+                    
+                    _ ->
+                        child
+                )
+            )
+    else
+        nextState
