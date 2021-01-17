@@ -206,6 +206,7 @@ header {
     margin-bottom: v.$pad-v;
 
     h1, h2, h3, h4, h5, h6 {
+        line-height: 2.5rem;
         &:last-of-type {
             margin-bottom: 0;
         }

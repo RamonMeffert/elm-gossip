@@ -84,6 +84,7 @@ renderString agents call =
         _ ->
             "❌"
 
+
 {-| Execute a call on a gossip graph
 
 Make sure the caller knows everything the receiver knows and vice versa. Since

@@ -7,8 +7,7 @@ import CallSequence.CallSequence exposing (containing)
 import Dict exposing (Dict)
 import GossipProtocol.Conditions.Constituents exposing (..)
 import GossipProtocol.GossipProtocol exposing (ProtocolCondition)
-import Html exposing (Html, p, text)
-import Html exposing (sup)
+import Html exposing (Html, p, sup, text)
 
 
 any : ProtocolCondition
@@ -68,16 +67,17 @@ name =
         , ( "lns", "Learn New Secrets" )
         ]
 
+
 condition : Dict String ProtocolCondition
-condition = 
-  Dict.fromList
-    [ ("any", any)
-    , ("tok", tok)
-    , ("spi", spi)
-    , ("co",  co)
-    , ("wco", wco)
-    , ("lns", lns)
-    ]
+condition =
+    Dict.fromList
+        [ ( "any", any )
+        , ( "tok", tok )
+        , ( "spi", spi )
+        , ( "co", co )
+        , ( "wco", wco )
+        , ( "lns", lns )
+        ]
 
 
 explanation : Dict String (List (Html msg))
@@ -110,9 +110,9 @@ explanation =
           )
         , ( "lns"
           , [ p [] [ text "Until every agent knows all secrets, choose different agents x and y, such that x knows the number of y but not the secret of y, and let x call y." ]
-            , p [] 
+            , p []
                 [ text "Represented by the boolean formula ¬S"
-                , sup [] [ text "σ"]
+                , sup [] [ text "σ" ]
                 , text "xy."
                 ]
             ]

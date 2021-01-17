@@ -5,7 +5,7 @@ $-header:  -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Helvetica, 
 $-body: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 $-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
 $-base-size: 16px;
-$-type-scale: 1.15;
+$-type-scale: 1.1;
 
 body {
     font-size: $-base-size;
@@ -32,7 +32,6 @@ body {
         font-size: $size;
         font-family: $-header;
         font-weight: bold;
-        // letter-spacing: -1px;
         margin-top: 0;
         margin-bottom: $size / 2;
     }

@@ -30,6 +30,7 @@ import Color
 import Tree exposing (Tree)
 import Tree.Zipper
 import Tree.Zipper
+import Json.Decode
 
 
 
@@ -49,6 +50,7 @@ main =
 
 -- MODEL
 
+-- TODO: Add leaf node
 type HistoryNode
     = Root
     | Node {  
@@ -72,6 +74,7 @@ type alias Model =
     , historyLocation : Int
     , history : Tree HistoryNode
     , historyInitialGraph : Graph Agent Relation
+    , executionTreeDepth : Int
     , modal : { visible : Bool, title : String, content : List (Html Message) }
     }
 
@@ -90,6 +93,7 @@ init _ =
       , relations = Ok []
       , protocolCondition = Predefined.any
       , protocolName = "any"
+      , executionTreeDepth = 5
       , graphSettings =
             { nodeRadius = 20
             , edgeWidth = 1.5
@@ -124,6 +128,8 @@ type Message
     | InsertExampleGraph String
     | ShowModal String (List (Html Message))
     | HideModal
+    | ChangeExecutionTreeDepth String
+    | GenerateExecutionTree
 
 
 update : Message -> Model -> ( Model, Cmd Message )
@@ -337,6 +343,14 @@ update msg model =
             , Cmd.none
             )
 
+        ChangeExecutionTreeDepth depth ->
+            ({ model | executionTreeDepth = String.toInt depth |> Maybe.withDefault 5 }, Cmd.none)
+
+        GenerateExecutionTree ->
+            ( { model 
+                | modal = (\md -> { md | visible = False }) model.modal
+              }
+            , Cmd.none)
 
 
 -- VIEW
@@ -553,10 +567,24 @@ historyView model =
     section [ id "history" ]
         [ header [] 
             [ h2 [] [ text "Call history" ]
-            , helpButtonView "Call history" historyHelpView
+            , div [ class "input-set" ]
+                [ button [ type_ "button", onClick (ShowModal "Execution Tree" (executionTreeModalView model)) ] [ Icon.viewIcon Icon.fastForward ]
+                , helpButtonView "Call history" historyHelpView
+                ]
             ]
         , div [ id "execution-tree" ] [renderTree model.history]
         ]
+
+
+executionTreeModalView : Model -> List (Html Message)
+executionTreeModalView model =
+    [ p [] [ text "You can generate the execution tree up until a specified depth here." ]
+    , label [ for "execution-depth" ] [ text "Depth" ]
+    , div [ class "input-group", id "execution-depth" ] 
+        [ input [ type_ "number", Html.Attributes.min "0", Html.Attributes.max "10", value (String.fromInt model.executionTreeDepth), onInput ChangeExecutionTreeDepth ] []
+        , button [ type_ "button", onClick GenerateExecutionTree ] [ text "Generate" ]
+        ]
+    ]
 
 
 connectionInfoView : Kind -> Result String (Graph Agent Relation) -> Html Message
@@ -565,10 +593,10 @@ connectionInfoView kind graph =
         icon =
             case kind of
                 Number ->
-                    Icon.phone
+                    text "N"
 
                 Secret ->
-                    Icon.lock
+                    text "S"
 
         relationType =
             case kind of
@@ -586,7 +614,7 @@ connectionInfoView kind graph =
     in
     Html.div [ class "connection-info" ]
         [ Html.div [ class "visible" ]
-            [ Html.div [ class "icon" ] [ Icon.viewIcon icon ]
+            [ Html.div [ class "icon" ] [ icon ]
             , Html.span [ class "explanation" ] [ text relationType ]
             ]
         , Html.div [ class "divider" ] []
@@ -880,8 +908,7 @@ protocolView model =
 modalView : Model -> Html Message
 modalView model =
     div
-        [ onClick HideModal
-        , class <|
+        [ class <|
             "modal-overlay"
                 ++ (if model.modal.visible then
                         " visible"

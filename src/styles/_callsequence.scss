@@ -75,7 +75,29 @@
         cursor: default;
 
         &.current {
-            background-color: greenyellow;
+            background-color: v.$lightYellow;
+
+            &:hover {
+                background-color: lighten($color: v.$lightYellow, $amount: 2.5);
+            }
+    
+            &:active {
+                background-color: darken($color: v.$lightYellow, $amount: 5);
+            }
+        }
+
+        &:hover {
+            background-color: lighten($color: v.$lightBlue, $amount: 5);
+        }
+
+        &:active {
+            background-color: darken($color: v.$lightBlue, $amount: 5);
+        }
+    }
+
+    ul:first-child {
+        .call {
+            margin-left: 0;
         }
     }
 
@@ -146,7 +168,6 @@
 
             // Extra lines
             ul:not(:first-child) {
-                // edge stuff
                 &::after {
                     content: "";
                     position: absolute;
