@@ -14,11 +14,32 @@
     margin-bottom: v.$pad-v / 2;
     border-radius: v.$border-radius;
     text-align: center;
+    cursor: default;
 }
 
 .call {
     background-color: theme.$lightBlue;
     border: 2px solid color.scale(theme.$baseTextColor, $alpha: -85%);
+
+    &.current {
+        background-color: v.$lightYellow;
+
+        &:hover {
+            background-color: lighten($color: v.$lightYellow, $amount: 2.5);
+        }
+
+        &:active {
+            background-color: darken($color: v.$lightYellow, $amount: 5);
+        }
+    }
+
+    &:hover {
+        background-color: lighten($color: v.$lightBlue, $amount: 5);
+    }
+
+    &:active {
+        background-color: darken($color: v.$lightBlue, $amount: 5);
+    }
 }
 
 .dead-end {
@@ -83,27 +104,6 @@
         align-items: center;
         justify-content: center;
         line-height: $nht;
-        cursor: default;
-
-        &.current {
-            background-color: v.$lightYellow;
-
-            &:hover {
-                background-color: lighten($color: v.$lightYellow, $amount: 2.5);
-            }
-    
-            &:active {
-                background-color: darken($color: v.$lightYellow, $amount: 5);
-            }
-        }
-
-        &:hover {
-            background-color: lighten($color: v.$lightBlue, $amount: 5);
-        }
-
-        &:active {
-            background-color: darken($color: v.$lightBlue, $amount: 5);
-        }
     }
 
     .dead-end {
@@ -116,7 +116,6 @@
         align-items: center;
         justify-content: center;
         line-height: $nht;
-        cursor: default;
     }
 
     ul:not(:first-child) {
