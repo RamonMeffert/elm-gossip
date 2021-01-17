@@ -1,10 +1,12 @@
 @use 'variables'as v;
 @use 'mixins'as m;
-
+@use 'theme';
+@use 'sass:color';
 
 input[type=text]:disabled {
-    background-color: darken(white,15%);
-    color: darken(white, 50%)
+    background-color: color.scale(theme.$baseTextColor, $alpha: -90%);
+    color: color.scale(theme.$baseTextColor, $alpha: -50%);
+    cursor: not-allowed;
 }
 
 input, button, select {
@@ -15,11 +17,13 @@ input, button, select {
     padding: 0 v.$pad-h;
     line-height: 2.5rem;
     white-space: nowrap;
-    border: 2px solid darken(white, 25%);
+    border: 2px solid color.scale(theme.$baseTextColor, $alpha: -85%);
+    color: theme.$baseTextColor;
+    background-color: theme.$baseBgColor;
 
     &:focus {
         outline: none;
-        box-shadow: 0 0 0 4px steelblue;
+        box-shadow: 0 0 0 4px theme.$lightBlue;
         z-index: 5;
     }
 }
@@ -27,17 +31,22 @@ input, button, select {
 button,
 input[type=button] {
     appearance: none;
-    background-color: darken(white, 10%);
+    background-color: color.scale(theme.$baseTextColor, $alpha: -90%);
     transition: background-color .1s;
     border-radius: v.$border-radius;
     cursor: default;
 
+    &:disabled {
+        color: color.scale(theme.$baseTextColor, $alpha: -50%);
+        cursor: not-allowed;
+    }
+
     &:not(:disabled):hover {
-        background-color: darken(white, 5%);
+        background-color: color.scale(theme.$baseTextColor, $alpha: -95%);
     }
 
     &:not(:disabled):active {
-        background-color: darken(white, 20%);
+        background-color: color.scale(theme.$baseTextColor, $alpha: -80%);
     }
 }
 
@@ -55,7 +64,7 @@ label {
     margin-bottom: v.$pad-v / 4;
     display: block;
     font-size: 80%;
-    color: grey;
+    color: color.scale(theme.$baseTextColor, $alpha: -50%);
 }
 
 // Set of grouped, but separate inputs
@@ -108,7 +117,7 @@ label {
     }
 
     &:focus-within {
-        box-shadow: 0 0 0 4px rgba(70, 130, 180, 0.5);
+        box-shadow: 0 0 0 4px color.scale(theme.$lightBlue, $alpha: -25%);
         border-radius: v.$border-radius;
     }
 }

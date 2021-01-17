@@ -1,9 +1,10 @@
 @use 'variables' as v;
 @use 'sass:color';
+@use 'theme';
 
 @mixin box {
     border-radius: v.$border-radius;
     padding: v.$pad-v v.$pad-h;
-    border: 2px solid rgba(0,0,0,10%);
-    background-color: white;
+    border: 2px solid color.scale(theme.$baseTextColor, $alpha: -90%);;
+    background-color: theme.$baseBgColor;
 }

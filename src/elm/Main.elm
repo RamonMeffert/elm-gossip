@@ -31,6 +31,7 @@ import Tree exposing (Tree)
 import Tree.Zipper
 import Tree.Zipper
 import Json.Decode
+import GossipProtocol.GossipProtocol exposing (HistoryNode(..))
 
 
 
@@ -49,15 +50,6 @@ main =
 
 
 -- MODEL
-
--- TODO: Add leaf node
-type HistoryNode
-    = Root
-    | Node {  
-        call : Call,
-        index : Int,
-        state : Graph Agent Relation
-    }
 
 
 type alias Model =
@@ -215,6 +207,8 @@ update msg model =
                                         0
                                     Node { index } ->
                                         index
+                                    DeadEnd ->
+                                        -1
                                 )
                             |> List.maximum
                             |> Maybe.withDefault 0
@@ -233,12 +227,12 @@ update msg model =
                                     -- Apply the sequence to the current position in the tree
                                     Tree.Zipper.fromTree model.history
                                     |> Tree.Zipper.findFromRoot (\node -> 
-                                        case node of
-                                            Root ->
-                                                False
-                                            
+                                        case node of                                            
                                             Node { index} ->
                                                 index == model.historyLocation
+
+                                            _ ->
+                                                False
                                         )
                                     |> Maybe.withDefault (Tree.Zipper.fromTree model.history)
                                 , state = graph
@@ -323,6 +317,9 @@ update msg model =
                               }
                             , Cmd.none
                             )
+
+                        DeadEnd ->
+                            (model, Cmd.none)
                 _ ->
                     (model, Cmd.none)
 
@@ -344,11 +341,12 @@ update msg model =
             )
 
         ChangeExecutionTreeDepth depth ->
-            ({ model | executionTreeDepth = String.toInt depth |> Maybe.withDefault 5 }, Cmd.none)
+            ({ model | executionTreeDepth = String.toInt depth |> Maybe.withDefault 5 |> clamp 0 5 }, Cmd.none)
 
         GenerateExecutionTree ->
             ( { model 
                 | modal = (\md -> { md | visible = False }) model.modal
+                , history = GossipProtocol.generateExecutionTree model.historyInitialGraph model.protocolCondition [] model.executionTreeDepth
               }
             , Cmd.none)
 
@@ -372,7 +370,7 @@ headerHelpView =
         [ text
             "This application was developed by Ramon Meffert ("
         , a [ href "mailto:r.a.meffert@student.rug.nl" ] [ text "r.a.meffert@student.rug.nl" ]
-        , text ") as part of his bachelor's research project under supervision of Malvin Gattinger."
+        , text ") as part of his bachelor's research project under supervision of Dr. Malvin Gattinger."
         ]
     , p []
         [ text "This tool is built on the following free software:" ]
@@ -404,7 +402,7 @@ headerView =
                 , text ")"
                 ]
             , p [ class "subtitle" ]
-                [ text "Supervisor: B.R.M. Gattinger" ]
+                [ text "Supervisor: Dr. B.R.M. Gattinger" ]
             ]
         , helpButtonView "Tools for Gossip" headerHelpView
         ]
@@ -547,13 +545,19 @@ historyView model =
         renderCallHistoryNode node =
             case node of
                 Root ->
-                    div [ onClick (TimeTravel 0), if model.historyLocation == 0 then class "current call" else class "call", title "Initial Graph" ] 
+                    div [ onClick (TimeTravel 0), classList [ ("call", True), ("current", model.historyLocation == 0)], title "Initial Graph" ] 
                         [ Icon.viewIcon Icon.asterisk ]
+
+                DeadEnd ->
+                    div [ class "call" ] 
+                        [ Icon.viewIcon Icon.times ]
 
                 Node n ->
                     case model.agents of
                         Ok agents ->
-                            div [ onClick (TimeTravel n.index), if model.historyLocation == n.index then class "current call" else class "call" ] 
+                            div [ onClick (TimeTravel n.index)
+                                , classList [ ("call", True), ("current", model.historyLocation == n.index)]
+                                ] 
                                 [ text <| Call.renderString agents n.call
                                 ]
                         Err e ->
@@ -592,12 +596,13 @@ historyView model =
 
 executionTreeModalView : Model -> List (Html Message)
 executionTreeModalView model =
-    [ p [] [ text "You can generate the execution tree up until a specified depth here." ]
+    [ p [] [ text "You can generate the execution tree up until a specified depth here. The execution tree will be generated starting from the initial graph." ]
     , label [ for "execution-depth" ] [ text "Depth" ]
     , div [ class "input-group", id "execution-depth" ] 
-        [ input [ type_ "number", Html.Attributes.min "0", Html.Attributes.max "10", value (String.fromInt model.executionTreeDepth), onInput ChangeExecutionTreeDepth ] []
+        [ input [ type_ "number", Html.Attributes.min "0", Html.Attributes.max "5", value (String.fromInt model.executionTreeDepth), onInput ChangeExecutionTreeDepth ] []
         , button [ type_ "button", onClick GenerateExecutionTree ] [ text "Generate" ]
         ]
+    , Alert.render Alert.Warning "This operation will overwrite the current call history!"
     ]
 
 
@@ -896,10 +901,11 @@ protocolView model =
                         calls =
                             GossipProtocol.selectCalls graph model.protocolCondition (Tree.flatten model.history |> List.foldr (\el acc ->
                                 case el of
-                                    Root ->
-                                        acc
                                     Node n ->
                                         n.call :: acc
+
+                                    _ ->
+                                        acc
                             ) [])
                     in
                     if String.isEmpty model.inputGossipGraph then
@@ -922,14 +928,10 @@ protocolView model =
 modalView : Model -> Html Message
 modalView model =
     div
-        [ class <|
-            "modal-overlay"
-                ++ (if model.modal.visible then
-                        " visible"
-
-                    else
-                        ""
-                   )
+        [ classList
+            [ ("modal-overlay", True)
+            , ("visible", model.modal.visible)
+            ]
         ]
         [ div [ class "modal-window" ]
             [ header [ class "modal-header" ]

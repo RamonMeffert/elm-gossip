@@ -8,6 +8,7 @@ import Graph exposing (Graph, NodeContext, NodeId)
 import IntDict
 import List.Extra exposing (mapAccumr)
 import Utils.List exposing (distinct)
+import Tree exposing (Tree)
 
 
 {-| Protocol conditions
@@ -16,6 +17,15 @@ import GossipGraph.Relation
 type alias ProtocolCondition =
     ( AgentId, AgentId ) -> List Relation -> CallSequence -> Bool
 
+
+type HistoryNode
+    = Root
+    | Node {  
+        call : Call,
+        index : Int,
+        state : Graph Agent Relation
+    }
+    | DeadEnd
 
 {-| Selects the calls that can be executed based on some protocol condition.
 
@@ -205,3 +215,8 @@ isStronglyConnected kind graph =
         (\ctx acc -> acc && edgeInAnyDirection ctx)
         True
         graph
+
+
+generateExecutionTree : Graph Agent Relation -> ProtocolCondition -> CallSequence -> Int -> Tree HistoryNode
+generateExecutionTree graph condition sequence depth = 
+    Tree.singleton Root

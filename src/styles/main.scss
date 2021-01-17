@@ -8,6 +8,7 @@
 @use 'alert';
 @use 'modal';
 @use 'sass:color';
+@use 'theme';
 
 html {
     width: 100%;
@@ -25,10 +26,16 @@ body {
     column-gap: v.$pad-h;
     row-gap: v.$pad-v;
     position: relative;
+    background-color: darken($color: theme.$baseBgColor, $amount: 5);
 
     section {
         @include m.box;
+        background-color: theme.$baseBgColor;
     }
+}
+
+a {
+    color: theme.$baseTextColor;
 }
 
 #header {
@@ -50,7 +57,7 @@ body {
         p.subtitle {
             font-size: 75%;
             margin: 0;
-            color: gray;
+            color: color.scale(theme.$baseTextColor, $alpha: -50%);
             margin-right: v.$pad-h / 2;
 
             &:not(:last-of-type)::after {
@@ -100,10 +107,10 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    color: darken(white, 30%);
+    color: color.scale(theme.$baseTextColor, $alpha: -75%);
 
     svg {
-        color: darken(white, 10%);
+        color: color.scale(theme.$baseTextColor, $alpha: -90%);
         margin-bottom: 2 * v.$pad-v;
     }
 }
@@ -116,7 +123,7 @@ body {
 }
 
 hr {
-    border: 2px solid darken(white, 25%);
+    border: 2px solid color.scale(theme.$baseTextColor, $alpha: -75%);
     width: 75%;
     margin-left: 0;
 }
@@ -154,7 +161,7 @@ hr {
 
     .divider {
         width: 2px;
-        background-color: rgba(0,0,0,10%);
+        background-color: color.scale(theme.$baseTextColor, $alpha: -90%);
         margin-right: v.$pad-h / 2;
     }
 
