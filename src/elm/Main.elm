@@ -387,6 +387,7 @@ update msg model =
 
         InsertExampleGraph graph ->
             update (ChangeGossipGraph graph) model
+            |> \(mo, me) -> ({ mo | modal = (\md -> { md | visible = False }) mo.modal }, me)
 
         HideModal ->
             ( { model
