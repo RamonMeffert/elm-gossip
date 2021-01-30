@@ -2,22 +2,47 @@
   display: flex;
   flex-wrap: wrap;
 }
-.call-list .call {
+
+.call, .dead-end {
   padding: 0.5rem 0.6rem;
   margin-right: 0.6rem;
   margin-bottom: 0.5rem;
-  background-color: #c7dae9;
   border-radius: 0.3rem;
   text-align: center;
-  border: 2px solid rgba(0, 0, 0, 0.1);
+  cursor: default;
+}
+
+.call {
+  background-color: rgba(70, 130, 180, 0.4);
+  border: 2px solid rgba(0, 0, 0, 0.15);
+}
+.call.current {
+  background-color: #ffefd6;
+}
+.call.current:hover {
+  background-color: #fff4e3;
+}
+.call.current:active {
+  background-color: #ffe4bd;
+}
+.call:hover {
+  background-color: #d9e6f0;
+}
+.call:active {
+  background-color: #b4cde2;
+}
+
+.dead-end {
+  background-color: rgba(219, 112, 147, 0.4);
+  border: 2px solid rgba(0, 0, 0, 0.15);
 }
 
 #sequences .input-group:focus-within #call-sequence-input:focus + #call-sequence-validity {
-  box-shadow: 0 0 0 4px steelblue;
+  box-shadow: 0 0 0 4px rgba(70, 130, 180, 0.4);
 }
 
 #call-sequence-input:focus {
-  box-shadow: 6px 0 0 -2px white, 4px 0 0 #bfbfbf, 0 0 0 4px steelblue;
+  box-shadow: 6px 0 0 -2px white, 4px 0 0 rgba(0, 0, 0, 0.15), 0 0 0 4px rgba(70, 130, 180, 0.4);
 }
 
 #call-sequence-validity {
@@ -27,4 +52,99 @@
   display: block;
   background-color: transparent;
   border-left: none;
+}
+
+#execution-tree ul, #execution-tree li, #execution-tree div {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+#execution-tree ul {
+  flex-direction: column;
+  position: relative;
+}
+#execution-tree .call {
+  width: 3.6rem;
+  height: 2rem;
+  margin-left: 0.8rem;
+  margin-bottom: 0.4rem;
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  line-height: 2rem;
+}
+#execution-tree .dead-end {
+  width: 3.6rem;
+  height: 2rem;
+  margin-left: 0.8rem;
+  margin-bottom: 0.4rem;
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  line-height: 2rem;
+}
+#execution-tree ul:not(:first-child) > li {
+  position: relative;
+}
+#execution-tree ul:not(:first-child) > li:last-child:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: calc(2.6rem + 3px);
+  height: calc(1.4rem + 3px);
+  left: calc(-1.8rem - 3px);
+  top: -0.4rem;
+  box-sizing: border-box;
+  border-style: solid;
+  border-width: 0 0 2px 2px;
+  border-bottom-left-radius: 0.6rem;
+}
+#execution-tree ul:not(:first-child) > li ~ li:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: calc(2.6rem + 3px);
+  height: calc(1.4rem + 3px);
+  left: calc(-1.8rem - 3px);
+  top: -0.4rem;
+  box-sizing: border-box;
+  border-style: solid;
+  border-width: 0 0 2px 0;
+}
+#execution-tree ul:not(:first-child) > li ~ li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 2px;
+  left: calc(-1.8rem - 3px);
+  height: 100%;
+  top: -0.4rem;
+  background-color: black;
+}
+#execution-tree ul:not(:first-child) > li:first-child::before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 0.8rem;
+  height: calc(1.4rem + 3px);
+  left: 0;
+  top: -0.4rem;
+  box-sizing: border-box;
+  border-style: solid;
+  border-width: 0 0 2px 0;
+}
+#execution-tree ul:not(:first-child) > li ul:not(:first-child)::after {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 2px;
+  left: calc(-1.8rem - 3px);
+  height: calc(100% - 4rem - 0.8rem);
+  top: calc(2rem + 4px);
+  background-color: black;
 }

@@ -1,12 +1,13 @@
 body {
   font-size: 16px;
   font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: black;
 }
 body p, body li {
   line-height: 24px;
 }
 body code {
-  background-color: #dbdbf0;
+  background-color: rgba(102, 102, 255, 0.25);
   border: 2px solid rgba(0, 0, 0, 0.1);
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
   font-size: 85%;
@@ -15,71 +16,71 @@ body code {
 }
 
 h1 {
-  font-size: 37.00897225px;
+  font-size: 28.344976px;
   font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-weight: bold;
   margin-top: 0;
-  margin-bottom: 18.504486125px;
+  margin-bottom: 14.172488px;
 }
 
 h1 + p.subtitle {
-  font-size: 16.0908575px;
+  font-size: 12.88408px;
 }
 
 h2 {
-  font-size: 32.181715px;
+  font-size: 25.76816px;
   font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-weight: bold;
   margin-top: 0;
-  margin-bottom: 16.0908575px;
+  margin-bottom: 12.88408px;
 }
 
 h2 + p.subtitle {
-  font-size: 13.99205px;
+  font-size: 11.7128px;
 }
 
 h3 {
-  font-size: 27.9841px;
+  font-size: 23.4256px;
   font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-weight: bold;
   margin-top: 0;
-  margin-bottom: 13.99205px;
+  margin-bottom: 11.7128px;
 }
 
 h3 + p.subtitle {
-  font-size: 12.167px;
+  font-size: 10.648px;
 }
 
 h4 {
-  font-size: 24.334px;
+  font-size: 21.296px;
   font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-weight: bold;
   margin-top: 0;
-  margin-bottom: 12.167px;
+  margin-bottom: 10.648px;
 }
 
 h4 + p.subtitle {
-  font-size: 10.58px;
+  font-size: 9.68px;
 }
 
 h5 {
-  font-size: 21.16px;
+  font-size: 19.36px;
   font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-weight: bold;
   margin-top: 0;
-  margin-bottom: 10.58px;
+  margin-bottom: 9.68px;
 }
 
 h5 + p.subtitle {
-  font-size: 9.2px;
+  font-size: 8.8px;
 }
 
 h6 {
-  font-size: 18.4px;
+  font-size: 17.6px;
   font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-weight: bold;
   margin-top: 0;
-  margin-bottom: 9.2px;
+  margin-bottom: 8.8px;
 }
 
 h6 + p.subtitle {

@@ -39,7 +39,7 @@
   background-color: transparent;
 }
 .modal-overlay .modal-window .modal-header button:hover {
-  background-color: #e6e6e6;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 .modal-overlay .modal-window .modal-content {
   max-height: 60vh;
@@ -52,4 +52,7 @@
 }
 .modal-overlay .modal-window .modal-content p:last-child {
   margin-bottom: 0;
+}
+.modal-overlay .modal-window .modal-content p.note {
+  color: rgba(0, 0, 0, 0.5);
 }

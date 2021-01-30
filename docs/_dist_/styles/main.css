@@ -811,12 +811,13 @@ template {
 body {
   font-size: 16px;
   font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  color: black;
 }
 body p, body li {
   line-height: 24px;
 }
 body code {
-  background-color: #dbdbf0;
+  background-color: rgba(102, 102, 255, 0.25);
   border: 2px solid rgba(0, 0, 0, 0.1);
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
   font-size: 85%;
@@ -825,71 +826,71 @@ body code {
 }
 
 h1 {
-  font-size: 37.00897225px;
+  font-size: 28.344976px;
   font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-weight: bold;
   margin-top: 0;
-  margin-bottom: 18.504486125px;
+  margin-bottom: 14.172488px;
 }
 
 h1 + p.subtitle {
-  font-size: 16.0908575px;
+  font-size: 12.88408px;
 }
 
 h2 {
-  font-size: 32.181715px;
+  font-size: 25.76816px;
   font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-weight: bold;
   margin-top: 0;
-  margin-bottom: 16.0908575px;
+  margin-bottom: 12.88408px;
 }
 
 h2 + p.subtitle {
-  font-size: 13.99205px;
+  font-size: 11.7128px;
 }
 
 h3 {
-  font-size: 27.9841px;
+  font-size: 23.4256px;
   font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-weight: bold;
   margin-top: 0;
-  margin-bottom: 13.99205px;
+  margin-bottom: 11.7128px;
 }
 
 h3 + p.subtitle {
-  font-size: 12.167px;
+  font-size: 10.648px;
 }
 
 h4 {
-  font-size: 24.334px;
+  font-size: 21.296px;
   font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-weight: bold;
   margin-top: 0;
-  margin-bottom: 12.167px;
+  margin-bottom: 10.648px;
 }
 
 h4 + p.subtitle {
-  font-size: 10.58px;
+  font-size: 9.68px;
 }
 
 h5 {
-  font-size: 21.16px;
+  font-size: 19.36px;
   font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-weight: bold;
   margin-top: 0;
-  margin-bottom: 10.58px;
+  margin-bottom: 9.68px;
 }
 
 h5 + p.subtitle {
-  font-size: 9.2px;
+  font-size: 8.8px;
 }
 
 h6 {
-  font-size: 18.4px;
+  font-size: 17.6px;
   font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-weight: bold;
   margin-top: 0;
-  margin-bottom: 9.2px;
+  margin-bottom: 8.8px;
 }
 
 h6 + p.subtitle {
@@ -900,22 +901,47 @@ h6 + p.subtitle {
   display: flex;
   flex-wrap: wrap;
 }
-.call-list .call {
+
+.call, .dead-end {
   padding: 0.5rem 0.6rem;
   margin-right: 0.6rem;
   margin-bottom: 0.5rem;
-  background-color: #c7dae9;
   border-radius: 0.3rem;
   text-align: center;
-  border: 2px solid rgba(0, 0, 0, 0.1);
+  cursor: default;
+}
+
+.call {
+  background-color: rgba(70, 130, 180, 0.4);
+  border: 2px solid rgba(0, 0, 0, 0.15);
+}
+.call.current {
+  background-color: #ffefd6;
+}
+.call.current:hover {
+  background-color: #fff4e3;
+}
+.call.current:active {
+  background-color: #ffe4bd;
+}
+.call:hover {
+  background-color: #d9e6f0;
+}
+.call:active {
+  background-color: #b4cde2;
+}
+
+.dead-end {
+  background-color: rgba(219, 112, 147, 0.4);
+  border: 2px solid rgba(0, 0, 0, 0.15);
 }
 
 #sequences .input-group:focus-within #call-sequence-input:focus + #call-sequence-validity {
-  box-shadow: 0 0 0 4px steelblue;
+  box-shadow: 0 0 0 4px rgba(70, 130, 180, 0.4);
 }
 
 #call-sequence-input:focus {
-  box-shadow: 6px 0 0 -2px white, 4px 0 0 #bfbfbf, 0 0 0 4px steelblue;
+  box-shadow: 6px 0 0 -2px white, 4px 0 0 rgba(0, 0, 0, 0.15), 0 0 0 4px rgba(70, 130, 180, 0.4);
 }
 
 #call-sequence-validity {
@@ -927,9 +953,105 @@ h6 + p.subtitle {
   border-left: none;
 }
 
+#execution-tree ul, #execution-tree li, #execution-tree div {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+#execution-tree ul {
+  flex-direction: column;
+  position: relative;
+}
+#execution-tree .call {
+  width: 3.6rem;
+  height: 2rem;
+  margin-left: 0.8rem;
+  margin-bottom: 0.4rem;
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  line-height: 2rem;
+}
+#execution-tree .dead-end {
+  width: 3.6rem;
+  height: 2rem;
+  margin-left: 0.8rem;
+  margin-bottom: 0.4rem;
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  line-height: 2rem;
+}
+#execution-tree ul:not(:first-child) > li {
+  position: relative;
+}
+#execution-tree ul:not(:first-child) > li:last-child:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: calc(2.6rem + 3px);
+  height: calc(1.4rem + 3px);
+  left: calc(-1.8rem - 3px);
+  top: -0.4rem;
+  box-sizing: border-box;
+  border-style: solid;
+  border-width: 0 0 2px 2px;
+  border-bottom-left-radius: 0.6rem;
+}
+#execution-tree ul:not(:first-child) > li ~ li:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: calc(2.6rem + 3px);
+  height: calc(1.4rem + 3px);
+  left: calc(-1.8rem - 3px);
+  top: -0.4rem;
+  box-sizing: border-box;
+  border-style: solid;
+  border-width: 0 0 2px 0;
+}
+#execution-tree ul:not(:first-child) > li ~ li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 2px;
+  left: calc(-1.8rem - 3px);
+  height: 100%;
+  top: -0.4rem;
+  background-color: black;
+}
+#execution-tree ul:not(:first-child) > li:first-child::before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 0.8rem;
+  height: calc(1.4rem + 3px);
+  left: 0;
+  top: -0.4rem;
+  box-sizing: border-box;
+  border-style: solid;
+  border-width: 0 0 2px 0;
+}
+#execution-tree ul:not(:first-child) > li ul:not(:first-child)::after {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 2px;
+  left: calc(-1.8rem - 3px);
+  height: calc(100% - 4rem - 0.8rem);
+  top: calc(2rem + 4px);
+  background-color: black;
+}
+
 input[type=text]:disabled {
-  background-color: #d9d9d9;
-  color: gray;
+  background-color: rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.5);
+  cursor: not-allowed;
 }
 
 input, button, select {
@@ -938,31 +1060,38 @@ input, button, select {
   appearance: none;
   box-sizing: border-box;
   padding: 0 1.2rem;
-  line-height: 3rem;
+  line-height: 2.5rem;
   white-space: nowrap;
-  border: 2px solid #bfbfbf;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  color: black;
+  background-color: white;
 }
 input:focus, button:focus, select:focus {
   outline: none;
-  box-shadow: 0 0 0 4px steelblue;
+  box-shadow: 0 0 0 4px rgba(70, 130, 180, 0.4);
   z-index: 5;
 }
 
 button,
 input[type=button] {
   appearance: none;
-  background-color: #e6e6e6;
+  background-color: rgba(0, 0, 0, 0.1);
   transition: background-color 0.1s;
   border-radius: 0.3rem;
   cursor: default;
 }
+button:disabled,
+input[type=button]:disabled {
+  color: rgba(0, 0, 0, 0.5);
+  cursor: not-allowed;
+}
 button:not(:disabled):hover,
 input[type=button]:not(:disabled):hover {
-  background-color: #f2f2f2;
+  background-color: rgba(0, 0, 0, 0.05);
 }
 button:not(:disabled):active,
 input[type=button]:not(:disabled):active {
-  background-color: #cccccc;
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
 select {
@@ -975,9 +1104,15 @@ select {
 }
 
 label {
-  padding: 0 0.3rem;
+  padding: 0 0.6rem;
   margin-bottom: 0.25rem;
   display: block;
+  font-size: 80%;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+.input-set input:not(:last-child), .input-set button:not(:last-child), .input-set select:not(:last-child), .input-set .input-group:not(:last-child) {
+  margin-right: 0.6rem;
 }
 
 .input-group {
@@ -1012,7 +1147,7 @@ label {
   border-radius: 0.3rem;
 }
 .input-group:focus-within {
-  box-shadow: 0 0 0 4px rgba(70, 130, 180, 0.5);
+  box-shadow: 0 0 0 4px rgba(70, 130, 180, 0.3);
   border-radius: 0.3rem;
 }
 
@@ -1024,6 +1159,7 @@ label {
   display: flex;
   width: 100%;
   box-sizing: border-box;
+  color: black;
 }
 .alert:not(:last-child) {
   margin-bottom: 1rem;
@@ -1039,13 +1175,13 @@ label {
   align-items: center;
 }
 .alert.info {
-  background-color: #c7dae9;
+  background-color: rgba(70, 130, 180, 0.4);
 }
 .alert.warning {
-  background-color: #ffefd6;
+  background-color: rgba(255, 222, 173, 0.4);
 }
 .alert.error {
-  background-color: #f1c6d4;
+  background-color: rgba(219, 112, 147, 0.4);
 }
 
 .modal-overlay {
@@ -1089,7 +1225,7 @@ label {
   background-color: transparent;
 }
 .modal-overlay .modal-window .modal-header button:hover {
-  background-color: #e6e6e6;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 .modal-overlay .modal-window .modal-content {
   max-height: 60vh;
@@ -1102,6 +1238,9 @@ label {
 }
 .modal-overlay .modal-window .modal-content p:last-child {
   margin-bottom: 0;
+}
+.modal-overlay .modal-window .modal-content p.note {
+  color: rgba(0, 0, 0, 0.5);
 }
 
 html {
@@ -1120,12 +1259,18 @@ body {
   column-gap: 1.2rem;
   row-gap: 1rem;
   position: relative;
+  background-color: #f2f2f2;
 }
 body section {
   border-radius: 0.3rem;
   padding: 1rem 1.2rem;
   border: 2px solid rgba(0, 0, 0, 0.1);
   background-color: white;
+  background-color: white;
+}
+
+a {
+  color: black;
 }
 
 #header {
@@ -1149,7 +1294,7 @@ body section {
 #header div p.subtitle {
   font-size: 75%;
   margin: 0;
-  color: gray;
+  color: rgba(0, 0, 0, 0.5);
   margin-right: 0.6rem;
 }
 #header div p.subtitle:not(:last-of-type)::after {
@@ -1195,10 +1340,10 @@ body section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: #b3b3b3;
+  color: rgba(0, 0, 0, 0.25);
 }
 #gossip-graph.empty svg {
-  color: #e6e6e6;
+  color: rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
 }
 
@@ -1213,7 +1358,7 @@ body section {
 }
 
 hr {
-  border: 2px solid #bfbfbf;
+  border: 2px solid rgba(0, 0, 0, 0.25);
   width: 75%;
   margin-left: 0;
 }
@@ -1291,6 +1436,9 @@ header {
   display: flex;
   justify-content: space-between;
   margin-bottom: 1rem;
+}
+header h1, header h2, header h3, header h4, header h5, header h6 {
+  line-height: 2.5rem;
 }
 header h1:last-of-type, header h2:last-of-type, header h3:last-of-type, header h4:last-of-type, header h5:last-of-type, header h6:last-of-type {
   margin-bottom: 0;

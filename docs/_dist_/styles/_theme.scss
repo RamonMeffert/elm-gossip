@@ -1,0 +1,16 @@
+@use 'sass:color';
+// Theme colors
+
+// Invariant colors
+$codeBgColor: hsla(240, 100%, 70%, 25%);
+$lightBlue: color.scale(steelblue, $alpha: -60%);
+$lightYellow: color.scale(navajowhite, $alpha: -60%);
+$lightRed: color.scale(palevioletred, $alpha: -60%);
+
+// Dark theme (WIP)
+// $baseBgColor: #222;
+// $baseTextColor: white;
+
+// Light theme
+$baseBgColor: white;
+$baseTextColor: black;
