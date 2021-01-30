@@ -4,19 +4,21 @@ input[type=text]:disabled {
   cursor: not-allowed;
 }
 
-input, button, select {
+input:not([type=checkbox]), button, select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
   box-sizing: border-box;
-  padding: 0 1.2rem;
-  line-height: 2.5rem;
+  padding: 0 1rem;
+  line-height: 2rem;
   white-space: nowrap;
   border: 2px solid rgba(0, 0, 0, 0.15);
   color: black;
   background-color: white;
+  box-shadow: 0 0 0 0 rgba(70, 130, 180, 0.4);
+  transition: box-shadow 0.1s;
 }
-input:focus, button:focus, select:focus {
+input:not([type=checkbox]):focus, button:focus, select:focus {
   outline: none;
   box-shadow: 0 0 0 4px rgba(70, 130, 180, 0.4);
   z-index: 5;
@@ -41,28 +43,28 @@ input[type=button]:not(:disabled):hover {
 }
 button:not(:disabled):active,
 input[type=button]:not(:disabled):active {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.15);
 }
 
 select {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 48'><path d='M23.7 17.3c.9 1.5-.2 3.5-2 3.5H2.3c-1.8 0-2.9-1.9-2-3.5L10 1.1c.9-1.5 3-1.5 3.9 0 .1 0 9.8 16.2 9.8 16.2zM.3 30.7c-.9-1.5.2-3.5 2-3.5h19.4c1.8 0 2.9 1.9 2 3.5L14 46.9c-.9 1.5-3 1.5-3.9 0C10 46.9.3 30.7.3 30.7z'/></svg>");
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 48'><path fill='black' d='M23.7 17.3c.9 1.5-.2 3.5-2 3.5H2.3c-1.8 0-2.9-1.9-2-3.5L10 1.1c.9-1.5 3-1.5 3.9 0 .1 0 9.8 16.2 9.8 16.2zM.3 30.7c-.9-1.5.2-3.5 2-3.5h19.4c1.8 0 2.9 1.9 2 3.5L14 46.9c-.9 1.5-3 1.5-3.9 0C10 46.9.3 30.7.3 30.7z'/></svg>");
   background-repeat: no-repeat;
-  background-position: center right 0.8rem;
+  background-position: center right 0.6666666667rem;
   background-origin: padding-box;
   background-size: 0.5rem;
-  padding-right: 1.8rem;
+  padding-right: 1.5rem;
 }
 
 label {
-  padding: 0 0.6rem;
-  margin-bottom: 0.25rem;
+  padding: 0 0.5rem;
+  margin-bottom: 0.2rem;
   display: block;
   font-size: 80%;
   color: rgba(0, 0, 0, 0.5);
 }
 
-.input-set input:not(:last-child), .input-set button:not(:last-child), .input-set select:not(:last-child), .input-set .input-group:not(:last-child) {
-  margin-right: 0.6rem;
+.input-set input:not([type=checkbox]):not(:last-child), .input-set button:not(:last-child), .input-set select:not(:last-child), .input-set .input-group:not(:last-child) {
+  margin-right: 0.5rem;
 }
 
 .input-group {
@@ -76,24 +78,24 @@ label {
   flex-grow: unset;
 }
 .input-group:not(:last-child) {
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
 }
 .input-group input:not([type=button]), .input-group select {
   width: 100%;
 }
-.input-group input, .input-group button, .input-group select {
+.input-group input:not([type=checkbox]), .input-group button, .input-group select {
   border-right-width: 0;
   flex-grow: 1;
   border-radius: 0;
 }
-.input-group input:first-child, .input-group button:first-child, .input-group select:first-child {
+.input-group input:not([type=checkbox]):first-child, .input-group button:first-child, .input-group select:first-child {
   border-radius: 0.3rem 0 0 0.3rem;
 }
-.input-group input:last-child, .input-group button:last-child, .input-group select:last-child {
+.input-group input:not([type=checkbox]):last-child, .input-group button:last-child, .input-group select:last-child {
   border-right-width: 2px;
   border-radius: 0 0.3rem 0.3rem 0;
 }
-.input-group input:only-child, .input-group button:only-child, .input-group select:only-child {
+.input-group input:not([type=checkbox]):only-child, .input-group button:only-child, .input-group select:only-child {
   border-radius: 0.3rem;
 }
 .input-group:focus-within {

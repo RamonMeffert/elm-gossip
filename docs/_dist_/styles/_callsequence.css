@@ -4,9 +4,10 @@
 }
 
 .call, .dead-end {
-  padding: 0.5rem 0.6rem;
-  margin-right: 0.6rem;
-  margin-bottom: 0.5rem;
+  padding: 0 0.5rem;
+  line-height: 2rem;
+  margin-right: 0.5rem;
+  margin-bottom: 0.4rem;
   border-radius: 0.3rem;
   text-align: center;
   cursor: default;
@@ -17,19 +18,19 @@
   border: 2px solid rgba(0, 0, 0, 0.15);
 }
 .call.current {
-  background-color: #ffefd6;
+  background-color: rgba(255, 222, 173, 0.4);
 }
 .call.current:hover {
-  background-color: #fff4e3;
+  background-color: rgba(255, 230, 194, 0.4);
 }
 .call.current:active {
-  background-color: #ffe4bd;
+  background-color: rgba(255, 179, 66, 0.4);
 }
 .call:hover {
-  background-color: #d9e6f0;
+  background-color: rgba(115, 161, 200, 0.4);
 }
 .call:active {
-  background-color: #b4cde2;
+  background-color: rgba(53, 98, 135, 0.4);
 }
 
 .dead-end {
@@ -54,7 +55,7 @@
   border-left: none;
 }
 
-#execution-tree ul, #execution-tree li, #execution-tree div {
+#execution-tree ul, #execution-tree li {
   margin: 0;
   padding: 0;
   list-style: none;
@@ -67,15 +68,7 @@
   position: relative;
 }
 #execution-tree .call {
-  width: 3.6rem;
-  height: 2rem;
-  margin-left: 0.8rem;
-  margin-bottom: 0.4rem;
-  display: flex;
-  overflow: hidden;
-  align-items: center;
-  justify-content: center;
-  line-height: 2rem;
+  margin: 0 0 0.4rem 0.8rem;
 }
 #execution-tree .dead-end {
   width: 3.6rem;
