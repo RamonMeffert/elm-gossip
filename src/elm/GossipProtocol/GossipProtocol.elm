@@ -8,6 +8,11 @@ import Graph exposing (Graph, NodeContext, NodeId)
 import IntDict
 import List.Extra exposing (mapAccumr)
 import Utils.List exposing (distinct)
+import Tree exposing (Tree)
+import Array
+import Tree
+import List
+import List
 
 
 {-| Protocol conditions
@@ -16,6 +21,15 @@ import GossipGraph.Relation
 type alias ProtocolCondition =
     ( AgentId, AgentId ) -> List Relation -> CallSequence -> Bool
 
+
+type HistoryNode
+    = Root
+    | Node {  
+        call : Call,
+        index : Int,
+        state : Graph Agent Relation
+    }
+    | DeadEnd
 
 {-| Selects the calls that can be executed based on some protocol condition.
 
@@ -205,3 +219,39 @@ isStronglyConnected kind graph =
         (\ctx acc -> acc && edgeInAnyDirection ctx)
         True
         graph
+
+
+generateExecutionTree : Int -> Graph Agent Relation -> ProtocolCondition -> CallSequence -> Int -> Tree HistoryNode -> Tree HistoryNode
+generateExecutionTree index graph condition sequence depth state =
+    let
+        -- Select the calls that are possible on the current state of the graph
+        possibleCalls = selectCalls graph condition sequence |> Array.fromList |> Array.toIndexedList
+
+        nextIndex = index + List.length possibleCalls 
+
+        nextState =
+            if List.isEmpty possibleCalls then
+                Tree.prependChild (Tree.singleton DeadEnd) state
+            else
+                List.foldr 
+                ( \(ind, call) acc -> 
+                        Tree.prependChild (Tree.singleton (Node { call = call, index = index + ind, state = Call.execute graph call })) acc
+                ) 
+                state 
+                possibleCalls
+    in
+    if depth > 1 then
+        nextState
+            |> Tree.mapChildren 
+                ( List.indexedMap
+                    (\ind child ->
+                case Tree.label child of
+                    Node n ->
+                        generateExecutionTree (nextIndex * (ind + 1)) n.state condition sequence (depth - 1) child
+                    
+                    _ ->
+                        child
+                )
+            )
+    else
+        nextState

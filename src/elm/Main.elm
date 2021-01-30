@@ -27,6 +27,11 @@ import Tuple
 import Utils.Alert as Alert
 import TypedSvg.Attributes exposing (color)
 import Color
+import Tree exposing (Tree)
+import Tree.Zipper
+import Tree.Zipper
+import Json.Decode
+import GossipProtocol.GossipProtocol exposing (HistoryNode(..))
 
 
 
@@ -58,9 +63,10 @@ type alias Model =
     , protocolName : String
     , graphSettings : GossipGraph.Renderer.GraphSettings
     , callSequence : Result CallSequence.Parser.Error CallSequence.CallSequence.CallSequence -- not great. Maybe move "type" to main namespace somehow
-    , graphHistory : Array (Graph Agent Relation)
-    , graphHistoryLocation : Int
-    , callHistory : Array Call
+    , historyLocation : Int
+    , history : Tree HistoryNode
+    , historyInitialGraph : Graph Agent Relation
+    , executionTreeDepth : Int
     , modal : { visible : Bool, title : String, content : List (Html Message) }
     }
 
@@ -71,14 +77,15 @@ init _ =
       , inputCallSequence = ""
       , canonicalGossipGraph = ""
       , callSequence = Ok []
-      , callHistory = Array.empty
-      , graphHistory = Array.empty
-      , graphHistoryLocation = 0
+      , history = Tree.singleton Root
+      , historyLocation = 0
+      , historyInitialGraph = Graph.empty
       , graph = Ok Graph.empty
       , agents = Ok []
       , relations = Ok []
       , protocolCondition = Predefined.any
       , protocolName = "any"
+      , executionTreeDepth = 5
       , graphSettings =
             { nodeRadius = 20
             , edgeWidth = 1.5
@@ -108,11 +115,14 @@ type Message
     = ChangeGossipGraph String
     | ChangeCallSequence String
     | ChangeProtocol String
-    | ApplyCallSequence
+    | ExecuteCall Call
+    | ExecuteCallSequence
     | TimeTravel Int
     | InsertExampleGraph String
     | ShowModal String (List (Html Message))
     | HideModal
+    | ChangeExecutionTreeDepth String
+    | GenerateExecutionTree
 
 
 update : Message -> Model -> ( Model, Cmd Message )
@@ -168,8 +178,7 @@ update msg model =
                 , agents = agents
                 , relations = relations
                 , callSequence = callSequence
-                , callHistory = Array.empty
-                , graphHistory = Array.empty
+                , history = Tree.singleton Root
               }
             , Cmd.none
             )
@@ -187,30 +196,121 @@ update msg model =
             , Cmd.none
             )
 
-        ApplyCallSequence ->
+        ExecuteCall call ->
+            -- TODO: make this less of a copy of ExecuteCallSequence (extract some common code, clean up)
+            case model.graph of
+                Ok graph ->
+                    let
+                        highestIndex = model.history 
+                            |> Tree.flatten
+                            |> List.map (\n -> 
+                                case n of
+                                    Root ->
+                                        0
+                                    Node { index } ->
+                                        index
+                                    DeadEnd ->
+                                        -1
+                                )
+                            |> List.maximum
+                            |> Maybe.withDefault 0
+
+                        newGraph =
+                            { callHistory = 
+                                -- Apply the sequence to the current position in the tree
+                                Tree.Zipper.fromTree model.history
+                                |> Tree.Zipper.findFromRoot (\node -> 
+                                    case node of                                            
+                                        Node { index} ->
+                                            index == model.historyLocation
+
+                                        _ ->
+                                            False
+                                    )
+                                |> Maybe.withDefault (Tree.Zipper.fromTree model.history)
+                            , state = graph
+                            , index = highestIndex 
+                            }
+                            |> (\{ callHistory, state, index } ->
+                                    { callHistory = 
+                                        Tree.Zipper.mapTree (Tree.prependChild <| Tree.singleton (Node { call = call, index = index + 1, state = Call.execute state call })) callHistory 
+                                            |> (\z -> Maybe.withDefault callHistory (Tree.Zipper.firstChild z))
+                                    , state = Call.execute state call
+                                    , index = index + 1
+                                    }
+                                )
+                    in
+                    ( { model
+                        | graph = Ok <| newGraph.state
+                        , relations = Ok <| Graph.fold (\ctx acc -> acc ++ GossipGraph.Relation.fromNodeContext ctx) [] newGraph.state
+                        , historyLocation = newGraph.index
+                        , history = Tree.Zipper.toTree newGraph.callHistory
+                        , inputCallSequence = ""
+                        , inputGossipGraph = GossipGraph.Parser.toString newGraph.state
+                        , callSequence = Ok []
+                        , historyInitialGraph = if Graph.isEmpty model.historyInitialGraph then Result.withDefault Graph.empty model.graph else model.historyInitialGraph
+                      }
+                    , Cmd.none
+                    )
+                _ ->
+                    (model, Cmd.none)
+                    
+
+
+        ExecuteCallSequence ->
             case ( model.graph, model.callSequence ) of
                 ( Ok graph, Ok sequence ) ->
                     let
+                        highestIndex = model.history 
+                            |> Tree.flatten
+                            |> List.map (\n -> 
+                                case n of
+                                    Root ->
+                                        0
+                                    Node { index } ->
+                                        index
+                                    DeadEnd ->
+                                        -1
+                                )
+                            |> List.maximum
+                            |> Maybe.withDefault 0
+
                         newGraph =
                             List.foldr
-                                (\call ( callHistory, state, graphHistory ) ->
-                                    ( Array.push call callHistory
-                                    , Call.execute state call
-                                    , Array.push (Call.execute state call) graphHistory
-                                    )
+                                (\call { callHistory, state, index } ->
+                                    { callHistory = 
+                                        Tree.Zipper.mapTree (Tree.prependChild <| Tree.singleton (Node { call = call, index = index + 1, state = Call.execute state call })) callHistory 
+                                            |> (\z -> Maybe.withDefault callHistory (Tree.Zipper.firstChild z))
+                                    , state = Call.execute state call
+                                    , index = index + 1
+                                    }
                                 )
-                                ( Array.empty, graph, Array.fromList [ graph ] )
+                                { callHistory = 
+                                    -- Apply the sequence to the current position in the tree
+                                    Tree.Zipper.fromTree model.history
+                                    |> Tree.Zipper.findFromRoot (\node -> 
+                                        case node of                                            
+                                            Node { index} ->
+                                                index == model.historyLocation
+
+                                            _ ->
+                                                False
+                                        )
+                                    |> Maybe.withDefault (Tree.Zipper.fromTree model.history)
+                                , state = graph
+                                , index = highestIndex 
+                                }
                                 sequence
                     in
                     ( { model
-                        | graph = Ok <| (\( _, g, _ ) -> g) newGraph
-                        , relations = Ok <| (\( _, g, _ ) -> Graph.fold (\ctx acc -> acc ++ GossipGraph.Relation.fromNodeContext ctx) [] g) newGraph
-                        , graphHistory = (\( _, _, h ) -> h) newGraph
-                        , graphHistoryLocation = (\( _, _, h ) -> h) newGraph |> Array.length |> (-) 1
-                        , callHistory = (\( h, _, _ ) -> h) newGraph
+                        | graph = Ok <| newGraph.state
+                        , relations = Ok <| Graph.fold (\ctx acc -> acc ++ GossipGraph.Relation.fromNodeContext ctx) [] newGraph.state
+                        , historyLocation = newGraph.index
+                        , history = Tree.Zipper.toTree newGraph.callHistory
                         , inputCallSequence = ""
-                        , inputGossipGraph = (\( _, g, _ ) -> GossipGraph.Parser.toString g) newGraph
+                        , inputGossipGraph = GossipGraph.Parser.toString newGraph.state
                         , callSequence = Ok []
+                        , historyInitialGraph = if Graph.isEmpty model.historyInitialGraph then Result.withDefault Graph.empty model.graph else model.historyInitialGraph
                       }
                     , Cmd.none
                     )
@@ -219,91 +319,71 @@ update msg model =
                     ( model, Cmd.none )
 
         ChangeProtocol protocolName ->
-            case protocolName of
-                -- TODO: Define a dict and just map this
-                "any" ->
+            let
+                condition = Dict.get protocolName Predefined.condition
+            in
+            case condition of
+                Just c ->
                     ( { model
-                        | protocolCondition = Predefined.any
+                        | protocolCondition = c
                         , protocolName = protocolName
-                        , callHistory = Array.empty
+                        , history = Tree.singleton Root
                       }
-                    , Cmd.none
-                    )
-
-                "tok" ->
-                    ( { model
-                        | protocolCondition = Predefined.tok
-                        , protocolName = protocolName
-                        , callHistory = Array.empty
-                      }
-                    , Cmd.none
-                    )
-
-                "spi" ->
-                    ( { model
-                        | protocolCondition = Predefined.spi
-                        , protocolName = protocolName
-                        , callHistory = Array.empty
-                      }
-                    , Cmd.none
-                    )
-
-                "co" ->
-                    ( { model
-                        | protocolCondition = Predefined.co
-                        , protocolName = protocolName
-                        , callHistory = Array.empty
-                      }
-                    , Cmd.none
-                    )
-
-                "wco" ->
-                    ( { model
-                        | protocolCondition = Predefined.wco
-                        , protocolName = protocolName
-                        , callHistory = Array.empty
-                      }
-                    , Cmd.none
-                    )
-
-                "lns" ->
-                    ( { model
-                        | protocolCondition = Predefined.lns
-                        , protocolName = protocolName
-                        , callHistory = Array.empty
-                      }
-                    , Cmd.none
-                    )
-
-                "custom" ->
-                    ( { model
-                        | protocolName = protocolName
-                        , callHistory = Array.empty
-                      }
-                    , Cmd.none
-                    )
-
-                _ ->
+                    , Cmd.none)
+                Nothing ->
                     ( { model
                         | protocolCondition = Predefined.any
                         , protocolName = "any"
-                        , callHistory = Array.empty
+                        , history = Tree.singleton Root
                       }
                     , Cmd.none
                     )
 
-        TimeTravel time ->
-            case Array.get time model.graphHistory of
-                Just graph ->
-                    ( { model
-                        | graph = Ok graph
-                        , inputGossipGraph = GossipGraph.Parser.toString graph
-                      }
-                    , Cmd.none
-                    )
+        TimeTravel to ->
+            let 
+                targetNode : Maybe (Tree.Zipper.Zipper HistoryNode)
+                targetNode =
+                    if to == 0 then
+                        Just (Tree.Zipper.fromTree model.history 
+                            |> Tree.Zipper.root)
+                    else
+                        Tree.Zipper.fromTree model.history
+                            |> Tree.Zipper.findFromRoot (
+                                \zip ->
+                                    case zip of
+                                        Node { index } ->
+                                            index == to
+                                        _ ->
+                                            False
+                            )
+            in
+            case targetNode of
+                Just zip ->
+                    let
+                        node = Tree.Zipper.label zip
+                    in
+                    case node of
+                        Node n ->
+                            ( { model 
+                                | graph = Ok n.state
+                                , inputGossipGraph = GossipGraph.Parser.toString n.state
+                                , historyLocation = to
+                            }
+                            , Cmd.none )
+                        
+                        Root ->
+                            ( { model 
+                                | graph = Ok model.historyInitialGraph
+                                , inputGossipGraph = GossipGraph.Parser.toString model.historyInitialGraph
+                                , historyLocation = to
+                              }
+                            , Cmd.none
+                            )
 
-                Nothing ->
-                    ( model, Cmd.none )
+                        DeadEnd ->
+                            (model, Cmd.none)
+                _ ->
+                    (model, Cmd.none)
 
         InsertExampleGraph graph ->
             update (ChangeGossipGraph graph) model
@@ -322,6 +402,24 @@ update msg model =
             , Cmd.none
             )
 
+        ChangeExecutionTreeDepth depth ->
+            ({ model | executionTreeDepth = String.toInt depth |> Maybe.withDefault 5 |> clamp 0 5 }, Cmd.none)
+
+        GenerateExecutionTree ->
+            let
+                initialGraph =
+                    if Graph.isEmpty model.historyInitialGraph then
+                        Result.withDefault Graph.empty model.graph
+                    else
+                        model.historyInitialGraph
+            in
+            
+            ( { model 
+                | modal = (\md -> { md | visible = False }) model.modal
+                , history = GossipProtocol.generateExecutionTree 1 initialGraph model.protocolCondition [] model.executionTreeDepth (Tree.singleton Root)
+                , historyInitialGraph = initialGraph
+              }
+            , Cmd.none)
 
 
 -- VIEW
@@ -343,7 +441,21 @@ headerHelpView =
         [ text
             "This application was developed by Ramon Meffert ("
         , a [ href "mailto:r.a.meffert@student.rug.nl" ] [ text "r.a.meffert@student.rug.nl" ]
-        , text ") as part of his bachelor's research project under supervision of Malvin Gattinger."
+        , text ") as part of his bachelor's research project under supervision of Dr. Malvin Gattinger."
+        ]
+    , p []
+        [ text "This tool is built on the following free software:" ]
+    , ul []
+        [ li [] [ a [ href "https://elm-lang.org/" ] [ text "Elm" ] , text ", a functional web language" ]
+        , li [] [ text "A number of ", a [ href "https://package.elm-lang.org/" ] [ text "Elm packages" ] , text " by the Elm commmunity" ]
+        , li [] [ a [ href "https://sass-lang.org/" ] [ text "Sass" ] , text " for better CSS" ]
+        , li [] [ a [ href "https://fontawesome.com/" ] [ text "FontAwesome" ] , text " for the interface icons" ]
+        , li [] [ a [ href "https://iconmonstr.com/" ] [ text "IconMonstr" ] , text " for the favicon" ]
+        ]
+    , p []
+        [ text "The source code is available on "
+        , a [ href "https://github.com/RamonMeffert/tools-for-gossip" ] [ text "GitHub" ]
+        , text ". Once finished, the accompanying thesis will also be made available."
         ]
     ]
 
@@ -361,7 +473,7 @@ headerView =
                 , text ")"
                 ]
             , p [ class "subtitle" ]
-                [ text "Supervisor: B.R.M. Gattinger" ]
+                [ text "Supervisor: Dr. B.R.M. Gattinger" ]
             ]
         , helpButtonView "Tools for Gossip" headerHelpView
         ]
@@ -494,39 +606,82 @@ gossipGraphView model =
 historyHelpView : List (Html msg)
 historyHelpView =
     [ p [] [ text "This section shows the history of calls that have been made. You can click any of the calls to time-travel to that state of the gossip graph." ]
-    , Alert.render Alert.Information "In the next version of this application, it will be possible to generate the execution tree for the current protocol here."
     ]
 
 historyView : Model -> Html Message
 historyView model =
+    let
+        renderCallHistoryNode : HistoryNode -> Html Message
+        renderCallHistoryNode node =
+            case node of
+                Root ->
+                    div [ onClick (TimeTravel 0), classList [ ("call", True), ("current", model.historyLocation == 0)], title "Initial Graph" ] 
+                        [ Icon.viewIcon Icon.asterisk ]
+
+                DeadEnd ->
+                    div [ class "dead-end", title "No more calls are possible"] 
+                        [ Icon.viewIcon Icon.times ]
+
+                Node n ->
+                    case model.agents of
+                        Ok agents ->
+                            div [ onClick (TimeTravel n.index)
+                                , classList [ ("call", True), ("current", model.historyLocation == n.index)]
+                                ] 
+                                [ text <| Call.renderString agents n.call
+                                ]
+                        Err e ->
+                            div [] [ text "❌" ]
+
+        toListItems : Html msg -> List (Html msg) -> Html msg
+        toListItems label children =
+            case children of
+                [] ->
+                    Html.li [] [ label ]
+                _ ->
+                    Html.li []
+                        [ label
+                        , Html.ul [] children
+                        ]
+
+        renderTree : Tree HistoryNode -> Html Message
+        renderTree tree = tree
+            |> Tree.restructure renderCallHistoryNode toListItems
+            |> \root -> ul [] [ root ]
+
+
+    in
+    -- TODO: render historic call sequence based on current branch of tree OR highlight current branch somehow
     section [ id "history" ]
         [ header [] 
             [ h2 [] [ text "Call history" ]
-            , helpButtonView "Call history" historyHelpView
+            , div [ class "input-set" ]
+                [ button [ type_ "button", onClick (ShowModal "Execution Tree" (executionTreeModalView model)) ] [ Icon.viewIcon Icon.fastForward ]
+                , helpButtonView "Call history" historyHelpView
+                ]
             ]
-        , div [ class "call-list" ]
-            (if Array.length model.callHistory > 0 then
-                div [ class "call", onClick (TimeTravel 0) ] [ text "Initial graph" ]
-                    :: (Array.toList <|
-                            Array.indexedMap
-                                (\i call ->
-                                    case ( Agent.fromId (Result.withDefault [] model.agents) call.from, Agent.fromId (Result.withDefault [] model.agents) call.to ) of
-                                        ( Ok from, Ok to ) ->
-                                            div [ class "call", onClick (TimeTravel (i + 1)) ]
-                                                [ text (String.fromChar from.name ++ " 📞 " ++ String.fromChar to.name)
-                                                ]
-
-                                        _ ->
-                                            div [ class "call" ]
-                                                [ text "❌" ]
-                                )
-                                model.callHistory
-                       )
-
-             else
-                [ text "No calls have been made yet." ]
-            )
+        , div [ id "execution-tree" ] [renderTree model.history]
         ]
+
+
+executionTreeModalView : Model -> List (Html Message)
+executionTreeModalView model =
+    [ p [] [ text "You can generate the execution tree up until a specified depth here. The execution tree will be generated starting from the initial graph." ]
+    , p [] [ text "If there already is a call history, the execution tree will be generated from that history's initial graph. Otherwise, the current graph will be taken as the initial graph." ]
+    , label [ for "execution-depth" ] [ text "Depth" ]
+    , div [ class "input-group", id "execution-depth" ] 
+        [ input [ type_ "number", Html.Attributes.min "0", Html.Attributes.max "5", value (String.fromInt model.executionTreeDepth), onInput ChangeExecutionTreeDepth ] []
+        , button [ type_ "button", onClick GenerateExecutionTree ] [ text "Generate" ]
+        ]
+    , Alert.render Alert.Warning "Depending on the size of the graph, this might generate a very large execution tree*. This might take some time! Clicking “Generate” will overwrite the current call history."
+    , p [ class "note " ]
+        [ text "* If you take a 3-agent graph where all agents know each others numbers, and assume the "
+        , code [] [ text "Any" ]
+        , text " protocol is selected, that means there are 6 calls to be made for every round, ending up with 6"
+        , sup [] [ text "d"]
+        , text " history nodes (where d is the depth). For d = 5, that means 7,776 nodes!"
+        ]
+    ]
 
 
 connectionInfoView : Kind -> Result String (Graph Agent Relation) -> Html Message
@@ -535,10 +690,10 @@ connectionInfoView kind graph =
         icon =
             case kind of
                 Number ->
-                    Icon.phone
+                    text "N"
 
                 Secret ->
-                    Icon.lock
+                    text "S"
 
         relationType =
             case kind of
@@ -556,7 +711,7 @@ connectionInfoView kind graph =
     in
     Html.div [ class "connection-info" ]
         [ Html.div [ class "visible" ]
-            [ Html.div [ class "icon" ] [ Icon.viewIcon icon ]
+            [ Html.div [ class "icon" ] [ icon ]
             , Html.span [ class "explanation" ] [ text relationType ]
             ]
         , Html.div [ class "divider" ] []
@@ -749,7 +904,7 @@ callSequenceView model =
 
             , button
                 [ type_ "button"
-                , onClick ApplyCallSequence
+                , onClick ExecuteCallSequence
                 , disabled <| not permitted
                 , title
                     (if permitted then
@@ -822,7 +977,14 @@ protocolView model =
                 ( Ok agents, Ok graph ) ->
                     let
                         calls =
-                            GossipProtocol.selectCalls graph model.protocolCondition (Array.toList model.callHistory)
+                            GossipProtocol.selectCalls graph model.protocolCondition (Tree.flatten model.history |> List.foldr (\el acc ->
+                                case el of
+                                    Node n ->
+                                        n.call :: acc
+
+                                    _ ->
+                                        acc
+                            ) [])
                     in
                     if String.isEmpty model.inputGossipGraph then
                         [ text "None" ]
@@ -831,7 +993,7 @@ protocolView model =
                         [ text "All possible calls have been made." ]
 
                     else
-                        List.map (Call.render agents) calls
+                        List.map (\call -> div [ class "call", onClick (ExecuteCall call) ] [ text <| Call.renderString agents call ]) calls
 
                 _ ->
                     -- TODO: propagate errors from model.callSequence, .agents, .graph instead of the error below
@@ -844,15 +1006,10 @@ protocolView model =
 modalView : Model -> Html Message
 modalView model =
     div
-        [ onClick HideModal
-        , class <|
-            "modal-overlay"
-                ++ (if model.modal.visible then
-                        " visible"
-
-                    else
-                        ""
-                   )
+        [ classList
+            [ ("modal-overlay", True)
+            , ("visible", model.modal.visible)
+            ]
         ]
         [ div [ class "modal-window" ]
             [ header [ class "modal-header" ]
