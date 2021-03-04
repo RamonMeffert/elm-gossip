@@ -1,18 +1,16 @@
 module GossipProtocol.GossipProtocol exposing (..)
 
+import Array
 import CallSequence.CallSequence exposing (CallSequence)
 import GossipGraph.Agent exposing (Agent, AgentId)
 import GossipGraph.Call as Call exposing (Call)
 import GossipGraph.Relation as Relation exposing (Kind(..), Relation, knows)
-import Graph exposing (Graph, NodeContext, NodeId)
+import Graph exposing (DfsNodeVisitor, Graph, NodeContext, NodeId)
 import IntDict
-import List.Extra exposing (mapAccumr)
-import Utils.List exposing (distinct)
+import List
+import Set exposing (Set)
 import Tree exposing (Tree)
-import Array
-import Tree
-import List
-import List
+import Utils.List exposing (distinct)
 
 
 {-| Protocol conditions
@@ -24,12 +22,13 @@ type alias ProtocolCondition =
 
 type HistoryNode
     = Root
-    | Node {  
-        call : Call,
-        index : Int,
-        state : Graph Agent Relation
-    }
+    | Node
+        { call : Call
+        , index : Int
+        , state : Graph Agent Relation
+        }
     | DeadEnd
+
 
 {-| Selects the calls that can be executed based on some protocol condition.
 
@@ -156,38 +155,51 @@ make sure that (`incoming` ∪ `outgoing`) == A
 Note: Since (N ∪ N⁻¹) is the symmetric closure of N, and the `Graph` library
 defines a function to find symmetric closures, it might be possible to use that.
 
+Idea:
+
+1.  Compute the symmetric closure of the graph
+2.  Pick a random node
+3.  Check if all other nodes are reachable by traversing depth-first
+4.  If this is true, the graph is weakly connected
+
 -}
 isWeaklyConnected : Kind -> Graph Agent Relation -> Bool
 isWeaklyConnected kind graph =
     let
-        agentIds =
-            Graph.nodeIds graph
-                |> List.sort
-
-        edgeInAnyDirection : NodeContext Agent Relation -> Bool
-        edgeInAnyDirection ctx =
-            -- since ctx.outgoing == ctx.incoming (because of
-            -- Graph.symmetricClosure), we can check either one of them.
-            -- In either case, all agents should be reached.
-            -- comparing sorted lists seems to be the easiest way to check if
-            -- lists contain exactly the same members
-            ctx.outgoing
-                |> IntDict.values
-                |> List.filter (\r -> Relation.isOfKind r kind)
-                |> List.concatMap (\r -> [ r.from, r.to ])
-                |> distinct
-                |> List.sort
-                |> (==) agentIds
+        firstNode = List.head <| Graph.nodeIds graph
 
         merger : NodeId -> NodeId -> Relation -> Relation -> Relation
         merger _ _ outLabel _ =
             outLabel
-    in
-    Graph.fold
-        (\ctx acc -> acc && edgeInAnyDirection ctx)
-        True
-        (Graph.symmetricClosure merger graph)
 
+        visitor : DfsNodeVisitor Agent Relation (Set AgentId)
+        visitor ctx acc =
+            ctx.outgoing
+                -- find all relations of `kind` from the current node and ignore reflexive relation
+                |> IntDict.filter (\_ r -> Relation.isOfKind r kind && r.to /= r.from)
+                -- convert to a List (Int, Relation)
+                |> IntDict.toList
+                -- Take only the Relation, and of that, only .to
+                |> List.map (Tuple.second >> .to)
+                -- Add that agent id to the set of reachable agents
+                |> List.foldr Set.insert acc
+                -- produce the desired format (??)
+                |> (\a -> ( a, identity ))
+                |> Debug.log "visitor"
+    in
+    case firstNode of
+        Just fn ->
+            -- Construct the symmetric closure of the graph
+            Graph.symmetricClosure merger graph
+                -- Starting at some first node, traverse the graph depth-first and construct the set of reachable agents
+                |> Graph.guidedDfs Graph.alongOutgoingEdges visitor [ fn ] Set.empty
+                -- Add the first agent to the set of reachable agents
+                |> \(reachableAgents, _) -> Set.insert fn reachableAgents
+                -- Check if all agents are reachable
+                |> (\allReachableAgents -> List.all (\agent -> Set.member agent allReachableAgents) (Graph.nodeIds graph))
+        
+        Nothing ->
+            False
 
 {-| Van Ditmarsch et al. (2018) state that “[a relation] is strongly connected
 if, for all _x, y ∈ A_, there is an _N_-path from _x_ to _y_”
@@ -225,33 +237,37 @@ generateExecutionTree : Int -> Graph Agent Relation -> ProtocolCondition -> Call
 generateExecutionTree index graph condition sequence depth state =
     let
         -- Select the calls that are possible on the current state of the graph
-        possibleCalls = selectCalls graph condition sequence |> Array.fromList |> Array.toIndexedList
+        possibleCalls =
+            selectCalls graph condition sequence |> Array.fromList |> Array.toIndexedList
 
-        nextIndex = index + List.length possibleCalls 
+        nextIndex =
+            index + List.length possibleCalls
 
         nextState =
             if List.isEmpty possibleCalls then
                 Tree.prependChild (Tree.singleton DeadEnd) state
+
             else
-                List.foldr 
-                ( \(ind, call) acc -> 
+                List.foldr
+                    (\( ind, call ) acc ->
                         Tree.prependChild (Tree.singleton (Node { call = call, index = index + ind, state = Call.execute graph call })) acc
-                ) 
-                state 
-                possibleCalls
+                    )
+                    state
+                    possibleCalls
     in
     if depth > 1 then
         nextState
-            |> Tree.mapChildren 
-                ( List.indexedMap
+            |> Tree.mapChildren
+                (List.indexedMap
                     (\ind child ->
-                case Tree.label child of
-                    Node n ->
-                        generateExecutionTree (nextIndex * (ind + 1)) n.state condition sequence (depth - 1) child
-                    
-                    _ ->
-                        child
+                        case Tree.label child of
+                            Node n ->
+                                generateExecutionTree (nextIndex * (ind + 1)) n.state condition sequence (depth - 1) child
+
+                            _ ->
+                                child
+                    )
                 )
-            )
+
     else
         nextState
