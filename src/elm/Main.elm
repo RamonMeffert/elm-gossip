@@ -1,17 +1,14 @@
 module Main exposing (..)
 
--- import GossipGraph.Parser
-
-import Array exposing (Array)
 import Browser exposing (Document)
 import CallSequence.CallSequence
 import CallSequence.Parser
 import CallSequence.Renderer
 import Dict
 import FontAwesome.Attributes as Icon
-import FontAwesome.Icon as Icon exposing (Icon)
+import FontAwesome.Icon as Icon
 import FontAwesome.Solid as Icon
-import GossipGraph.Agent as Agent exposing (Agent)
+import GossipGraph.Agent exposing (Agent)
 import GossipGraph.Call as Call exposing (Call)
 import GossipGraph.Parser
 import GossipGraph.Relation exposing (Kind(..), Relation)
@@ -23,14 +20,10 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Json.Decode as Json
-import Tuple
 import Utils.Alert as Alert
-import TypedSvg.Attributes exposing (color)
-import Color
 import Tree exposing (Tree)
 import Tree.Zipper
 import Tree.Zipper
-import Json.Decode
 import GossipProtocol.GossipProtocol exposing (HistoryNode(..))
 
 
@@ -128,266 +121,26 @@ type Message
 update : Message -> Model -> ( Model, Cmd Message )
 update msg model =
     case msg of
-        -- TODO: move to separate method for cleanliness
         ChangeGossipGraph input ->
-            let
-                lexResult =
-                    GossipGraph.Parser.lexer { separator = " " } input
-
-                agents : Result String (List Agent)
-                agents =
-                    lexResult
-                        |> Result.andThen GossipGraph.Parser.parseAgents
-
-                relations =
-                    case ( lexResult, agents ) of
-                        ( Ok tokens, Ok agts ) ->
-                            GossipGraph.Parser.parseRelations agts tokens
-
-                        ( Err e, Ok _ ) ->
-                            Err e
-
-                        ( Ok _, Err e ) ->
-                            Err e
-
-                        _ ->
-                            Err "Something went wrong when parsing the relations"
-
-                graph =
-                    case ( agents, relations ) of
-                        ( Ok agts, Ok rels ) ->
-                            Ok <| GossipGraph.Parser.fromAgentsAndRelations agts rels
-
-                        ( Err e, _ ) ->
-                            Err e
-
-                        ( _, Err e ) ->
-                            Err e
-
-                callSequence =
-                    agents
-                        |> Result.andThen (CallSequence.Parser.parse model.inputCallSequence)
-
-                canonical =
-                    GossipGraph.Parser.toCanonicalString (Result.withDefault Graph.empty graph)
-            in
-            ( { model
-                | inputGossipGraph = input
-                , canonicalGossipGraph = canonical
-                , graph = graph
-                , agents = agents
-                , relations = relations
-                , callSequence = callSequence
-                , history = Tree.singleton Root
-              }
-            , Cmd.none
-            )
+            changeGossipGraph input model
 
         ChangeCallSequence input ->
-            let
-                callSequence =
-                    model.agents
-                        |> Result.andThen (CallSequence.Parser.parse input)
-            in
-            ( { model
-                | inputCallSequence = input
-                , callSequence = callSequence
-              }
-            , Cmd.none
-            )
+            changeCallSequence model input
 
         ExecuteCall call ->
-            -- TODO: make this less of a copy of ExecuteCallSequence (extract some common code, clean up)
-            case model.graph of
-                Ok graph ->
-                    let
-                        highestIndex = model.history 
-                            |> Tree.flatten
-                            |> List.map (\n -> 
-                                case n of
-                                    Root ->
-                                        0
-                                    Node { index } ->
-                                        index
-                                    DeadEnd ->
-                                        -1
-                                )
-                            |> List.maximum
-                            |> Maybe.withDefault 0
-
-                        newGraph =
-                            { callHistory = 
-                                -- Apply the sequence to the current position in the tree
-                                Tree.Zipper.fromTree model.history
-                                |> Tree.Zipper.findFromRoot (\node -> 
-                                    case node of                                            
-                                        Node { index} ->
-                                            index == model.historyLocation
-
-                                        _ ->
-                                            False
-                                    )
-                                |> Maybe.withDefault (Tree.Zipper.fromTree model.history)
-                            , state = graph
-                            , index = highestIndex 
-                            }
-                            |> (\{ callHistory, state, index } ->
-                                    { callHistory = 
-                                        Tree.Zipper.mapTree (Tree.prependChild <| Tree.singleton (Node { call = call, index = index + 1, state = Call.execute state call })) callHistory 
-                                            |> (\z -> Maybe.withDefault callHistory (Tree.Zipper.firstChild z))
-                                    , state = Call.execute state call
-                                    , index = index + 1
-                                    }
-                                )
-                    in
-                    ( { model
-                        | graph = Ok <| newGraph.state
-                        , relations = Ok <| Graph.fold (\ctx acc -> acc ++ GossipGraph.Relation.fromNodeContext ctx) [] newGraph.state
-                        , historyLocation = newGraph.index
-                        , history = Tree.Zipper.toTree newGraph.callHistory
-                        , inputCallSequence = ""
-                        , inputGossipGraph = GossipGraph.Parser.toString newGraph.state
-                        , callSequence = Ok []
-                        , historyInitialGraph = if Graph.isEmpty model.historyInitialGraph then Result.withDefault Graph.empty model.graph else model.historyInitialGraph
-                      }
-                    , Cmd.none
-                    )
-                _ ->
-                    (model, Cmd.none)
-                    
-
+            executeCall model call
 
         ExecuteCallSequence ->
-            case ( model.graph, model.callSequence ) of
-                ( Ok graph, Ok sequence ) ->
-                    let
-                        highestIndex = model.history 
-                            |> Tree.flatten
-                            |> List.map (\n -> 
-                                case n of
-                                    Root ->
-                                        0
-                                    Node { index } ->
-                                        index
-                                    DeadEnd ->
-                                        -1
-                                )
-                            |> List.maximum
-                            |> Maybe.withDefault 0
-
-                        newGraph =
-                            List.foldr
-                                (\call { callHistory, state, index } ->
-                                    { callHistory = 
-                                        Tree.Zipper.mapTree (Tree.prependChild <| Tree.singleton (Node { call = call, index = index + 1, state = Call.execute state call })) callHistory 
-                                            |> (\z -> Maybe.withDefault callHistory (Tree.Zipper.firstChild z))
-                                    , state = Call.execute state call
-                                    , index = index + 1
-                                    }
-                                )
-                                { callHistory = 
-                                    -- Apply the sequence to the current position in the tree
-                                    Tree.Zipper.fromTree model.history
-                                    |> Tree.Zipper.findFromRoot (\node -> 
-                                        case node of                                            
-                                            Node { index} ->
-                                                index == model.historyLocation
-
-                                            _ ->
-                                                False
-                                        )
-                                    |> Maybe.withDefault (Tree.Zipper.fromTree model.history)
-                                , state = graph
-                                , index = highestIndex 
-                                }
-                                sequence
-                    in
-                    ( { model
-                        | graph = Ok <| newGraph.state
-                        , relations = Ok <| Graph.fold (\ctx acc -> acc ++ GossipGraph.Relation.fromNodeContext ctx) [] newGraph.state
-                        , historyLocation = newGraph.index
-                        , history = Tree.Zipper.toTree newGraph.callHistory
-                        , inputCallSequence = ""
-                        , inputGossipGraph = GossipGraph.Parser.toString newGraph.state
-                        , callSequence = Ok []
-                        , historyInitialGraph = if Graph.isEmpty model.historyInitialGraph then Result.withDefault Graph.empty model.graph else model.historyInitialGraph
-                      }
-                    , Cmd.none
-                    )
-
-                _ ->
-                    ( model, Cmd.none )
+            executeCallSequence model
 
         ChangeProtocol protocolName ->
-            let
-                condition = Dict.get protocolName Predefined.condition
-            in
-            case condition of
-                Just c ->
-                    ( { model
-                        | protocolCondition = c
-                        , protocolName = protocolName
-                        , history = Tree.singleton Root
-                      }
-                    , Cmd.none)
-                Nothing ->
-                    ( { model
-                        | protocolCondition = Predefined.any
-                        , protocolName = "any"
-                        , history = Tree.singleton Root
-                      }
-                    , Cmd.none
-                    )
+            changeProtocol protocolName model
 
         TimeTravel to ->
-            let 
-                targetNode : Maybe (Tree.Zipper.Zipper HistoryNode)
-                targetNode =
-                    if to == 0 then
-                        Just (Tree.Zipper.fromTree model.history 
-                            |> Tree.Zipper.root)
-                    else
-                        Tree.Zipper.fromTree model.history
-                            |> Tree.Zipper.findFromRoot (
-                                \zip ->
-                                    case zip of
-                                        Node { index } ->
-                                            index == to
-                                        _ ->
-                                            False
-                            )
-            in
-            case targetNode of
-                Just zip ->
-                    let
-                        node = Tree.Zipper.label zip
-                    in
-                    case node of
-                        Node n ->
-                            ( { model 
-                                | graph = Ok n.state
-                                , inputGossipGraph = GossipGraph.Parser.toString n.state
-                                , historyLocation = to
-                            }
-                            , Cmd.none )
-                        
-                        Root ->
-                            ( { model 
-                                | graph = Ok model.historyInitialGraph
-                                , inputGossipGraph = GossipGraph.Parser.toString model.historyInitialGraph
-                                , historyLocation = to
-                              }
-                            , Cmd.none
-                            )
-
-                        DeadEnd ->
-                            (model, Cmd.none)
-                _ ->
-                    (model, Cmd.none)
+            timeTravel to model
 
         InsertExampleGraph graph ->
-            update (ChangeGossipGraph graph) model
-            |> \(mo, me) -> ({ mo | modal = (\md -> { md | visible = False }) mo.modal }, me)
+            insertExampleGraph graph model
 
         HideModal ->
             ( { model
@@ -407,23 +160,300 @@ update msg model =
             ({ model | executionTreeDepth = String.toInt depth |> Maybe.withDefault 5 |> clamp 0 5 }, Cmd.none)
 
         GenerateExecutionTree ->
-            let
-                initialGraph =
-                    if Graph.isEmpty model.historyInitialGraph then
-                        Result.withDefault Graph.empty model.graph
-                    else
-                        model.historyInitialGraph
-            in
-            
-            ( { model 
-                | modal = (\md -> { md | visible = False }) model.modal
-                , history = GossipProtocol.generateExecutionTree 1 initialGraph model.protocolCondition [] model.executionTreeDepth (Tree.singleton Root)
-                , historyInitialGraph = initialGraph
-              }
-            , Cmd.none)
+            generateExecutionTree model
 
 
 -- VIEW
+
+
+insertExampleGraph : String -> Model -> ({ inputGossipGraph : String, canonicalGossipGraph : String, inputCallSequence : String, graph : Result String (Graph Agent Relation), agents : Result String (List Agent), relations : Result String (List Relation), protocolCondition : GossipProtocol.GossipProtocol.ProtocolCondition, protocolName : String, graphSettings : GossipGraph.Renderer.GraphSettings, callSequence : Result CallSequence.Parser.Error (CallSequence.CallSequence.CallSequence), historyLocation : Int, history : Tree HistoryNode, historyInitialGraph : Graph Agent Relation, executionTreeDepth : Int, modal : { visible : Bool, title : String, content : List (Html Message) } }, Cmd Message)
+insertExampleGraph graph model =
+    update (ChangeGossipGraph graph) model
+    |> \(mo, me) -> ({ mo | modal = (\md -> { md | visible = False }) mo.modal }, me)
+
+
+changeGossipGraph : String -> Model -> (Model, Cmd Message)
+changeGossipGraph input model =
+    let
+        lexResult =
+            GossipGraph.Parser.lexer { separator = " " } input
+
+        agents : Result String (List Agent)
+        agents =
+            lexResult
+                |> Result.andThen GossipGraph.Parser.parseAgents
+
+        relations =
+            case ( lexResult, agents ) of
+                ( Ok tokens, Ok agts ) ->
+                    GossipGraph.Parser.parseRelations agts tokens
+
+                ( Err e, Ok _ ) ->
+                    Err e
+
+                ( Ok _, Err e ) ->
+                    Err e
+
+                _ ->
+                    Err "Something went wrong when parsing the relations"
+
+        graph =
+            case ( agents, relations ) of
+                ( Ok agts, Ok rels ) ->
+                    Ok <| GossipGraph.Parser.fromAgentsAndRelations agts rels
+
+                ( Err e, _ ) ->
+                    Err e
+
+                ( _, Err e ) ->
+                    Err e
+
+        callSequence =
+            agents
+                |> Result.andThen (CallSequence.Parser.parse model.inputCallSequence)
+
+        canonical =
+            GossipGraph.Parser.toCanonicalString (Result.withDefault Graph.empty graph)
+    in
+    ( { model
+        | inputGossipGraph = input
+        , canonicalGossipGraph = canonical
+        , graph = graph
+        , agents = agents
+        , relations = relations
+        , callSequence = callSequence
+        , history = Tree.singleton Root
+      }
+    , Cmd.none
+    )
+
+
+changeCallSequence : Model -> String -> (Model, Cmd Message)
+changeCallSequence model input =
+    let
+        callSequence =
+            model.agents
+                |> Result.andThen (CallSequence.Parser.parse input)
+    in
+    ( { model
+        | inputCallSequence = input
+        , callSequence = callSequence
+      }
+    , Cmd.none
+    )
+
+
+generateExecutionTree : Model -> (Model, Cmd Message)
+generateExecutionTree model =
+    let
+        initialGraph =
+            if Graph.isEmpty model.historyInitialGraph then
+                Result.withDefault Graph.empty model.graph
+            else
+                model.historyInitialGraph
+    in
+    
+    ( { model 
+        | modal = (\md -> { md | visible = False }) model.modal
+        , history = GossipProtocol.generateExecutionTree 1 initialGraph model.protocolCondition [] model.executionTreeDepth (Tree.singleton Root)
+        , historyInitialGraph = initialGraph
+      }
+    , Cmd.none)
+
+
+executeCall : Model -> Call -> (Model, Cmd Message)
+executeCall model call =
+    -- TODO: make this less of a copy of ExecuteCallSequence (extract some common code, clean up)
+    case model.graph of
+        Ok graph ->
+            let
+                highestIndex = model.history 
+                    |> Tree.flatten
+                    |> List.map (\n -> 
+                        case n of
+                            Root ->
+                                0
+                            Node { index } ->
+                                index
+                            DeadEnd ->
+                                -1
+                        )
+                    |> List.maximum
+                    |> Maybe.withDefault 0
+
+                newGraph =
+                    { callHistory = 
+                        -- Apply the sequence to the current position in the tree
+                        Tree.Zipper.fromTree model.history
+                        |> Tree.Zipper.findFromRoot (\node -> 
+                            case node of                                            
+                                Node { index} ->
+                                    index == model.historyLocation
+
+                                _ ->
+                                    False
+                            )
+                        |> Maybe.withDefault (Tree.Zipper.fromTree model.history)
+                    , state = graph
+                    , index = highestIndex 
+                    }
+                    |> (\{ callHistory, state, index } ->
+                            { callHistory = 
+                                Tree.Zipper.mapTree (Tree.prependChild <| Tree.singleton (Node { call = call, index = index + 1, state = Call.execute state call })) callHistory 
+                                    |> (\z -> Maybe.withDefault callHistory (Tree.Zipper.firstChild z))
+                            , state = Call.execute state call
+                            , index = index + 1
+                            }
+                        )
+            in
+            ( { model
+                | graph = Ok <| newGraph.state
+                , relations = Ok <| Graph.fold (\ctx acc -> acc ++ GossipGraph.Relation.fromNodeContext ctx) [] newGraph.state
+                , historyLocation = newGraph.index
+                , history = Tree.Zipper.toTree newGraph.callHistory
+                , inputCallSequence = ""
+                , inputGossipGraph = GossipGraph.Parser.toString newGraph.state
+                , callSequence = Ok []
+                , historyInitialGraph = if Graph.isEmpty model.historyInitialGraph then Result.withDefault Graph.empty model.graph else model.historyInitialGraph
+              }
+            , Cmd.none
+            )
+        _ ->
+            (model, Cmd.none)
+
+
+executeCallSequence : Model -> (Model, Cmd Message)
+executeCallSequence model =
+    case ( model.graph, model.callSequence ) of
+        ( Ok graph, Ok sequence ) ->
+            let
+                highestIndex = model.history 
+                    |> Tree.flatten
+                    |> List.map (\n -> 
+                        case n of
+                            Root ->
+                                0
+                            Node { index } ->
+                                index
+                            DeadEnd ->
+                                -1
+                        )
+                    |> List.maximum
+                    |> Maybe.withDefault 0
+
+                newGraph =
+                    List.foldr
+                        (\call { callHistory, state, index } ->
+                            { callHistory = 
+                                Tree.Zipper.mapTree (Tree.prependChild <| Tree.singleton (Node { call = call, index = index + 1, state = Call.execute state call })) callHistory 
+                                    |> (\z -> Maybe.withDefault callHistory (Tree.Zipper.firstChild z))
+                            , state = Call.execute state call
+                            , index = index + 1
+                            }
+                        )
+                        { callHistory = 
+                            -- Apply the sequence to the current position in the tree
+                            Tree.Zipper.fromTree model.history
+                            |> Tree.Zipper.findFromRoot (\node -> 
+                                case node of
+                                    Node { index} ->
+                                        index == model.historyLocation
+
+                                    _ ->
+                                        False
+                                )
+                            |> Maybe.withDefault (Tree.Zipper.fromTree model.history)
+                        , state = graph
+                        , index = highestIndex 
+                        }
+                        sequence
+            in
+            ( { model
+                | graph = Ok <| newGraph.state
+                , relations = Ok <| Graph.fold (\ctx acc -> acc ++ GossipGraph.Relation.fromNodeContext ctx) [] newGraph.state
+                , historyLocation = newGraph.index
+                , history = Tree.Zipper.toTree newGraph.callHistory
+                , inputCallSequence = ""
+                , inputGossipGraph = GossipGraph.Parser.toString newGraph.state
+                , callSequence = Ok []
+                , historyInitialGraph = if Graph.isEmpty model.historyInitialGraph then Result.withDefault Graph.empty model.graph else model.historyInitialGraph
+              }
+            , Cmd.none
+            )
+
+        _ ->
+            ( model, Cmd.none )
+
+
+timeTravel : Int -> Model -> (Model, Cmd Message)
+timeTravel to model =
+    let 
+        targetNode : Maybe (Tree.Zipper.Zipper HistoryNode)
+        targetNode =
+            if to == 0 then
+                Just (Tree.Zipper.fromTree model.history 
+                    |> Tree.Zipper.root)
+            else
+                Tree.Zipper.fromTree model.history
+                    |> Tree.Zipper.findFromRoot (
+                        \zip ->
+                            case zip of
+                                Node { index } ->
+                                    index == to
+                                _ ->
+                                    False
+                    )
+    in
+    case targetNode of
+        Just zip ->
+            let
+                node = Tree.Zipper.label zip
+            in
+            case node of
+                Node n ->
+                    ( { model 
+                        | graph = Ok n.state
+                        , inputGossipGraph = GossipGraph.Parser.toString n.state
+                        , historyLocation = to
+                    }
+                    , Cmd.none )
+                
+                Root ->
+                    ( { model 
+                        | graph = Ok model.historyInitialGraph
+                        , inputGossipGraph = GossipGraph.Parser.toString model.historyInitialGraph
+                        , historyLocation = to
+                      }
+                    , Cmd.none
+                    )
+
+                DeadEnd ->
+                    (model, Cmd.none)
+        _ ->
+            (model, Cmd.none)
+
+
+changeProtocol : String -> Model -> (Model, Cmd Message)
+changeProtocol protocolName model =
+    let
+        condition = Dict.get protocolName Predefined.condition
+    in
+    case condition of
+        Just c ->
+            ( { model
+                | protocolCondition = c
+                , protocolName = protocolName
+                , history = Tree.singleton Root
+              }
+            , Cmd.none)
+        Nothing ->
+            ( { model
+                | protocolCondition = Predefined.any
+                , protocolName = "any"
+                , history = Tree.singleton Root
+              }
+            , Cmd.none
+            )
 
 
 helpButtonView : String -> List (Html Message) -> Html Message
