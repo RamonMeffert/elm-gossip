@@ -146,14 +146,8 @@ isSunGraph graph =
 for all _x, y ∈ A_, there is an _(N ∪ N⁻¹)_ path from _x_ to _y_”
 (Note: _N_ is _a_ relation, not necessarily the number relation)
 
-That is: for all nodes, there must exist a connection in at least one direction
-to every other node.
-
-With the `Graph` datatype, this means we need to check all `NodeContext`s and
-make sure that (`incoming` ∪ `outgoing`) == A
-
-Note: Since (N ∪ N⁻¹) is the symmetric closure of N, and the `Graph` library
-defines a function to find symmetric closures, it might be possible to use that.
+That is: for all nodes, there must exist a path to every other node. To check
+this, we can simply pick a random node and see if we can reach every other node.
 
 Idea:
 
@@ -185,7 +179,6 @@ isWeaklyConnected kind graph =
                 |> List.foldr Set.insert acc
                 -- produce the desired format (??)
                 |> (\a -> ( a, identity ))
-                |> Debug.log "visitor"
     in
     case firstNode of
         Just fn ->
@@ -206,31 +199,21 @@ if, for all _x, y ∈ A_, there is an _N_-path from _x_ to _y_”
 
 That is: all nodes must be connected to all other nodes in all directions.
 
+We validate this based on the assumption that the rule "If there is any agent 
+who can reach only themselves, they cannot learn anything new and therefore, 
+the relation cannot be strongly connected" excludes all non-strongly connected 
+relations.
+
+This might not be true.
+
 -}
 isStronglyConnected : Kind -> Graph Agent Relation -> Bool
 isStronglyConnected kind graph =
     let
-        agentIds =
-            Graph.nodeIds graph
-                |> List.sort
-
-        edgeInAnyDirection : NodeContext Agent Relation -> Bool
-        edgeInAnyDirection ctx =
-            -- to check whether a graph is strongly conncted, all nodes
-            -- should have a connection to every other node. So there should be
-            -- outgoing edges to all other agents
-            ctx.outgoing
-                |> IntDict.values
-                |> List.filter (\r -> Relation.isOfKind r kind)
-                |> List.concatMap (\r -> [ r.from, r.to ])
-                |> distinct
-                |> List.sort
-                |> (==) agentIds
+        lonelyIncoming = Graph.fold (\ctx acc -> IntDict.filter (\_ rel -> Relation.isOfKind rel kind) ctx.incoming |> \out -> IntDict.size out == 1 || acc) False graph
+        lonelyOutgoing = Graph.fold (\ctx acc -> IntDict.filter (\_ rel -> Relation.isOfKind rel kind) ctx.outgoing |> \out -> IntDict.size out == 1 || acc) False graph
     in
-    Graph.fold
-        (\ctx acc -> acc && edgeInAnyDirection ctx)
-        True
-        graph
+    not (lonelyIncoming || lonelyOutgoing)
 
 
 generateExecutionTree : Int -> Graph Agent Relation -> ProtocolCondition -> CallSequence -> Int -> Tree HistoryNode -> Tree HistoryNode
