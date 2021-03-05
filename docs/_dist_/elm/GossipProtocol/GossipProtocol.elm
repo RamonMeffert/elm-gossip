@@ -196,7 +196,6 @@ isWeaklyConnected kind graph =
 
 {-| A relation P is strongly connected if, for all nodes, there exists a path 
 between nodes in P or P⁻¹
-
 -}
 isStronglyConnected : Kind -> Graph Agent Relation -> Bool
 isStronglyConnected kind graph =
@@ -229,28 +228,6 @@ isStronglyConnected kind graph =
             |> (\allReachableAgents -> List.all (\agent -> Set.member agent allReachableAgents) (Graph.nodeIds graph))
         Nothing ->
             False
-
-
-{-| Van Ditmarsch et al. (2018) state that “[a relation] is strongly connected
-if, for all _x, y ∈ A_, there is an _N_-path from _x_ to _y_”
-
-That is: all nodes must be connected to all other nodes in all directions.
-
-We validate this based on the assumption that the rule "If there is any agent 
-who can reach only themselves, they cannot learn anything new and therefore, 
-the relation cannot be strongly connected" excludes all non-strongly connected 
-relations.
-
-This might not be true.
-
--}
-isStronglyConnectedOld : Kind -> Graph Agent Relation -> Bool
-isStronglyConnectedOld kind graph =
-    let
-        lonelyIncoming = Graph.fold (\ctx acc -> IntDict.filter (\_ rel -> Relation.isOfKind rel kind) ctx.incoming |> \out -> IntDict.size out == 1 || acc) False graph
-        lonelyOutgoing = Graph.fold (\ctx acc -> IntDict.filter (\_ rel -> Relation.isOfKind rel kind) ctx.outgoing |> \out -> IntDict.size out == 1 || acc) False graph
-    in
-    not (lonelyIncoming || lonelyOutgoing)
 
 
 generateExecutionTree : Int -> Graph Agent Relation -> ProtocolCondition -> CallSequence -> Int -> Tree HistoryNode -> Tree HistoryNode
