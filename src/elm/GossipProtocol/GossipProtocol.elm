@@ -11,6 +11,7 @@ import List
 import Set exposing (Set)
 import Tree exposing (Tree)
 import Utils.List exposing (distinct)
+import Result
 
 
 {-| Protocol conditions
@@ -194,45 +195,37 @@ isWeaklyConnected kind graph =
         Nothing ->
             False
 
-{-| A relation P is strongly connected if, for all nodes, there exists a path 
-between nodes in P or P⁻¹
-
-Nope, this isn't right either -- ABC aBc abC is reported as being strongly connected while it isn't.
-
-Working on a new version...
+{-| Determines whether some relation P of a given kind is strongly connected by
+checking whether the number of connected components for P is equal to 1.
 
 -}
 isStronglyConnected : Kind -> Graph Agent Relation -> Bool
 isStronglyConnected kind graph =
     let
-        firstNode = List.head <| Graph.nodeIds graph
+        -- Removes edges from a context that are not of the right kind.
+        -- For example, when we want to find out if the number relation is 
+        -- strongly connected, we need to remove all edges indicating secret 
+        -- relations. When checking for the secret relation, we do not need to 
+        -- remove edges, since a secret relation implies a number relation.
+        -- The Relation.isOfKind function takes care of this. However, if we
+        -- would want better performance, we could also let kindGraph be the
+        -- unmodified graph when analysing the secret relation.
+        reduceContext : NodeContext Agent Relation -> NodeContext Agent Relation
+        reduceContext context =
+            { context 
+                | incoming = IntDict.filter (\_ r -> Relation.isOfKind r kind) context.incoming
+                , outgoing = IntDict.filter (\_ r -> Relation.isOfKind r kind) context.outgoing
+            }
 
-        visitor : DfsNodeVisitor Agent Relation (Set AgentId)
-        visitor ctx acc =
-            ctx.outgoing
-                -- find all relations of `kind` from the current node and ignore reflexive relation
-                |> IntDict.filter (\_ r -> Relation.isOfKind r kind && r.to /= r.from)
-                -- convert to a List (Int, Relation)
-                |> IntDict.toList
-                -- Take only the Relation, and of that, only .to
-                |> List.map (Tuple.second >> .to)
-                -- Add that agent id to the set of reachable agents
-                |> List.foldr Set.insert acc
-                -- produce the desired format (??)
-                |> (\a -> ( a, identity ))
+        -- The subgraph containing only edges that are at least of some kind,
+        -- keeping in mind that N ⊆ S
+        kindGraph = Graph.mapContexts reduceContext graph
     in
-    case firstNode of
-        Just fn ->
-            Set.union
-                ( Graph.guidedDfs Graph.alongOutgoingEdges visitor [ fn ] Set.empty graph
-                |> \(reachableAgents, _) -> Set.insert fn reachableAgents
-                )
-                ( Graph.guidedDfs Graph.alongOutgoingEdges visitor [ fn ] Set.empty (Graph.reverseEdges graph)
-                |> \(reachableAgents, _) -> Set.insert fn reachableAgents
-                )
-            |> (\allReachableAgents -> List.all (\agent -> Set.member agent allReachableAgents) (Graph.nodeIds graph))
-        Nothing ->
-            False
+    case Graph.stronglyConnectedComponents kindGraph of
+       -- Ok acyclic means the graph is acyclic and therefor cannot be strongly connected
+       Ok _ -> False
+       -- If the graph contains strongly connected components, it is only strongly connected if there is only 1
+       Err components -> List.length components == 1
 
 
 generateExecutionTree : Int -> Graph Agent Relation -> ProtocolCondition -> CallSequence -> Int -> Tree HistoryNode -> Tree HistoryNode
