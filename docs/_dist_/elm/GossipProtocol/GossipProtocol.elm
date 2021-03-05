@@ -194,6 +194,43 @@ isWeaklyConnected kind graph =
         Nothing ->
             False
 
+{-| A relation P is strongly connected if, for all nodes, there exists a path 
+between nodes in P or P⁻¹
+
+-}
+isStronglyConnected : Kind -> Graph Agent Relation -> Bool
+isStronglyConnected kind graph =
+    let
+        firstNode = List.head <| Graph.nodeIds graph
+
+        visitor : DfsNodeVisitor Agent Relation (Set AgentId)
+        visitor ctx acc =
+            ctx.outgoing
+                -- find all relations of `kind` from the current node and ignore reflexive relation
+                |> IntDict.filter (\_ r -> Relation.isOfKind r kind && r.to /= r.from)
+                -- convert to a List (Int, Relation)
+                |> IntDict.toList
+                -- Take only the Relation, and of that, only .to
+                |> List.map (Tuple.second >> .to)
+                -- Add that agent id to the set of reachable agents
+                |> List.foldr Set.insert acc
+                -- produce the desired format (??)
+                |> (\a -> ( a, identity ))
+    in
+    case firstNode of
+        Just fn ->
+            Set.union
+                ( Graph.guidedDfs Graph.alongOutgoingEdges visitor [ fn ] Set.empty graph
+                |> \(reachableAgents, _) -> Set.insert fn reachableAgents
+                )
+                ( Graph.guidedDfs Graph.alongOutgoingEdges visitor [ fn ] Set.empty (Graph.reverseEdges graph)
+                |> \(reachableAgents, _) -> Set.insert fn reachableAgents
+                )
+            |> (\allReachableAgents -> List.all (\agent -> Set.member agent allReachableAgents) (Graph.nodeIds graph))
+        Nothing ->
+            False
+
+
 {-| Van Ditmarsch et al. (2018) state that “[a relation] is strongly connected
 if, for all _x, y ∈ A_, there is an _N_-path from _x_ to _y_”
 
@@ -207,8 +244,8 @@ relations.
 This might not be true.
 
 -}
-isStronglyConnected : Kind -> Graph Agent Relation -> Bool
-isStronglyConnected kind graph =
+isStronglyConnectedOld : Kind -> Graph Agent Relation -> Bool
+isStronglyConnectedOld kind graph =
     let
         lonelyIncoming = Graph.fold (\ctx acc -> IntDict.filter (\_ rel -> Relation.isOfKind rel kind) ctx.incoming |> \out -> IntDict.size out == 1 || acc) False graph
         lonelyOutgoing = Graph.fold (\ctx acc -> IntDict.filter (\_ rel -> Relation.isOfKind rel kind) ctx.outgoing |> \out -> IntDict.size out == 1 || acc) False graph
