@@ -10,8 +10,6 @@ import IntDict
 import List
 import Set exposing (Set)
 import Tree exposing (Tree)
-import Utils.List exposing (distinct)
-import Result
 
 
 {-| Protocol conditions

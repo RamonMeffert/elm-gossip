@@ -661,7 +661,7 @@ historyView model =
                                 ] 
                                 [ text <| Call.renderString agents n.call
                                 ]
-                        Err e ->
+                        Err _ ->
                             div [] [ text "❌" ]
 
         toListItems : Html msg -> List (Html msg) -> Html msg
