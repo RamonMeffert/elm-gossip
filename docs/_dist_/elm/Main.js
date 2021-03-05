@@ -784,11 +784,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.dt.bA === region.dS.bA)
+	if (region.ds.bz === region.dR.bz)
 	{
-		return 'on line ' + region.dt.bA;
+		return 'on line ' + region.ds.bz;
 	}
-	return 'on lines ' + region.dt.bA + ' through ' + region.dS.bA;
+	return 'on lines ' + region.ds.bz + ' through ' + region.dR.bz;
 }
 
 
@@ -2712,9 +2712,9 @@ var _VirtualDom_mapEventTuple = F2(function(func, tuple)
 var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
-		aD: func(record.aD),
-		du: record.du,
-		de: record.de
+		aC: func(record.aC),
+		dt: record.dt,
+		dd: record.dd
 	}
 });
 
@@ -2982,11 +2982,11 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 		// 3 = Custom
 
 		var value = result.a;
-		var message = !tag ? value : tag < 3 ? value.a : value.aD;
-		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.du;
+		var message = !tag ? value : tag < 3 ? value.a : value.aC;
+		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.dt;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
-			(tag == 2 ? value.b : tag == 3 && value.de) && event.preventDefault(),
+			(tag == 2 ? value.b : tag == 3 && value.dd) && event.preventDefault(),
 			eventNode
 		);
 		var tagger;
@@ -3976,7 +3976,7 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 		impl.fY,
 		impl.fO,
 		function(sendToApp, initialModel) {
-			var divertHrefToApp = impl.dl && impl.dl(sendToApp)
+			var divertHrefToApp = impl.dk && impl.dk(sendToApp)
 			var view = impl.fZ;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
@@ -3990,7 +3990,7 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
 				_VirtualDom_divertHrefToApp = 0;
-				(title !== doc.ce) && (_VirtualDom_doc.title = title = doc.ce);
+				(title !== doc.cd) && (_VirtualDom_doc.title = title = doc.cd);
 			});
 		}
 	);
@@ -4051,7 +4051,7 @@ function _Browser_application(impl)
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
-		dl: function(sendToApp)
+		dk: function(sendToApp)
 		{
 			key.a = sendToApp;
 			_Browser_window.addEventListener('popstate', key);
@@ -4068,7 +4068,7 @@ function _Browser_application(impl)
 					sendToApp(onUrlRequest(
 						(next
 							&& curr.eu === next.eu
-							&& curr.d_ === next.d_
+							&& curr.dZ === next.dZ
 							&& curr.eq.a === next.eq.a
 						)
 							? $elm$browser$Browser$Internal(next)
@@ -4242,10 +4242,10 @@ function _Browser_getViewport()
 	return {
 		eC: _Browser_getScene(),
 		eQ: {
-			Z: _Browser_window.pageXOffset,
-			_: _Browser_window.pageYOffset,
+			Y: _Browser_window.pageXOffset,
+			Z: _Browser_window.pageYOffset,
 			eT: _Browser_doc.documentElement.clientWidth,
-			dZ: _Browser_doc.documentElement.clientHeight
+			dY: _Browser_doc.documentElement.clientHeight
 		}
 	};
 }
@@ -4256,7 +4256,7 @@ function _Browser_getScene()
 	var elem = _Browser_doc.documentElement;
 	return {
 		eT: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
-		dZ: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
+		dY: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
 
@@ -4281,13 +4281,13 @@ function _Browser_getViewportOf(id)
 		return {
 			eC: {
 				eT: node.scrollWidth,
-				dZ: node.scrollHeight
+				dY: node.scrollHeight
 			},
 			eQ: {
-				Z: node.scrollLeft,
-				_: node.scrollTop,
+				Y: node.scrollLeft,
+				Z: node.scrollTop,
 				eT: node.clientWidth,
-				dZ: node.clientHeight
+				dY: node.clientHeight
 			}
 		};
 	});
@@ -4319,16 +4319,16 @@ function _Browser_getElement(id)
 		return {
 			eC: _Browser_getScene(),
 			eQ: {
-				Z: x,
-				_: y,
+				Y: x,
+				Z: y,
 				eT: _Browser_doc.documentElement.clientWidth,
-				dZ: _Browser_doc.documentElement.clientHeight
+				dY: _Browser_doc.documentElement.clientHeight
 			},
 			fb: {
-				Z: x + rect.left,
-				_: y + rect.top,
+				Y: x + rect.left,
+				Z: y + rect.top,
 				eT: rect.width,
-				dZ: rect.height
+				dY: rect.height
 			}
 		};
 	});
@@ -4806,25 +4806,25 @@ var $elm$core$Array$treeFromBuilder = F2(
 	});
 var $elm$core$Array$builderToArray = F2(
 	function (reverseNodeList, builder) {
-		if (!builder.v) {
+		if (!builder.u) {
 			return A4(
 				$elm$core$Array$Array_elm_builtin,
-				$elm$core$Elm$JsArray$length(builder.y),
+				$elm$core$Elm$JsArray$length(builder.x),
 				$elm$core$Array$shiftStep,
 				$elm$core$Elm$JsArray$empty,
-				builder.y);
+				builder.x);
 		} else {
-			var treeLen = builder.v * $elm$core$Array$branchFactor;
+			var treeLen = builder.u * $elm$core$Array$branchFactor;
 			var depth = $elm$core$Basics$floor(
 				A2($elm$core$Basics$logBase, $elm$core$Array$branchFactor, treeLen - 1));
-			var correctNodeList = reverseNodeList ? $elm$core$List$reverse(builder.C) : builder.C;
-			var tree = A2($elm$core$Array$treeFromBuilder, correctNodeList, builder.v);
+			var correctNodeList = reverseNodeList ? $elm$core$List$reverse(builder.B) : builder.B;
+			var tree = A2($elm$core$Array$treeFromBuilder, correctNodeList, builder.u);
 			return A4(
 				$elm$core$Array$Array_elm_builtin,
-				$elm$core$Elm$JsArray$length(builder.y) + treeLen,
+				$elm$core$Elm$JsArray$length(builder.x) + treeLen,
 				A2($elm$core$Basics$max, 5, depth * $elm$core$Array$shiftStep),
 				tree,
-				builder.y);
+				builder.x);
 		}
 	});
 var $elm$core$Basics$idiv = _Basics_idiv;
@@ -4837,7 +4837,7 @@ var $elm$core$Array$initializeHelp = F5(
 				return A2(
 					$elm$core$Array$builderToArray,
 					false,
-					{C: nodeList, v: (len / $elm$core$Array$branchFactor) | 0, y: tail});
+					{B: nodeList, u: (len / $elm$core$Array$branchFactor) | 0, x: tail});
 			} else {
 				var leaf = $elm$core$Array$Leaf(
 					A3($elm$core$Elm$JsArray$initialize, $elm$core$Array$branchFactor, fromIndex, fn));
@@ -4904,7 +4904,7 @@ var $elm$url$Url$Http = 0;
 var $elm$url$Url$Https = 1;
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {dY: fragment, d_: host, eo: path, eq: port_, eu: protocol, ev: query};
+		return {dX: fragment, dZ: host, eo: path, eq: port_, eu: protocol, ev: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -5204,21 +5204,21 @@ var $zwilias$elm_rosetree$Tree$singleton = function (v) {
 var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
 		{
-			aM: $elm$core$Result$Ok(_List_Nil),
-			ap: $elm$core$Result$Ok(_List_Nil),
-			bX: '',
-			bv: 5,
-			u: $elm$core$Result$Ok($elm_community$graph$Graph$empty),
-			cA: {bn: 6, cp: 400, cq: 800, b0: 1.5, aR: 20},
-			x: $zwilias$elm_rosetree$Tree$singleton($author$project$GossipProtocol$GossipProtocol$Root),
-			K: $elm_community$graph$Graph$empty,
-			ai: 0,
-			aj: '',
-			ab: '',
-			V: {cs: _List_Nil, ce: '', bl: false},
-			aU: $author$project$GossipProtocol$Conditions$Predefined$any,
-			at: 'any',
-			bE: $elm$core$Result$Ok(_List_Nil)
+			aL: $elm$core$Result$Ok(_List_Nil),
+			ao: $elm$core$Result$Ok(_List_Nil),
+			bW: '',
+			bu: 5,
+			t: $elm$core$Result$Ok($elm_community$graph$Graph$empty),
+			cz: {bm: 6, co: 400, cp: 800, b$: 1.5, aQ: 20},
+			w: $zwilias$elm_rosetree$Tree$singleton($author$project$GossipProtocol$GossipProtocol$Root),
+			J: $elm_community$graph$Graph$empty,
+			ah: 0,
+			ai: '',
+			aa: '',
+			U: {cr: _List_Nil, cd: '', bk: false},
+			aT: $author$project$GossipProtocol$Conditions$Predefined$any,
+			as: 'any',
+			bD: $elm$core$Result$Ok(_List_Nil)
 		},
 		$elm$core$Platform$Cmd$none);
 };
@@ -5285,8 +5285,8 @@ var $author$project$GossipGraph$Call$fromList = function (agents) {
 		if ((!_v0.a.$) && (!_v0.b.$)) {
 			var f = _v0.a.a;
 			var t = _v0.b.a;
-			return _Utils_eq(f.b2, t.b2) ? $elm$core$Result$Err('An agent cannot call itself.') : $elm$core$Result$Ok(
-				{aq: f.b2, aW: t.b2});
+			return _Utils_eq(f.b1, t.b1) ? $elm$core$Result$Err('An agent cannot call itself.') : $elm$core$Result$Ok(
+				{ap: f.b1, aV: t.b1});
 		} else {
 			return $elm$core$Result$Err('A call must contain two agents.');
 		}
@@ -5338,7 +5338,7 @@ var $author$project$GossipGraph$Agent$fromChar = F2(
 				$author$project$Utils$List$find,
 				function (agent) {
 					return _Utils_eq(
-						agent.cZ,
+						agent.cY,
 						$elm$core$Char$toUpper(_char));
 				},
 				agents));
@@ -5608,16 +5608,16 @@ var $author$project$Main$changeCallSequence = F2(
 		var callSequence = A2(
 			$elm$core$Result$andThen,
 			$author$project$CallSequence$Parser$parse(input),
-			model.aM);
+			model.aL);
 		return _Utils_Tuple2(
 			_Utils_update(
 				model,
-				{ap: callSequence, aj: input}),
+				{ao: callSequence, ai: input}),
 			$elm$core$Platform$Cmd$none);
 	});
 var $elm_community$graph$Graph$NodeContext = F3(
 	function (node, incoming, outgoing) {
-		return {m: incoming, ej: node, c3: outgoing};
+		return {d1: incoming, ej: node, c2: outgoing};
 	});
 var $elm$core$Basics$always = F2(
 	function (a, _v0) {
@@ -5634,7 +5634,7 @@ var $elm_community$intdict$IntDict$size = function (dict) {
 			return 1;
 		default:
 			var i = dict.a;
-			return i.dm;
+			return i.dl;
 	}
 };
 var $elm_community$intdict$IntDict$inner = F3(
@@ -5653,7 +5653,7 @@ var $elm_community$intdict$IntDict$inner = F3(
 						d: l,
 						i: p,
 						e: r,
-						dm: $elm_community$intdict$IntDict$size(l) + $elm_community$intdict$IntDict$size(r)
+						dl: $elm_community$intdict$IntDict$size(l) + $elm_community$intdict$IntDict$size(r)
 					});
 			}
 		}
@@ -5691,7 +5691,7 @@ var $elm_community$intdict$IntDict$isBranchingBitSet = function (p) {
 		$elm$core$Bitwise$xor($elm_community$intdict$IntDict$signBit),
 		A2(
 			$elm$core$Basics$composeR,
-			$elm$core$Bitwise$and(p.a0),
+			$elm$core$Bitwise$and(p.a$),
 			$elm$core$Basics$neq(0)));
 };
 var $elm_community$intdict$IntDict$higherBitMask = function (branchingBit) {
@@ -5702,7 +5702,7 @@ var $elm_community$intdict$IntDict$lcp = F2(
 		var branchingBit = $elm_community$intdict$IntDict$highestBitSet(x ^ y);
 		var mask = $elm_community$intdict$IntDict$higherBitMask(branchingBit);
 		var prefixBits = x & mask;
-		return {a0: branchingBit, am: prefixBits};
+		return {a$: branchingBit, al: prefixBits};
 	});
 var $elm_community$intdict$IntDict$Leaf = function (a) {
 	return {$: 1, a: a};
@@ -5715,8 +5715,8 @@ var $elm_community$intdict$IntDict$leaf = F2(
 var $elm_community$intdict$IntDict$prefixMatches = F2(
 	function (p, n) {
 		return _Utils_eq(
-			n & $elm_community$intdict$IntDict$higherBitMask(p.a0),
-			p.am);
+			n & $elm_community$intdict$IntDict$higherBitMask(p.a$),
+			p.al);
 	});
 var $elm_community$intdict$IntDict$update = F3(
 	function (key, alter, dict) {
@@ -5765,7 +5765,7 @@ var $elm_community$intdict$IntDict$update = F3(
 					_Utils_Tuple2(
 						key,
 						alteredNode($elm$core$Maybe$Nothing)),
-					_Utils_Tuple2(i.i.am, dict));
+					_Utils_Tuple2(i.i.al, dict));
 		}
 	});
 var $elm_community$intdict$IntDict$insert = F3(
@@ -5835,7 +5835,7 @@ var $elm_community$graph$Graph$fromNodesAndEdges = F2(
 			function (n) {
 				return A2(
 					$elm_community$intdict$IntDict$insert,
-					n.b2,
+					n.b1,
 					A3($elm_community$graph$Graph$NodeContext, n, $elm_community$intdict$IntDict$empty, $elm_community$intdict$IntDict$empty));
 			},
 			$elm_community$intdict$IntDict$empty,
@@ -5846,37 +5846,37 @@ var $elm_community$graph$Graph$fromNodesAndEdges = F2(
 					return _Utils_update(
 						ctx,
 						{
-							c3: A3($elm_community$intdict$IntDict$insert, edge.aW, edge.fo, ctx.c3)
+							c2: A3($elm_community$intdict$IntDict$insert, edge.aV, edge.fo, ctx.c2)
 						});
 				};
 				var updateIncoming = function (ctx) {
 					return _Utils_update(
 						ctx,
 						{
-							m: A3($elm_community$intdict$IntDict$insert, edge.aq, edge.fo, ctx.m)
+							d1: A3($elm_community$intdict$IntDict$insert, edge.ap, edge.fo, ctx.d1)
 						});
 				};
 				return A3(
 					$elm_community$intdict$IntDict$update,
-					edge.aW,
+					edge.aV,
 					$elm$core$Maybe$map(updateIncoming),
 					A3(
 						$elm_community$intdict$IntDict$update,
-						edge.aq,
+						edge.ap,
 						$elm$core$Maybe$map(updateOutgoing),
 						rep));
 			});
 		var addEdgeIfValid = F2(
 			function (edge, rep) {
-				return (A2($elm_community$intdict$IntDict$member, edge.aq, rep) && A2($elm_community$intdict$IntDict$member, edge.aW, rep)) ? A2(addEdge, edge, rep) : rep;
+				return (A2($elm_community$intdict$IntDict$member, edge.ap, rep) && A2($elm_community$intdict$IntDict$member, edge.aV, rep)) ? A2(addEdge, edge, rep) : rep;
 			});
 		return A3($elm$core$List$foldl, addEdgeIfValid, nodeRep, edges_);
 	});
 var $author$project$GossipGraph$Relation$toEdge = function (rel) {
-	return {aq: rel.aq, fo: rel, aW: rel.aW};
+	return {ap: rel.ap, fo: rel, aV: rel.aV};
 };
 var $author$project$GossipGraph$Agent$toNode = function (agent) {
-	return {b2: agent.b2, fo: agent};
+	return {b1: agent.b1, fo: agent};
 };
 var $author$project$GossipGraph$Parser$fromAgentsAndRelations = F2(
 	function (agents, relations) {
@@ -6227,7 +6227,7 @@ var $author$project$GossipGraph$Parser$parseAgents = function (ts) {
 										return !_Utils_eq(a, $author$project$GossipGraph$Parser$Separator);
 									},
 									rest));
-							var agent = {b2: id, cZ: name};
+							var agent = {b1: id, cY: name};
 							var _v2 = A3(
 								parser,
 								A2($elm$core$List$cons, name, names),
@@ -6315,7 +6315,7 @@ var $author$project$GossipGraph$Parser$parseAgents = function (ts) {
 				A2(
 					$elm$core$List$map,
 					function (a) {
-						return a.cZ;
+						return a.cY;
 					},
 					agents)) + '. Make sure every segment contains the identity relation for the agent it represents!')))))) : $elm$core$Result$Ok(agents)));
 	};
@@ -6349,7 +6349,7 @@ var $author$project$GossipGraph$Parser$parseRelations = F2(
 								function (agent) {
 									return A2(
 										$elm$core$List$cons,
-										{aq: id, d8: kind, aW: agent.b2},
+										{ap: id, d8: kind, aV: agent.b1},
 										relations);
 								},
 								A2($author$project$GossipGraph$Agent$fromChar, agents, name));
@@ -6396,7 +6396,7 @@ var $elm_community$intdict$IntDict$values = function (dict) {
 		dict);
 };
 var $author$project$GossipGraph$Relation$fromNodeContext = function (context) {
-	return $elm_community$intdict$IntDict$values(context.c3);
+	return $elm_community$intdict$IntDict$values(context.c2);
 };
 var $elm$core$List$sortBy = _List_sortBy;
 var $elm$core$Char$toLower = _Char_toLower;
@@ -6420,7 +6420,7 @@ var $author$project$GossipGraph$Parser$adjacencyToCanonicalString = F2(
 			A2(
 				$elm$core$List$map,
 				function (r) {
-					return _Utils_Tuple2(r.aW, r.d8);
+					return _Utils_Tuple2(r.aV, r.d8);
 				},
 				$author$project$GossipGraph$Relation$fromNodeContext(context)));
 		return A2(
@@ -6530,7 +6530,7 @@ var $elm_community$graph$Graph$applyEdgeDiff = F3(
 				return _Utils_update(
 					node,
 					{
-						c3: A3($elm_community$intdict$IntDict$update, nodeId, upd, node.c3)
+						c2: A3($elm_community$intdict$IntDict$update, nodeId, upd, node.c2)
 					});
 			});
 		var updateIncomingEdge = F2(
@@ -6538,7 +6538,7 @@ var $elm_community$graph$Graph$applyEdgeDiff = F3(
 				return _Utils_update(
 					node,
 					{
-						m: A3($elm_community$intdict$IntDict$update, nodeId, upd, node.m)
+						d1: A3($elm_community$intdict$IntDict$update, nodeId, upd, node.d1)
 					});
 			});
 		var flippedFoldl = F3(
@@ -6566,11 +6566,11 @@ var $elm_community$graph$Graph$applyEdgeDiff = F3(
 		return A3(
 			flippedFoldl,
 			updateAdjacency(updateOutgoingEdge),
-			diff.c3,
+			diff.c2,
 			A3(
 				flippedFoldl,
 				updateAdjacency(updateIncomingEdge),
-				diff.m,
+				diff.d1,
 				graphRep));
 	});
 var $elm_community$graph$Graph$Insert = function (a) {
@@ -6587,7 +6587,7 @@ var $elm_community$graph$Graph$crashHack = function (msg) {
 		continue crashHack;
 	}
 };
-var $elm_community$graph$Graph$emptyDiff = {m: $elm_community$intdict$IntDict$empty, c3: $elm_community$intdict$IntDict$empty};
+var $elm_community$graph$Graph$emptyDiff = {d1: $elm_community$intdict$IntDict$empty, c2: $elm_community$intdict$IntDict$empty};
 var $elm_community$graph$Graph$computeEdgeDiff = F2(
 	function (old, _new) {
 		var collectUpdates = F3(
@@ -6635,8 +6635,8 @@ var $elm_community$graph$Graph$computeEdgeDiff = F2(
 				var _v4 = _v0.a;
 				var ins = _v0.b.a;
 				return {
-					m: A3(collect, $elm_community$graph$Graph$Insert, ins.c3, $elm_community$intdict$IntDict$empty),
-					c3: A3(collect, $elm_community$graph$Graph$Insert, ins.m, $elm_community$intdict$IntDict$empty)
+					d1: A3(collect, $elm_community$graph$Graph$Insert, ins.c2, $elm_community$intdict$IntDict$empty),
+					c2: A3(collect, $elm_community$graph$Graph$Insert, ins.d1, $elm_community$intdict$IntDict$empty)
 				};
 			}
 		} else {
@@ -6644,23 +6644,23 @@ var $elm_community$graph$Graph$computeEdgeDiff = F2(
 				var rem = _v0.a.a;
 				var _v3 = _v0.b;
 				return {
-					m: A3(collect, $elm_community$graph$Graph$Remove, rem.c3, $elm_community$intdict$IntDict$empty),
-					c3: A3(collect, $elm_community$graph$Graph$Remove, rem.m, $elm_community$intdict$IntDict$empty)
+					d1: A3(collect, $elm_community$graph$Graph$Remove, rem.c2, $elm_community$intdict$IntDict$empty),
+					c2: A3(collect, $elm_community$graph$Graph$Remove, rem.d1, $elm_community$intdict$IntDict$empty)
 				};
 			} else {
 				var rem = _v0.a.a;
 				var ins = _v0.b.a;
 				return _Utils_eq(rem, ins) ? $elm_community$graph$Graph$emptyDiff : {
-					m: A3(
+					d1: A3(
 						collect,
 						$elm_community$graph$Graph$Insert,
-						ins.c3,
-						A3(collect, $elm_community$graph$Graph$Remove, rem.c3, $elm_community$intdict$IntDict$empty)),
-					c3: A3(
+						ins.c2,
+						A3(collect, $elm_community$graph$Graph$Remove, rem.c2, $elm_community$intdict$IntDict$empty)),
+					c2: A3(
 						collect,
 						$elm_community$graph$Graph$Insert,
-						ins.m,
-						A3(collect, $elm_community$graph$Graph$Remove, rem.m, $elm_community$intdict$IntDict$empty))
+						ins.d1,
+						A3(collect, $elm_community$graph$Graph$Remove, rem.d1, $elm_community$intdict$IntDict$empty))
 				};
 			}
 		}
@@ -6681,15 +6681,15 @@ var $elm_community$graph$Graph$update = F2(
 				return $elm_community$intdict$IntDict$filter(
 					F2(
 						function (id, _v0) {
-							return _Utils_eq(id, ctx.ej.b2) || A2($elm_community$intdict$IntDict$member, id, rep);
+							return _Utils_eq(id, ctx.ej.b1) || A2($elm_community$intdict$IntDict$member, id, rep);
 						}));
 			};
 			var cleanUpEdges = function (ctx) {
 				return _Utils_update(
 					ctx,
 					{
-						m: A2(filterInvalidEdges, ctx, ctx.m),
-						c3: A2(filterInvalidEdges, ctx, ctx.c3)
+						d1: A2(filterInvalidEdges, ctx, ctx.d1),
+						c2: A2(filterInvalidEdges, ctx, ctx.c2)
 					});
 			};
 			var _new = A2(
@@ -6734,7 +6734,7 @@ var $elm_community$graph$Graph$fold = F3(
 					if (!maybeContext.$) {
 						var ctx = maybeContext.a;
 						var $temp$acc1 = A2(f, ctx, acc1),
-							$temp$graph1 = A2($elm_community$graph$Graph$remove, ctx.ej.b2, graph1);
+							$temp$graph1 = A2($elm_community$graph$Graph$remove, ctx.ej.b1, graph1);
 						acc1 = $temp$acc1;
 						graph1 = $temp$graph1;
 						continue go;
@@ -6774,7 +6774,7 @@ var $author$project$Main$changeGossipGraph = F2(
 		var agents = A2($elm$core$Result$andThen, $author$project$GossipGraph$Parser$parseAgents, lexResult);
 		var callSequence = A2(
 			$elm$core$Result$andThen,
-			$author$project$CallSequence$Parser$parse(model.aj),
+			$author$project$CallSequence$Parser$parse(model.ai),
 			agents);
 		var relations = function () {
 			var _v1 = _Utils_Tuple2(lexResult, agents);
@@ -6819,19 +6819,19 @@ var $author$project$Main$changeGossipGraph = F2(
 			_Utils_update(
 				model,
 				{
-					aM: agents,
-					ap: callSequence,
-					bX: canonical,
-					u: graph,
-					x: $zwilias$elm_rosetree$Tree$singleton($author$project$GossipProtocol$GossipProtocol$Root),
-					ab: input,
-					bE: relations
+					aL: agents,
+					ao: callSequence,
+					bW: canonical,
+					t: graph,
+					w: $zwilias$elm_rosetree$Tree$singleton($author$project$GossipProtocol$GossipProtocol$Root),
+					aa: input,
+					bD: relations
 				}),
 			$elm$core$Platform$Cmd$none);
 	});
 var $author$project$GossipGraph$Call$includes = F2(
 	function (call, agent) {
-		return _Utils_eq(call.aq, agent) || _Utils_eq(call.aW, agent);
+		return _Utils_eq(call.ap, agent) || _Utils_eq(call.aV, agent);
 	});
 var $author$project$CallSequence$CallSequence$containing = F2(
 	function (sequence, agent) {
@@ -6862,7 +6862,7 @@ var $author$project$GossipProtocol$Conditions$Constituents$hasCalled = F3(
 		return A2(
 			$elm$core$List$any,
 			function (c) {
-				return _Utils_eq(c.aq, x) && _Utils_eq(c.aW, y);
+				return _Utils_eq(c.ap, x) && _Utils_eq(c.aV, y);
 			},
 			sequence);
 	});
@@ -6871,7 +6871,7 @@ var $author$project$GossipProtocol$Conditions$Constituents$wasCalledBy = F3(
 		return A2(
 			$elm$core$List$any,
 			function (c) {
-				return _Utils_eq(c.aq, y) && _Utils_eq(c.aW, x);
+				return _Utils_eq(c.ap, y) && _Utils_eq(c.aV, x);
 			},
 			sequence);
 	});
@@ -6900,7 +6900,7 @@ var $author$project$GossipGraph$Relation$atLeast = F2(
 	});
 var $author$project$GossipGraph$Relation$knows = F4(
 	function (x, y, kind, relation) {
-		return _Utils_eq(relation.aq, x) && (_Utils_eq(relation.aW, y) && A2($author$project$GossipGraph$Relation$atLeast, kind, relation));
+		return _Utils_eq(relation.ap, x) && (_Utils_eq(relation.aV, y) && A2($author$project$GossipGraph$Relation$atLeast, kind, relation));
 	});
 var $author$project$GossipProtocol$Conditions$Constituents$knowsSecret = F3(
 	function (x, y, relations) {
@@ -6925,7 +6925,7 @@ var $author$project$GossipProtocol$Conditions$Constituents$lastFrom = F2(
 		var _v0 = $elm$core$List$head(sequence);
 		if (!_v0.$) {
 			var call = _v0.a;
-			return _Utils_eq(call.aq, agent);
+			return _Utils_eq(call.ap, agent);
 		} else {
 			return false;
 		}
@@ -6941,7 +6941,7 @@ var $author$project$GossipProtocol$Conditions$Constituents$lastTo = F2(
 		var _v0 = $elm$core$List$head(sequence);
 		if (!_v0.$) {
 			var call = _v0.a;
-			return _Utils_eq(call.aW, agent);
+			return _Utils_eq(call.aV, agent);
 		} else {
 			return false;
 		}
@@ -7009,9 +7009,9 @@ var $author$project$Main$changeProtocol = F2(
 				_Utils_update(
 					model,
 					{
-						x: $zwilias$elm_rosetree$Tree$singleton($author$project$GossipProtocol$GossipProtocol$Root),
-						aU: c,
-						at: protocolName
+						w: $zwilias$elm_rosetree$Tree$singleton($author$project$GossipProtocol$GossipProtocol$Root),
+						aT: c,
+						as: protocolName
 					}),
 				$elm$core$Platform$Cmd$none);
 		} else {
@@ -7019,9 +7019,9 @@ var $author$project$Main$changeProtocol = F2(
 				_Utils_update(
 					model,
 					{
-						x: $zwilias$elm_rosetree$Tree$singleton($author$project$GossipProtocol$GossipProtocol$Root),
-						aU: $author$project$GossipProtocol$Conditions$Predefined$any,
-						at: 'any'
+						w: $zwilias$elm_rosetree$Tree$singleton($author$project$GossipProtocol$GossipProtocol$Root),
+						aT: $author$project$GossipProtocol$Conditions$Predefined$any,
+						as: 'any'
 					}),
 				$elm$core$Platform$Cmd$none);
 		}
@@ -7057,12 +7057,12 @@ var $elm_community$intdict$IntDict$determineBranchRelation = F2(
 		var rp = r.i;
 		var lp = l.i;
 		var mask = $elm_community$intdict$IntDict$highestBitSet(
-			A2($elm_community$intdict$IntDict$mostSignificantBranchingBit, lp.a0, rp.a0));
-		var modifiedRightPrefix = A3($elm_community$intdict$IntDict$combineBits, rp.am, ~lp.am, mask);
-		var prefix = A2($elm_community$intdict$IntDict$lcp, lp.am, modifiedRightPrefix);
+			A2($elm_community$intdict$IntDict$mostSignificantBranchingBit, lp.a$, rp.a$));
+		var modifiedRightPrefix = A3($elm_community$intdict$IntDict$combineBits, rp.al, ~lp.al, mask);
+		var prefix = A2($elm_community$intdict$IntDict$lcp, lp.al, modifiedRightPrefix);
 		var childEdge = F2(
 			function (branchPrefix, c) {
-				return A2($elm_community$intdict$IntDict$isBranchingBitSet, branchPrefix, c.i.am) ? 1 : 0;
+				return A2($elm_community$intdict$IntDict$isBranchingBitSet, branchPrefix, c.i.al) ? 1 : 0;
 			});
 		return _Utils_eq(lp, rp) ? $elm_community$intdict$IntDict$SamePrefix : (_Utils_eq(prefix, lp) ? A2(
 			$elm_community$intdict$IntDict$Parent,
@@ -7216,8 +7216,8 @@ var $elm_community$intdict$IntDict$merge = F6(
 	});
 var $author$project$GossipGraph$Call$execute = F2(
 	function (graph, _v0) {
-		var from = _v0.aq;
-		var to = _v0.aW;
+		var from = _v0.ap;
+		var to = _v0.aV;
 		var knowledge = function (id) {
 			return A2($elm_community$graph$Graph$get, id, graph);
 		};
@@ -7232,7 +7232,7 @@ var $author$project$GossipGraph$Call$execute = F2(
 						_Utils_update(
 							current,
 							{
-								c3: A6(
+								c2: A6(
 									$elm_community$intdict$IntDict$merge,
 									F3(
 										function (k, c, acc) {
@@ -7245,7 +7245,7 @@ var $author$project$GossipGraph$Call$execute = F2(
 												k,
 												_Utils_update(
 													n,
-													{aq: current.ej.b2}),
+													{ap: current.ej.b1}),
 												acc) : A3($elm_community$intdict$IntDict$insert, k, c, acc));
 										}),
 									F3(
@@ -7255,11 +7255,11 @@ var $author$project$GossipGraph$Call$execute = F2(
 												k,
 												_Utils_update(
 													n,
-													{aq: current.ej.b2}),
+													{ap: current.ej.b1}),
 												acc);
 										}),
-									current.c3,
-									_new.c3,
+									current.c2,
+									_new.c2,
 									$elm_community$intdict$IntDict$empty)
 							}));
 				} else {
@@ -7281,7 +7281,7 @@ var $zwilias$elm_rosetree$Tree$label = function (_v0) {
 	return v;
 };
 var $zwilias$elm_rosetree$Tree$Zipper$tree = function (_v0) {
-	var focus = _v0.s;
+	var focus = _v0.r;
 	return focus;
 };
 var $zwilias$elm_rosetree$Tree$Zipper$label = function (zipper) {
@@ -7319,7 +7319,7 @@ var $zwilias$elm_rosetree$Tree$children = function (_v0) {
 };
 var $zwilias$elm_rosetree$Tree$Zipper$firstChild = function (_v0) {
 	var zipper = _v0;
-	var _v1 = $zwilias$elm_rosetree$Tree$children(zipper.s);
+	var _v1 = $zwilias$elm_rosetree$Tree$children(zipper.r);
 	if (!_v1.b) {
 		return $elm$core$Maybe$Nothing;
 	} else {
@@ -7327,17 +7327,17 @@ var $zwilias$elm_rosetree$Tree$Zipper$firstChild = function (_v0) {
 		var cs = _v1.b;
 		return $elm$core$Maybe$Just(
 			{
-				p: cs,
-				r: _List_Nil,
-				E: A2(
+				o: cs,
+				q: _List_Nil,
+				D: A2(
 					$elm$core$List$cons,
 					{
-						p: zipper.p,
-						r: zipper.r,
-						fo: $zwilias$elm_rosetree$Tree$label(zipper.s)
+						o: zipper.o,
+						q: zipper.q,
+						fo: $zwilias$elm_rosetree$Tree$label(zipper.r)
 					},
-					zipper.E),
-				s: c
+					zipper.D),
+				r: c
 			});
 	}
 };
@@ -7366,7 +7366,7 @@ var $zwilias$elm_rosetree$Tree$Zipper$firstOf = F2(
 	});
 var $zwilias$elm_rosetree$Tree$Zipper$nextSibling = function (_v0) {
 	var zipper = _v0;
-	var _v1 = zipper.p;
+	var _v1 = zipper.o;
 	if (!_v1.b) {
 		return $elm$core$Maybe$Nothing;
 	} else {
@@ -7374,10 +7374,10 @@ var $zwilias$elm_rosetree$Tree$Zipper$nextSibling = function (_v0) {
 		var rest = _v1.b;
 		return $elm$core$Maybe$Just(
 			{
-				p: rest,
-				r: A2($elm$core$List$cons, zipper.s, zipper.r),
-				E: zipper.E,
-				s: next
+				o: rest,
+				q: A2($elm$core$List$cons, zipper.r, zipper.q),
+				D: zipper.D,
+				r: next
 			});
 	}
 };
@@ -7396,7 +7396,7 @@ var $zwilias$elm_rosetree$Tree$Zipper$reconstruct = F4(
 	});
 var $zwilias$elm_rosetree$Tree$Zipper$parent = function (_v0) {
 	var zipper = _v0;
-	var _v1 = zipper.E;
+	var _v1 = zipper.D;
 	if (!_v1.b) {
 		return $elm$core$Maybe$Nothing;
 	} else {
@@ -7404,10 +7404,10 @@ var $zwilias$elm_rosetree$Tree$Zipper$parent = function (_v0) {
 		var rest = _v1.b;
 		return $elm$core$Maybe$Just(
 			{
-				p: crumb.p,
-				r: crumb.r,
-				E: rest,
-				s: A4($zwilias$elm_rosetree$Tree$Zipper$reconstruct, zipper.s, zipper.r, zipper.p, crumb.fo)
+				o: crumb.o,
+				q: crumb.q,
+				D: rest,
+				r: A4($zwilias$elm_rosetree$Tree$Zipper$reconstruct, zipper.r, zipper.q, zipper.o, crumb.fo)
 			});
 	}
 };
@@ -7444,7 +7444,7 @@ var $zwilias$elm_rosetree$Tree$Zipper$findNext = F2(
 	});
 var $zwilias$elm_rosetree$Tree$Zipper$previousSibling = function (_v0) {
 	var zipper = _v0;
-	var _v1 = zipper.r;
+	var _v1 = zipper.q;
 	if (!_v1.b) {
 		return $elm$core$Maybe$Nothing;
 	} else {
@@ -7452,10 +7452,10 @@ var $zwilias$elm_rosetree$Tree$Zipper$previousSibling = function (_v0) {
 		var rest = _v1.b;
 		return $elm$core$Maybe$Just(
 			{
-				p: A2($elm$core$List$cons, zipper.s, zipper.p),
-				r: rest,
-				E: zipper.E,
-				s: previous
+				o: A2($elm$core$List$cons, zipper.r, zipper.o),
+				q: rest,
+				D: zipper.D,
+				r: previous
 			});
 	}
 };
@@ -7567,7 +7567,7 @@ var $zwilias$elm_rosetree$Tree$flatten = function (t) {
 	return A3($zwilias$elm_rosetree$Tree$foldr, $elm$core$List$cons, _List_Nil, t);
 };
 var $zwilias$elm_rosetree$Tree$Zipper$fromTree = function (t) {
-	return {p: _List_Nil, r: _List_Nil, E: _List_Nil, s: t};
+	return {o: _List_Nil, q: _List_Nil, D: _List_Nil, r: t};
 };
 var $elm_community$graph$Graph$isEmpty = function (graph) {
 	return _Utils_eq(graph, $elm_community$graph$Graph$empty);
@@ -7578,7 +7578,7 @@ var $zwilias$elm_rosetree$Tree$Zipper$mapTree = F2(
 		return _Utils_update(
 			zipper,
 			{
-				s: f(zipper.s)
+				r: f(zipper.r)
 			});
 	});
 var $elm$core$List$maximum = function (list) {
@@ -7632,12 +7632,12 @@ var $author$project$GossipGraph$Parser$adjacencyToString = F3(
 										return $.fo;
 									},
 									function ($) {
-										return $.cZ;
+										return $.cY;
 									}),
 								A2(
 									$author$project$Utils$List$find,
 									function (node) {
-										return _Utils_eq(node.fo.b2, id);
+										return _Utils_eq(node.fo.b1, id);
 									},
 									agents)))));
 			});
@@ -7647,7 +7647,7 @@ var $author$project$GossipGraph$Parser$adjacencyToString = F3(
 			A2(
 				$elm$core$List$map,
 				function (r) {
-					return _Utils_Tuple2(r.aW, r.d8);
+					return _Utils_Tuple2(r.aV, r.d8);
 				},
 				$author$project$GossipGraph$Relation$fromNodeContext(context)));
 		return A2(
@@ -7689,7 +7689,7 @@ var $elm$core$Basics$composeL = F3(
 var $zwilias$elm_rosetree$Tree$Zipper$toTree = A2($elm$core$Basics$composeL, $zwilias$elm_rosetree$Tree$Zipper$tree, $zwilias$elm_rosetree$Tree$Zipper$root);
 var $author$project$Main$executeCall = F2(
 	function (model, call) {
-		var _v0 = model.u;
+		var _v0 = model.t;
 		if (!_v0.$) {
 			var graph = _v0.a;
 			var highestIndex = A2(
@@ -7709,13 +7709,13 @@ var $author$project$Main$executeCall = F2(
 									return -1;
 							}
 						},
-						$zwilias$elm_rosetree$Tree$flatten(model.x))));
+						$zwilias$elm_rosetree$Tree$flatten(model.w))));
 			var newGraph = function (_v2) {
-				var callHistory = _v2.aB;
+				var callHistory = _v2.aA;
 				var state = _v2.eH;
 				var index = _v2.fl;
 				return {
-					aB: function (z) {
+					aA: function (z) {
 						return A2(
 							$elm$core$Maybe$withDefault,
 							callHistory,
@@ -7737,20 +7737,20 @@ var $author$project$Main$executeCall = F2(
 				};
 			}(
 				{
-					aB: A2(
+					aA: A2(
 						$elm$core$Maybe$withDefault,
-						$zwilias$elm_rosetree$Tree$Zipper$fromTree(model.x),
+						$zwilias$elm_rosetree$Tree$Zipper$fromTree(model.w),
 						A2(
 							$zwilias$elm_rosetree$Tree$Zipper$findFromRoot,
 							function (node) {
 								if (node.$ === 1) {
 									var index = node.a.fl;
-									return _Utils_eq(index, model.ai);
+									return _Utils_eq(index, model.ah);
 								} else {
 									return false;
 								}
 							},
-							$zwilias$elm_rosetree$Tree$Zipper$fromTree(model.x))),
+							$zwilias$elm_rosetree$Tree$Zipper$fromTree(model.w))),
 					fl: highestIndex,
 					eH: graph
 				});
@@ -7758,14 +7758,14 @@ var $author$project$Main$executeCall = F2(
 				_Utils_update(
 					model,
 					{
-						ap: $elm$core$Result$Ok(_List_Nil),
-						u: $elm$core$Result$Ok(newGraph.eH),
-						x: $zwilias$elm_rosetree$Tree$Zipper$toTree(newGraph.aB),
-						K: $elm_community$graph$Graph$isEmpty(model.K) ? A2($elm$core$Result$withDefault, $elm_community$graph$Graph$empty, model.u) : model.K,
-						ai: newGraph.fl,
-						aj: '',
-						ab: $author$project$GossipGraph$Parser$toString(newGraph.eH),
-						bE: $elm$core$Result$Ok(
+						ao: $elm$core$Result$Ok(_List_Nil),
+						t: $elm$core$Result$Ok(newGraph.eH),
+						w: $zwilias$elm_rosetree$Tree$Zipper$toTree(newGraph.aA),
+						J: $elm_community$graph$Graph$isEmpty(model.J) ? A2($elm$core$Result$withDefault, $elm_community$graph$Graph$empty, model.t) : model.J,
+						ah: newGraph.fl,
+						ai: '',
+						aa: $author$project$GossipGraph$Parser$toString(newGraph.eH),
+						bD: $elm$core$Result$Ok(
 							A3(
 								$elm_community$graph$Graph$fold,
 								F2(
@@ -7783,7 +7783,7 @@ var $author$project$Main$executeCall = F2(
 		}
 	});
 var $author$project$Main$executeCallSequence = function (model) {
-	var _v0 = _Utils_Tuple2(model.u, model.ap);
+	var _v0 = _Utils_Tuple2(model.t, model.ao);
 	if ((!_v0.a.$) && (!_v0.b.$)) {
 		var graph = _v0.a.a;
 		var sequence = _v0.b.a;
@@ -7804,16 +7804,16 @@ var $author$project$Main$executeCallSequence = function (model) {
 								return -1;
 						}
 					},
-					$zwilias$elm_rosetree$Tree$flatten(model.x))));
+					$zwilias$elm_rosetree$Tree$flatten(model.w))));
 		var newGraph = A3(
 			$elm$core$List$foldr,
 			F2(
 				function (call, _v1) {
-					var callHistory = _v1.aB;
+					var callHistory = _v1.aA;
 					var state = _v1.eH;
 					var index = _v1.fl;
 					return {
-						aB: function (z) {
+						aA: function (z) {
 							return A2(
 								$elm$core$Maybe$withDefault,
 								callHistory,
@@ -7835,20 +7835,20 @@ var $author$project$Main$executeCallSequence = function (model) {
 					};
 				}),
 			{
-				aB: A2(
+				aA: A2(
 					$elm$core$Maybe$withDefault,
-					$zwilias$elm_rosetree$Tree$Zipper$fromTree(model.x),
+					$zwilias$elm_rosetree$Tree$Zipper$fromTree(model.w),
 					A2(
 						$zwilias$elm_rosetree$Tree$Zipper$findFromRoot,
 						function (node) {
 							if (node.$ === 1) {
 								var index = node.a.fl;
-								return _Utils_eq(index, model.ai);
+								return _Utils_eq(index, model.ah);
 							} else {
 								return false;
 							}
 						},
-						$zwilias$elm_rosetree$Tree$Zipper$fromTree(model.x))),
+						$zwilias$elm_rosetree$Tree$Zipper$fromTree(model.w))),
 				fl: highestIndex,
 				eH: graph
 			},
@@ -7857,14 +7857,14 @@ var $author$project$Main$executeCallSequence = function (model) {
 			_Utils_update(
 				model,
 				{
-					ap: $elm$core$Result$Ok(_List_Nil),
-					u: $elm$core$Result$Ok(newGraph.eH),
-					x: $zwilias$elm_rosetree$Tree$Zipper$toTree(newGraph.aB),
-					K: $elm_community$graph$Graph$isEmpty(model.K) ? A2($elm$core$Result$withDefault, $elm_community$graph$Graph$empty, model.u) : model.K,
-					ai: newGraph.fl,
-					aj: '',
-					ab: $author$project$GossipGraph$Parser$toString(newGraph.eH),
-					bE: $elm$core$Result$Ok(
+					ao: $elm$core$Result$Ok(_List_Nil),
+					t: $elm$core$Result$Ok(newGraph.eH),
+					w: $zwilias$elm_rosetree$Tree$Zipper$toTree(newGraph.aA),
+					J: $elm_community$graph$Graph$isEmpty(model.J) ? A2($elm$core$Result$withDefault, $elm_community$graph$Graph$empty, model.t) : model.J,
+					ah: newGraph.fl,
+					ai: '',
+					aa: $author$project$GossipGraph$Parser$toString(newGraph.eH),
+					bD: $elm$core$Result$Ok(
 						A3(
 							$elm_community$graph$Graph$fold,
 							F2(
@@ -7895,7 +7895,7 @@ var $elm$core$Array$fromListHelp = F3(
 				return A2(
 					$elm$core$Array$builderToArray,
 					true,
-					{C: nodeList, v: nodeListSize, y: jsArray});
+					{B: nodeList, u: nodeListSize, x: jsArray});
 			} else {
 				var $temp$list = remainingItems,
 					$temp$nodeList = A2(
@@ -7929,7 +7929,7 @@ var $zwilias$elm_rosetree$Tree$mapChildren = F2(
 var $author$project$GossipGraph$Call$fromTuple = function (_v0) {
 	var x = _v0.a;
 	var y = _v0.b;
-	return {aq: x, aW: y};
+	return {ap: x, aV: y};
 };
 var $author$project$GossipProtocol$GossipProtocol$selectCalls = F3(
 	function (graph, condition, sequence) {
@@ -7938,15 +7938,15 @@ var $author$project$GossipProtocol$GossipProtocol$selectCalls = F3(
 				var localRelations = A2(
 					$elm$core$List$filter,
 					function (_v0) {
-						var from = _v0.aq;
-						var to = _v0.aW;
+						var from = _v0.ap;
+						var to = _v0.aV;
 						return !_Utils_eq(from, to);
 					},
 					$author$project$GossipGraph$Relation$fromNodeContext(context));
 				var relationPairs = A2(
 					$elm$core$List$map,
 					function (r) {
-						return _Utils_Tuple2(r.aq, r.aW);
+						return _Utils_Tuple2(r.ap, r.aV);
 					},
 					localRelations);
 				return _Utils_ap(
@@ -8030,25 +8030,25 @@ var $author$project$GossipProtocol$GossipProtocol$generateExecutionTree = F6(
 			nextState) : nextState;
 	});
 var $author$project$Main$generateExecutionTree = function (model) {
-	var initialGraph = $elm_community$graph$Graph$isEmpty(model.K) ? A2($elm$core$Result$withDefault, $elm_community$graph$Graph$empty, model.u) : model.K;
+	var initialGraph = $elm_community$graph$Graph$isEmpty(model.J) ? A2($elm$core$Result$withDefault, $elm_community$graph$Graph$empty, model.t) : model.J;
 	return _Utils_Tuple2(
 		_Utils_update(
 			model,
 			{
-				x: A6(
+				w: A6(
 					$author$project$GossipProtocol$GossipProtocol$generateExecutionTree,
 					1,
 					initialGraph,
-					model.aU,
+					model.aT,
 					_List_Nil,
-					model.bv,
+					model.bu,
 					$zwilias$elm_rosetree$Tree$singleton($author$project$GossipProtocol$GossipProtocol$Root)),
-				K: initialGraph,
-				V: function (md) {
+				J: initialGraph,
+				U: function (md) {
 					return _Utils_update(
 						md,
-						{bl: false});
-				}(model.V)
+						{bk: false});
+				}(model.U)
 			}),
 		$elm$core$Platform$Cmd$none);
 };
@@ -8056,7 +8056,7 @@ var $author$project$Main$timeTravel = F2(
 	function (to, model) {
 		var targetNode = (!to) ? $elm$core$Maybe$Just(
 			$zwilias$elm_rosetree$Tree$Zipper$root(
-				$zwilias$elm_rosetree$Tree$Zipper$fromTree(model.x))) : A2(
+				$zwilias$elm_rosetree$Tree$Zipper$fromTree(model.w))) : A2(
 			$zwilias$elm_rosetree$Tree$Zipper$findFromRoot,
 			function (zip) {
 				if (zip.$ === 1) {
@@ -8066,7 +8066,7 @@ var $author$project$Main$timeTravel = F2(
 					return false;
 				}
 			},
-			$zwilias$elm_rosetree$Tree$Zipper$fromTree(model.x));
+			$zwilias$elm_rosetree$Tree$Zipper$fromTree(model.w));
 		if (!targetNode.$) {
 			var zip = targetNode.a;
 			var node = $zwilias$elm_rosetree$Tree$Zipper$label(zip);
@@ -8077,9 +8077,9 @@ var $author$project$Main$timeTravel = F2(
 						_Utils_update(
 							model,
 							{
-								u: $elm$core$Result$Ok(n.eH),
-								ai: to,
-								ab: $author$project$GossipGraph$Parser$toString(n.eH)
+								t: $elm$core$Result$Ok(n.eH),
+								ah: to,
+								aa: $author$project$GossipGraph$Parser$toString(n.eH)
 							}),
 						$elm$core$Platform$Cmd$none);
 				case 0:
@@ -8087,9 +8087,9 @@ var $author$project$Main$timeTravel = F2(
 						_Utils_update(
 							model,
 							{
-								u: $elm$core$Result$Ok(model.K),
-								ai: to,
-								ab: $author$project$GossipGraph$Parser$toString(model.K)
+								t: $elm$core$Result$Ok(model.J),
+								ah: to,
+								aa: $author$project$GossipGraph$Parser$toString(model.J)
 							}),
 						$elm$core$Platform$Cmd$none);
 				default:
@@ -8108,11 +8108,11 @@ var $author$project$Main$insertExampleGraph = F2(
 				_Utils_update(
 					mo,
 					{
-						V: function (md) {
+						U: function (md) {
 							return _Utils_update(
 								md,
-								{bl: false});
-						}(mo.V)
+								{bk: false});
+						}(mo.U)
 					}),
 				me);
 		}(
@@ -8149,11 +8149,11 @@ var $author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{
-							V: function (md) {
+							U: function (md) {
 								return _Utils_update(
 									md,
-									{bl: false});
-							}(model.V)
+									{bk: false});
+							}(model.U)
 						}),
 					$elm$core$Platform$Cmd$none);
 			case 7:
@@ -8163,7 +8163,7 @@ var $author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{
-							V: {cs: content, ce: title, bl: true}
+							U: {cr: content, cd: title, bk: true}
 						}),
 					$elm$core$Platform$Cmd$none);
 			case 9:
@@ -8172,7 +8172,7 @@ var $author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{
-							bv: A3(
+							bu: A3(
 								$elm$core$Basics$clamp,
 								0,
 								5,
@@ -8197,7 +8197,7 @@ var $author$project$Main$ShowModal = F2(
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $lattyware$elm_fontawesome$FontAwesome$Icon$Icon = F5(
 	function (prefix, name, width, height, paths) {
-		return {dZ: height, cZ: name, fA: paths, i: prefix, eT: width};
+		return {dY: height, cY: name, fA: paths, i: prefix, eT: width};
 	});
 var $lattyware$elm_fontawesome$FontAwesome$Solid$check = A5(
 	$lattyware$elm_fontawesome$FontAwesome$Icon$Icon,
@@ -8223,7 +8223,7 @@ var $lattyware$elm_fontawesome$FontAwesome$Solid$times = A5(
 		['M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z']));
 var $lattyware$elm_fontawesome$FontAwesome$Icon$Presentation = $elm$core$Basics$identity;
 var $lattyware$elm_fontawesome$FontAwesome$Icon$present = function (icon) {
-	return {bV: _List_Nil, d1: icon, b2: $elm$core$Maybe$Nothing, bC: $elm$core$Maybe$Nothing, dj: 'img', ce: $elm$core$Maybe$Nothing, ch: _List_Nil};
+	return {bU: _List_Nil, d0: icon, b1: $elm$core$Maybe$Nothing, bB: $elm$core$Maybe$Nothing, di: 'img', cd: $elm$core$Maybe$Nothing, cg: _List_Nil};
 };
 var $lattyware$elm_fontawesome$FontAwesome$Icon$styled = F2(
 	function (attributes, _v0) {
@@ -8231,7 +8231,7 @@ var $lattyware$elm_fontawesome$FontAwesome$Icon$styled = F2(
 		return _Utils_update(
 			presentation,
 			{
-				bV: _Utils_ap(presentation.bV, attributes)
+				bU: _Utils_ap(presentation.bU, attributes)
 			});
 	});
 var $elm$virtual_dom$VirtualDom$attribute = F2(
@@ -8259,7 +8259,7 @@ var $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$add = F2(
 				}();
 				return _Utils_update(
 					combined,
-					{dm: combined.dm + amount});
+					{dl: combined.dl + amount});
 			case 1:
 				var direction = transform.a;
 				var _v2 = function () {
@@ -8282,7 +8282,7 @@ var $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$add = F2(
 				var y = _v2.b;
 				return _Utils_update(
 					combined,
-					{Z: combined.Z + x, _: combined._ + y});
+					{Y: combined.Y + x, Z: combined.Z + y});
 			case 2:
 				var rotation = transform.a;
 				return _Utils_update(
@@ -8303,7 +8303,7 @@ var $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$add = F2(
 		}
 	});
 var $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$baseSize = 16;
-var $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$meaninglessTransform = {ff: false, fg: false, fF: 0, dm: $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$baseSize, Z: 0, _: 0};
+var $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$meaninglessTransform = {ff: false, fg: false, fF: 0, dl: $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$baseSize, Y: 0, Z: 0};
 var $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$combine = function (transforms) {
 	return A3($elm$core$List$foldl, $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$add, $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$meaninglessTransform, transforms);
 };
@@ -8338,19 +8338,19 @@ var $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$transformForSvg =
 	function (containerWidth, iconWidth, transform) {
 		var path = 'translate(' + ($elm$core$String$fromFloat((iconWidth / 2) * (-1)) + ' -256)');
 		var outer = 'translate(' + ($elm$core$String$fromFloat(containerWidth / 2) + ' 256)');
-		var innerTranslate = 'translate(' + ($elm$core$String$fromFloat(transform.Z * 32) + (',' + ($elm$core$String$fromFloat(transform._ * 32) + ') ')));
+		var innerTranslate = 'translate(' + ($elm$core$String$fromFloat(transform.Y * 32) + (',' + ($elm$core$String$fromFloat(transform.Z * 32) + ') ')));
 		var innerRotate = 'rotate(' + ($elm$core$String$fromFloat(transform.fF) + ' 0 0)');
 		var flipY = transform.fg ? (-1) : 1;
-		var scaleY = (transform.dm / $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$baseSize) * flipY;
+		var scaleY = (transform.dl / $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$baseSize) * flipY;
 		var flipX = transform.ff ? (-1) : 1;
-		var scaleX = (transform.dm / $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$baseSize) * flipX;
+		var scaleX = (transform.dl / $lattyware$elm_fontawesome$FontAwesome$Transforms$Internal$baseSize) * flipX;
 		var innerScale = 'scale(' + ($elm$core$String$fromFloat(scaleX) + (', ' + ($elm$core$String$fromFloat(scaleY) + ') ')));
 		return {
 			d2: $elm$svg$Svg$Attributes$transform(
 				_Utils_ap(
 					innerTranslate,
 					_Utils_ap(innerScale, innerRotate))),
-			bC: $elm$svg$Svg$Attributes$transform(outer),
+			bB: $elm$svg$Svg$Attributes$transform(outer),
 			eo: $elm$svg$Svg$Attributes$transform(path)
 		};
 	});
@@ -8447,7 +8447,7 @@ var $lattyware$elm_fontawesome$FontAwesome$Icon$viewMaskedWithTransform = F4(
 						]),
 					inner)
 				]));
-		var maskId = 'mask-' + (inner.cZ + ('-' + id));
+		var maskId = 'mask-' + (inner.cY + ('-' + id));
 		var maskTag = A2(
 			$elm$svg$Svg$mask,
 			_Utils_ap(
@@ -8470,11 +8470,11 @@ var $lattyware$elm_fontawesome$FontAwesome$Icon$viewMaskedWithTransform = F4(
 					A2(
 					$elm$svg$Svg$g,
 					_List_fromArray(
-						[transforms.bC]),
+						[transforms.bB]),
 					_List_fromArray(
 						[maskInnerGroup]))
 				]));
-		var clipId = 'clip-' + (outer.cZ + ('-' + id));
+		var clipId = 'clip-' + (outer.cY + ('-' + id));
 		var defs = A2(
 			$elm$svg$Svg$defs,
 			_List_Nil,
@@ -8518,7 +8518,7 @@ var $lattyware$elm_fontawesome$FontAwesome$Icon$viewWithTransform = F2(
 			return A2(
 				$elm$svg$Svg$g,
 				_List_fromArray(
-					[ts.bC]),
+					[ts.bB]),
 				_List_fromArray(
 					[
 						A2(
@@ -8539,14 +8539,14 @@ var $lattyware$elm_fontawesome$FontAwesome$Icon$viewWithTransform = F2(
 		}
 	});
 var $lattyware$elm_fontawesome$FontAwesome$Icon$internalView = function (_v0) {
-	var icon = _v0.d1;
-	var attributes = _v0.bV;
-	var transforms = _v0.ch;
-	var role = _v0.dj;
-	var id = _v0.b2;
-	var title = _v0.ce;
-	var outer = _v0.bC;
-	var alwaysId = A2($elm$core$Maybe$withDefault, icon.cZ, id);
+	var icon = _v0.d0;
+	var attributes = _v0.bU;
+	var transforms = _v0.cg;
+	var role = _v0.di;
+	var id = _v0.b1;
+	var title = _v0.cd;
+	var outer = _v0.bB;
+	var alwaysId = A2($elm$core$Maybe$withDefault, icon.cY, id);
 	var titleId = alwaysId + '-title';
 	var semantics = A2(
 		$elm$core$Maybe$withDefault,
@@ -8558,11 +8558,11 @@ var $lattyware$elm_fontawesome$FontAwesome$Icon$internalView = function (_v0) {
 			title));
 	var _v1 = A2(
 		$elm$core$Maybe$withDefault,
-		_Utils_Tuple2(icon.eT, icon.dZ),
+		_Utils_Tuple2(icon.eT, icon.dY),
 		A2(
 			$elm$core$Maybe$map,
 			function (o) {
-				return _Utils_Tuple2(o.eT, o.dZ);
+				return _Utils_Tuple2(o.eT, o.dY);
 			},
 			outer));
 	var width = _v1.a;
@@ -8570,7 +8570,7 @@ var $lattyware$elm_fontawesome$FontAwesome$Icon$internalView = function (_v0) {
 	var classes = _List_fromArray(
 		[
 			'svg-inline--fa',
-			'fa-' + icon.cZ,
+			'fa-' + icon.cY,
 			'fa-w-' + $elm$core$String$fromInt(
 			$elm$core$Basics$ceiling((width / height) * 16))
 		]);
@@ -8905,15 +8905,15 @@ var $author$project$GossipGraph$Agent$fromId = F2(
 			A2(
 				$author$project$Utils$List$find,
 				function (agent) {
-					return _Utils_eq(agent.b2, id);
+					return _Utils_eq(agent.b1, id);
 				},
 				agents));
 	});
 var $author$project$GossipGraph$Call$render = F2(
 	function (agents, call) {
 		var _v0 = _Utils_Tuple2(
-			A2($author$project$GossipGraph$Agent$fromId, agents, call.aq),
-			A2($author$project$GossipGraph$Agent$fromId, agents, call.aW));
+			A2($author$project$GossipGraph$Agent$fromId, agents, call.ap),
+			A2($author$project$GossipGraph$Agent$fromId, agents, call.aV));
 		if ((!_v0.a.$) && (!_v0.b.$)) {
 			var from = _v0.a.a;
 			var to = _v0.b.a;
@@ -8926,7 +8926,7 @@ var $author$project$GossipGraph$Call$render = F2(
 				_List_fromArray(
 					[
 						$elm$html$Html$text(
-						$elm$core$String$fromChar(from.cZ) + (' 📞 ' + $elm$core$String$fromChar(to.cZ)))
+						$elm$core$String$fromChar(from.cY) + (' 📞 ' + $elm$core$String$fromChar(to.cY)))
 					]));
 		} else {
 			return A2(
@@ -9084,8 +9084,8 @@ var $author$project$GossipProtocol$GossipProtocol$sequencePermittedOn = F3(
 		};
 		var isCallPermitted = F3(
 			function (_v2, currentGraph, callHistory) {
-				var from = _v2.aq;
-				var to = _v2.aW;
+				var from = _v2.ap;
+				var to = _v2.aV;
 				var rels = relations(currentGraph);
 				return (!_Utils_eq(from, to)) && (A2(
 					$elm$core$List$any,
@@ -9122,11 +9122,11 @@ var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
 var $author$project$Main$callSequenceView = function (model) {
 	var permitted = function () {
-		var _v0 = _Utils_Tuple2(model.u, model.ap);
+		var _v0 = _Utils_Tuple2(model.t, model.ao);
 		if ((!_v0.a.$) && (!_v0.b.$)) {
 			var graph = _v0.a.a;
 			var sequence = _v0.b.a;
-			return A3($author$project$GossipProtocol$GossipProtocol$sequencePermittedOn, model.aU, graph, sequence);
+			return A3($author$project$GossipProtocol$GossipProtocol$sequencePermittedOn, model.aT, graph, sequence);
 		} else {
 			return false;
 		}
@@ -9168,13 +9168,13 @@ var $author$project$Main$callSequenceView = function (model) {
 								$elm$html$Html$Attributes$type_('text'),
 								$elm$html$Html$Attributes$id('call-sequence-input'),
 								$elm$html$Html$Attributes$class(
-								(permitted && (!$elm$core$String$isEmpty(model.aj))) ? 'permitted' : ($elm$core$String$isEmpty(model.aj) ? '' : 'not-permitted')),
-								$elm$html$Html$Attributes$value(model.aj),
+								(permitted && (!$elm$core$String$isEmpty(model.ai))) ? 'permitted' : ($elm$core$String$isEmpty(model.ai) ? '' : 'not-permitted')),
+								$elm$html$Html$Attributes$value(model.ai),
 								$elm$html$Html$Events$onInput($author$project$Main$ChangeCallSequence),
 								$elm$html$Html$Attributes$placeholder('Call sequence input')
 							]),
 						_List_Nil),
-						$elm$core$String$isEmpty(model.aj) ? A2(
+						$elm$core$String$isEmpty(model.ai) ? A2(
 						$elm$html$Html$button,
 						_List_fromArray(
 							[
@@ -9200,7 +9200,7 @@ var $author$project$Main$callSequenceView = function (model) {
 										A2(
 											$elm$core$Maybe$withDefault,
 											'?',
-											A2($elm$core$Dict$get, model.at, $author$project$GossipProtocol$Conditions$Predefined$name)),
+											A2($elm$core$Dict$get, model.as, $author$project$GossipProtocol$Conditions$Predefined$name)),
 										permitted)))
 							]),
 						_List_fromArray(
@@ -9227,7 +9227,7 @@ var $author$project$Main$callSequenceView = function (model) {
 										A2(
 											$elm$core$Maybe$withDefault,
 											'?',
-											A2($elm$core$Dict$get, model.at, $author$project$GossipProtocol$Conditions$Predefined$name)),
+											A2($elm$core$Dict$get, model.as, $author$project$GossipProtocol$Conditions$Predefined$name)),
 										permitted)))
 							]),
 						_List_fromArray(
@@ -9261,7 +9261,7 @@ var $author$project$Main$callSequenceView = function (model) {
 					[
 						$elm$html$Html$Attributes$class('call-list')
 					]),
-				A2($author$project$CallSequence$Renderer$render, model.ap, model.aM))
+				A2($author$project$CallSequence$Renderer$render, model.ao, model.aL))
 			]));
 };
 var $author$project$Utils$Alert$Information = 0;
@@ -9339,12 +9339,182 @@ var $lattyware$elm_fontawesome$FontAwesome$Solid$feather = A5(
 	512,
 	_List_fromArray(
 		['M467.14 44.84c-62.55-62.48-161.67-64.78-252.28 25.73-78.61 78.52-60.98 60.92-85.75 85.66-60.46 60.39-70.39 150.83-63.64 211.17l178.44-178.25c6.26-6.25 16.4-6.25 22.65 0s6.25 16.38 0 22.63L7.04 471.03c-9.38 9.37-9.38 24.57 0 33.94 9.38 9.37 24.6 9.37 33.98 0l66.1-66.03C159.42 454.65 279 457.11 353.95 384h-98.19l147.57-49.14c49.99-49.93 36.38-36.18 46.31-46.86h-97.78l131.54-43.8c45.44-74.46 34.31-148.84-16.26-199.36z']));
-var $elm$core$List$all = F2(
-	function (isOkay, list) {
-		return !A2(
-			$elm$core$List$any,
-			A2($elm$core$Basics$composeL, $elm$core$Basics$not, isOkay),
-			list);
+var $author$project$GossipGraph$Relation$isOfKind = F2(
+	function (relation, kind) {
+		return _Utils_eq(relation.d8, kind) || ((relation.d8 === 1) && (!kind));
+	});
+var $elm_community$graph$Graph$insert = F2(
+	function (nodeContext, graph) {
+		return A3(
+			$elm_community$graph$Graph$update,
+			nodeContext.ej.b1,
+			$elm$core$Basics$always(
+				$elm$core$Maybe$Just(nodeContext)),
+			graph);
+	});
+var $elm_community$graph$Graph$mapContexts = function (f) {
+	return A2(
+		$elm_community$graph$Graph$fold,
+		function (ctx) {
+			return $elm_community$graph$Graph$insert(
+				f(ctx));
+		},
+		$elm_community$graph$Graph$empty);
+};
+var $elm_community$graph$Graph$AcyclicGraph = F2(
+	function (a, b) {
+		return {$: 0, a: a, b: b};
+	});
+var $elm_community$graph$Graph$Edge = F3(
+	function (from, to, label) {
+		return {ap: from, fo: label, aV: to};
+	});
+var $elm_community$intdict$IntDict$intersect = F2(
+	function (l, r) {
+		intersect:
+		while (true) {
+			var _v0 = _Utils_Tuple2(l, r);
+			_v0$1:
+			while (true) {
+				_v0$2:
+				while (true) {
+					switch (_v0.a.$) {
+						case 0:
+							var _v1 = _v0.a;
+							return $elm_community$intdict$IntDict$Empty;
+						case 1:
+							switch (_v0.b.$) {
+								case 0:
+									break _v0$1;
+								case 1:
+									break _v0$2;
+								default:
+									break _v0$2;
+							}
+						default:
+							switch (_v0.b.$) {
+								case 0:
+									break _v0$1;
+								case 1:
+									var lr = _v0.b.a;
+									var _v3 = A2($elm_community$intdict$IntDict$get, lr.d7, l);
+									if (!_v3.$) {
+										var v = _v3.a;
+										return A2($elm_community$intdict$IntDict$leaf, lr.d7, v);
+									} else {
+										return $elm_community$intdict$IntDict$Empty;
+									}
+								default:
+									var il = _v0.a.a;
+									var ir = _v0.b.a;
+									var _v4 = A2($elm_community$intdict$IntDict$determineBranchRelation, il, ir);
+									switch (_v4.$) {
+										case 0:
+											return A3(
+												$elm_community$intdict$IntDict$inner,
+												il.i,
+												A2($elm_community$intdict$IntDict$intersect, il.d, ir.d),
+												A2($elm_community$intdict$IntDict$intersect, il.e, ir.e));
+										case 1:
+											if (!_v4.a) {
+												if (_v4.b === 1) {
+													var _v5 = _v4.a;
+													var _v6 = _v4.b;
+													var $temp$l = il.e,
+														$temp$r = r;
+													l = $temp$l;
+													r = $temp$r;
+													continue intersect;
+												} else {
+													var _v9 = _v4.a;
+													var _v10 = _v4.b;
+													var $temp$l = il.d,
+														$temp$r = r;
+													l = $temp$l;
+													r = $temp$r;
+													continue intersect;
+												}
+											} else {
+												if (_v4.b === 1) {
+													var _v7 = _v4.a;
+													var _v8 = _v4.b;
+													var $temp$l = l,
+														$temp$r = ir.e;
+													l = $temp$l;
+													r = $temp$r;
+													continue intersect;
+												} else {
+													var _v11 = _v4.a;
+													var _v12 = _v4.b;
+													var $temp$l = l,
+														$temp$r = ir.d;
+													l = $temp$l;
+													r = $temp$r;
+													continue intersect;
+												}
+											}
+										default:
+											return $elm_community$intdict$IntDict$Empty;
+									}
+							}
+					}
+				}
+				var ll = _v0.a.a;
+				return A2($elm_community$intdict$IntDict$member, ll.d7, r) ? l : $elm_community$intdict$IntDict$Empty;
+			}
+			var _v2 = _v0.b;
+			return $elm_community$intdict$IntDict$Empty;
+		}
+	});
+var $elm_community$graph$Graph$unsafeGet = F3(
+	function (msg, id, graph) {
+		var _v0 = A2($elm_community$graph$Graph$get, id, graph);
+		if (_v0.$ === 1) {
+			return $elm_community$graph$Graph$crashHack(msg);
+		} else {
+			var ctx = _v0.a;
+			return ctx;
+		}
+	});
+var $elm_community$graph$Graph$checkForBackEdges = F2(
+	function (ordering, graph) {
+		var success = function (_v3) {
+			return A2($elm_community$graph$Graph$AcyclicGraph, graph, ordering);
+		};
+		var check = F2(
+			function (id, _v2) {
+				var backSet = _v2.a;
+				var error = 'Graph.checkForBackEdges: `ordering` didn\'t contain `id`';
+				var ctx = A3($elm_community$graph$Graph$unsafeGet, error, id, graph);
+				var backSetWithId = A3($elm_community$intdict$IntDict$insert, id, 0, backSet);
+				var backEdges = A2($elm_community$intdict$IntDict$intersect, ctx.c2, backSetWithId);
+				var _v0 = $elm_community$intdict$IntDict$findMin(backEdges);
+				if (_v0.$ === 1) {
+					return $elm$core$Result$Ok(
+						_Utils_Tuple2(backSetWithId, 0));
+				} else {
+					var _v1 = _v0.a;
+					var to = _v1.a;
+					var label = _v1.b;
+					return $elm$core$Result$Err(
+						A3($elm_community$graph$Graph$Edge, id, to, label));
+				}
+			});
+		return A2(
+			$elm$core$Result$map,
+			success,
+			A3(
+				$elm$core$List$foldl,
+				F2(
+					function (id, res) {
+						return A2(
+							$elm$core$Result$andThen,
+							check(id),
+							res);
+					}),
+				$elm$core$Result$Ok(
+					_Utils_Tuple2($elm_community$intdict$IntDict$empty, 0)),
+				ordering));
 	});
 var $elm_community$intdict$IntDict$keys = function (dict) {
 	return A3(
@@ -9357,7 +9527,7 @@ var $elm_community$intdict$IntDict$keys = function (dict) {
 		dict);
 };
 var $elm_community$graph$Graph$alongOutgoingEdges = function (ctx) {
-	return $elm_community$intdict$IntDict$keys(ctx.c3);
+	return $elm_community$intdict$IntDict$keys(ctx.c2);
 };
 var $elm_community$graph$Graph$guidedDfs = F5(
 	function (selectNeighbors, visitNode, startingSeeds, startingAcc, startingGraph) {
@@ -9405,25 +9575,116 @@ var $elm_community$graph$Graph$guidedDfs = F5(
 			});
 		return A3(go, startingSeeds, startingAcc, startingGraph);
 	});
-var $author$project$GossipGraph$Relation$isOfKind = F2(
-	function (relation, kind) {
-		return _Utils_eq(relation.d8, kind) || ((relation.d8 === 1) && (!kind));
+var $elm_community$graph$Graph$nodeIds = A2($elm$core$Basics$composeR, $elm_community$graph$Graph$unGraph, $elm_community$intdict$IntDict$keys);
+var $elm_community$graph$Graph$dfs = F3(
+	function (visitNode, acc, graph) {
+		return A5(
+			$elm_community$graph$Graph$guidedDfs,
+			$elm_community$graph$Graph$alongOutgoingEdges,
+			visitNode,
+			$elm_community$graph$Graph$nodeIds(graph),
+			acc,
+			graph).a;
 	});
-var $elm$core$Dict$member = F2(
-	function (key, dict) {
-		var _v0 = A2($elm$core$Dict$get, key, dict);
-		if (!_v0.$) {
-			return true;
+var $elm_community$graph$Graph$Tree$MkTree = F2(
+	function (a, b) {
+		return {$: 0, a: a, b: b};
+	});
+var $elm_community$graph$Graph$Tree$empty = A2($elm_community$graph$Graph$Tree$MkTree, 0, $elm$core$Maybe$Nothing);
+var $elm_community$graph$Graph$Tree$isEmpty = function (tree) {
+	return _Utils_eq(tree, $elm_community$graph$Graph$Tree$empty);
+};
+var $elm_community$graph$Graph$Tree$size = function (tree) {
+	var n = tree.a;
+	return n;
+};
+var $elm_community$graph$Graph$Tree$inner = F2(
+	function (label, children) {
+		var nonEmptyChildren = A2(
+			$elm$core$List$filter,
+			A2($elm$core$Basics$composeL, $elm$core$Basics$not, $elm_community$graph$Graph$Tree$isEmpty),
+			children);
+		var totalSize = A3(
+			$elm$core$List$foldl,
+			A2($elm$core$Basics$composeL, $elm$core$Basics$add, $elm_community$graph$Graph$Tree$size),
+			1,
+			nonEmptyChildren);
+		return A2(
+			$elm_community$graph$Graph$Tree$MkTree,
+			totalSize,
+			$elm$core$Maybe$Just(
+				_Utils_Tuple2(label, nonEmptyChildren)));
+	});
+var $elm_community$graph$Graph$dfsForest = F2(
+	function (seeds, graph) {
+		var visitNode = F2(
+			function (ctx, trees) {
+				return _Utils_Tuple2(
+					_List_Nil,
+					function (children) {
+						return A2(
+							$elm$core$List$cons,
+							A2($elm_community$graph$Graph$Tree$inner, ctx, children),
+							trees);
+					});
+			});
+		return $elm$core$List$reverse(
+			A5($elm_community$graph$Graph$guidedDfs, $elm_community$graph$Graph$alongOutgoingEdges, visitNode, seeds, _List_Nil, graph).a);
+	});
+var $elm$core$Result$mapError = F2(
+	function (f, result) {
+		if (!result.$) {
+			var v = result.a;
+			return $elm$core$Result$Ok(v);
 		} else {
-			return false;
+			var e = result.a;
+			return $elm$core$Result$Err(
+				f(e));
 		}
 	});
-var $elm$core$Set$member = F2(
-	function (key, _v0) {
-		var dict = _v0;
-		return A2($elm$core$Dict$member, key, dict);
+var $elm_community$graph$Graph$onFinish = F3(
+	function (visitor, ctx, acc) {
+		return _Utils_Tuple2(
+			acc,
+			visitor(ctx));
 	});
-var $elm_community$graph$Graph$nodeIds = A2($elm$core$Basics$composeR, $elm_community$graph$Graph$unGraph, $elm_community$intdict$IntDict$keys);
+var $elm_community$graph$Graph$Tree$listForTraversal = F2(
+	function (traversal, tree) {
+		var f = F3(
+			function (label, children, rest) {
+				return A2(
+					$elm$core$Basics$composeR,
+					$elm$core$List$cons(label),
+					rest);
+			});
+		var acc = $elm$core$Basics$identity;
+		return A4(traversal, f, acc, tree, _List_Nil);
+	});
+var $elm_community$graph$Graph$Tree$root = function (tree) {
+	var maybe = tree.b;
+	return maybe;
+};
+var $elm_community$graph$Graph$Tree$preOrder = F3(
+	function (visit, acc, tree) {
+		var folder = F2(
+			function (b, a) {
+				return A3($elm_community$graph$Graph$Tree$preOrder, visit, a, b);
+			});
+		var _v0 = $elm_community$graph$Graph$Tree$root(tree);
+		if (_v0.$ === 1) {
+			return acc;
+		} else {
+			var _v1 = _v0.a;
+			var label = _v1.a;
+			var children = _v1.b;
+			return A3(
+				$elm$core$List$foldl,
+				folder,
+				A3(visit, label, children, acc),
+				children);
+		}
+	});
+var $elm_community$graph$Graph$Tree$preOrderList = $elm_community$graph$Graph$Tree$listForTraversal($elm_community$graph$Graph$Tree$preOrder);
 var $elm_community$intdict$IntDict$map = F2(
 	function (f, dict) {
 		switch (dict.$) {
@@ -9449,7 +9710,7 @@ var $elm_community$graph$Graph$reverseEdges = function () {
 		function (nodeId, ctx) {
 			return _Utils_update(
 				ctx,
-				{m: ctx.c3, c3: ctx.m});
+				{d1: ctx.c2, c2: ctx.d1});
 		});
 	return A2(
 		$elm$core$Basics$composeR,
@@ -9459,123 +9720,94 @@ var $elm_community$graph$Graph$reverseEdges = function () {
 			$elm_community$intdict$IntDict$map(updateContext),
 			$elm$core$Basics$identity));
 }();
-var $elm_community$intdict$IntDict$toList = function (dict) {
-	return A3(
-		$elm_community$intdict$IntDict$foldr,
-		F3(
-			function (key, value, list) {
-				return A2(
-					$elm$core$List$cons,
-					_Utils_Tuple2(key, value),
-					list);
-			}),
+var $elm_community$graph$Graph$stronglyConnectedComponents = function (graph) {
+	var reversePostOrder = A3(
+		$elm_community$graph$Graph$dfs,
+		$elm_community$graph$Graph$onFinish(
+			A2(
+				$elm$core$Basics$composeR,
+				function ($) {
+					return $.ej;
+				},
+				A2(
+					$elm$core$Basics$composeR,
+					function ($) {
+						return $.b1;
+					},
+					$elm$core$List$cons))),
 		_List_Nil,
-		dict);
+		graph);
+	return A2(
+		$elm$core$Result$mapError,
+		function (_v0) {
+			var forest = A2(
+				$elm_community$graph$Graph$dfsForest,
+				reversePostOrder,
+				$elm_community$graph$Graph$reverseEdges(graph));
+			return A2(
+				$elm$core$List$map,
+				A2(
+					$elm$core$Basics$composeR,
+					$elm_community$graph$Graph$Tree$preOrderList,
+					A2(
+						$elm$core$Basics$composeR,
+						A2($elm$core$List$foldr, $elm_community$graph$Graph$insert, $elm_community$graph$Graph$empty),
+						$elm_community$graph$Graph$reverseEdges)),
+				forest);
+		},
+		A2($elm_community$graph$Graph$checkForBackEdges, reversePostOrder, graph));
 };
-var $elm$core$Dict$foldl = F3(
-	function (func, acc, dict) {
-		foldl:
-		while (true) {
-			if (dict.$ === -2) {
-				return acc;
-			} else {
-				var key = dict.b;
-				var value = dict.c;
-				var left = dict.d;
-				var right = dict.e;
-				var $temp$func = func,
-					$temp$acc = A3(
-					func,
-					key,
-					value,
-					A3($elm$core$Dict$foldl, func, acc, left)),
-					$temp$dict = right;
-				func = $temp$func;
-				acc = $temp$acc;
-				dict = $temp$dict;
-				continue foldl;
-			}
-		}
-	});
-var $elm$core$Dict$union = F2(
-	function (t1, t2) {
-		return A3($elm$core$Dict$foldl, $elm$core$Dict$insert, t2, t1);
-	});
-var $elm$core$Set$union = F2(
-	function (_v0, _v1) {
-		var dict1 = _v0;
-		var dict2 = _v1;
-		return A2($elm$core$Dict$union, dict1, dict2);
-	});
 var $author$project$GossipProtocol$GossipProtocol$isStronglyConnected = F2(
 	function (kind, graph) {
-		var visitor = F2(
-			function (ctx, acc) {
-				return function (a) {
-					return _Utils_Tuple2(a, $elm$core$Basics$identity);
-				}(
-					A3(
-						$elm$core$List$foldr,
-						$elm$core$Set$insert,
-						acc,
-						A2(
-							$elm$core$List$map,
-							A2(
-								$elm$core$Basics$composeR,
-								$elm$core$Tuple$second,
-								function ($) {
-									return $.aW;
-								}),
-							$elm_community$intdict$IntDict$toList(
-								A2(
-									$elm_community$intdict$IntDict$filter,
-									F2(
-										function (_v3, r) {
-											return A2($author$project$GossipGraph$Relation$isOfKind, r, kind) && (!_Utils_eq(r.aW, r.aq));
-										}),
-									ctx.c3)))));
-			});
-		var firstNode = $elm$core$List$head(
-			$elm_community$graph$Graph$nodeIds(graph));
-		if (!firstNode.$) {
-			var fn = firstNode.a;
-			return function (allReachableAgents) {
-				return A2(
-					$elm$core$List$all,
-					function (agent) {
-						return A2($elm$core$Set$member, agent, allReachableAgents);
-					},
-					$elm_community$graph$Graph$nodeIds(graph));
-			}(
-				A2(
-					$elm$core$Set$union,
-					function (_v1) {
-						var reachableAgents = _v1.a;
-						return A2($elm$core$Set$insert, fn, reachableAgents);
-					}(
-						A5(
-							$elm_community$graph$Graph$guidedDfs,
-							$elm_community$graph$Graph$alongOutgoingEdges,
-							visitor,
-							_List_fromArray(
-								[fn]),
-							$elm$core$Set$empty,
-							graph)),
-					function (_v2) {
-						var reachableAgents = _v2.a;
-						return A2($elm$core$Set$insert, fn, reachableAgents);
-					}(
-						A5(
-							$elm_community$graph$Graph$guidedDfs,
-							$elm_community$graph$Graph$alongOutgoingEdges,
-							visitor,
-							_List_fromArray(
-								[fn]),
-							$elm$core$Set$empty,
-							$elm_community$graph$Graph$reverseEdges(graph)))));
+		var reduceContext = function (context) {
+			return _Utils_update(
+				context,
+				{
+					d1: A2(
+						$elm_community$intdict$IntDict$filter,
+						F2(
+							function (_v1, r) {
+								return A2($author$project$GossipGraph$Relation$isOfKind, r, kind);
+							}),
+						context.d1),
+					c2: A2(
+						$elm_community$intdict$IntDict$filter,
+						F2(
+							function (_v2, r) {
+								return A2($author$project$GossipGraph$Relation$isOfKind, r, kind);
+							}),
+						context.c2)
+				});
+		};
+		var kindGraph = A2($elm_community$graph$Graph$mapContexts, reduceContext, graph);
+		var _v0 = $elm_community$graph$Graph$stronglyConnectedComponents(kindGraph);
+		if (!_v0.$) {
+			return false;
+		} else {
+			var components = _v0.a;
+			return $elm$core$List$length(components) === 1;
+		}
+	});
+var $elm$core$List$all = F2(
+	function (isOkay, list) {
+		return !A2(
+			$elm$core$List$any,
+			A2($elm$core$Basics$composeL, $elm$core$Basics$not, isOkay),
+			list);
+	});
+var $elm$core$Dict$member = F2(
+	function (key, dict) {
+		var _v0 = A2($elm$core$Dict$get, key, dict);
+		if (!_v0.$) {
+			return true;
 		} else {
 			return false;
 		}
+	});
+var $elm$core$Set$member = F2(
+	function (key, _v0) {
+		var dict = _v0;
+		return A2($elm$core$Dict$member, key, dict);
 	});
 var $elm_community$intdict$IntDict$uniteWith = F3(
 	function (merger, l, r) {
@@ -9725,11 +9957,11 @@ var $elm_community$graph$Graph$symmetricClosure = function (edgeMerger) {
 			var edges_ = A3(
 				$elm_community$intdict$IntDict$uniteWith,
 				orderedEdgeMerger(nodeId),
-				ctx.c3,
-				ctx.m);
+				ctx.c2,
+				ctx.d1);
 			return _Utils_update(
 				ctx,
-				{m: edges_, c3: edges_});
+				{d1: edges_, c2: edges_});
 		});
 	return A2(
 		$elm$core$Basics$composeR,
@@ -9738,6 +9970,19 @@ var $elm_community$graph$Graph$symmetricClosure = function (edgeMerger) {
 			$elm$core$Basics$composeR,
 			$elm_community$intdict$IntDict$map(updateContext),
 			$elm$core$Basics$identity));
+};
+var $elm_community$intdict$IntDict$toList = function (dict) {
+	return A3(
+		$elm_community$intdict$IntDict$foldr,
+		F3(
+			function (key, value, list) {
+				return A2(
+					$elm$core$List$cons,
+					_Utils_Tuple2(key, value),
+					list);
+			}),
+		_List_Nil,
+		dict);
 };
 var $author$project$GossipProtocol$GossipProtocol$isWeaklyConnected = F2(
 	function (kind, graph) {
@@ -9756,16 +10001,16 @@ var $author$project$GossipProtocol$GossipProtocol$isWeaklyConnected = F2(
 								$elm$core$Basics$composeR,
 								$elm$core$Tuple$second,
 								function ($) {
-									return $.aW;
+									return $.aV;
 								}),
 							$elm_community$intdict$IntDict$toList(
 								A2(
 									$elm_community$intdict$IntDict$filter,
 									F2(
 										function (_v5, r) {
-											return A2($author$project$GossipGraph$Relation$isOfKind, r, kind) && (!_Utils_eq(r.aW, r.aq));
+											return A2($author$project$GossipGraph$Relation$isOfKind, r, kind) && (!_Utils_eq(r.aV, r.ap));
 										}),
-									ctx.c3)))));
+									ctx.c2)))));
 			});
 		var merger = F4(
 			function (_v2, _v3, outLabel, _v4) {
@@ -10088,16 +10333,16 @@ var $gampleman$elm_visualization$Force$entity = F2(
 		var radius = $elm$core$Basics$sqrt(index) * $gampleman$elm_visualization$Force$initialRadius;
 		var angle = index * $gampleman$elm_visualization$Force$initialAngle;
 		return {
-			b2: index,
+			b1: index,
 			eO: a,
+			am: 0.0,
 			an: 0.0,
-			ao: 0.0,
-			Z: radius * $elm$core$Basics$cos(angle),
-			_: radius * $elm$core$Basics$sin(angle)
+			Y: radius * $elm$core$Basics$cos(angle),
+			Z: radius * $elm$core$Basics$sin(angle)
 		};
 	});
 var $author$project$GossipGraph$Renderer$agentToEntity = function (agent) {
-	return A2($gampleman$elm_visualization$Force$entity, agent.b2, agent);
+	return A2($gampleman$elm_visualization$Force$entity, agent.b1, agent);
 };
 var $elm_community$typed_svg$TypedSvg$Core$attribute = $elm$virtual_dom$VirtualDom$attribute;
 var $elm_community$typed_svg$TypedSvg$Attributes$id = $elm_community$typed_svg$TypedSvg$Core$attribute('id');
@@ -10176,8 +10421,8 @@ var $elm_community$typed_svg$TypedSvg$Types$px = $elm_community$typed_svg$TypedS
 var $elm_community$typed_svg$TypedSvg$Attributes$refX = $elm_community$typed_svg$TypedSvg$Core$attribute('refX');
 var $elm_community$typed_svg$TypedSvg$Attributes$refY = $elm_community$typed_svg$TypedSvg$Core$attribute('refY');
 var $author$project$GossipGraph$Renderer$arrowHeads = function (settings) {
-	var width = settings.bn;
-	var height = settings.bn;
+	var width = settings.bm;
+	var height = settings.bm;
 	var yMid = height / 2;
 	return _List_fromArray(
 		[
@@ -10256,8 +10501,8 @@ var $elm_community$typed_svg$TypedSvg$Attributes$class = function (names) {
 		A2($elm$core$String$join, ' ', names));
 };
 var $gampleman$elm_visualization$Force$isCompleted = function (_v0) {
-	var alpha = _v0.a$;
-	var minAlpha = _v0.cW;
+	var alpha = _v0.a_;
+	var minAlpha = _v0.cV;
 	return _Utils_cmp(alpha, minAlpha) < 1;
 };
 var $gampleman$elm_visualization$Force$State = $elm$core$Basics$identity;
@@ -10673,19 +10918,19 @@ var $elm$core$Dict$update = F3(
 	});
 var $ianmackenzie$elm_geometry$BoundingBox2d$maxX = function (_v0) {
 	var boundingBox = _v0;
-	return boundingBox.a7;
+	return boundingBox.a6;
 };
 var $ianmackenzie$elm_geometry$BoundingBox2d$maxY = function (_v0) {
 	var boundingBox = _v0;
-	return boundingBox.a8;
+	return boundingBox.a7;
 };
 var $ianmackenzie$elm_geometry$BoundingBox2d$minX = function (_v0) {
 	var boundingBox = _v0;
-	return boundingBox.a9;
+	return boundingBox.a8;
 };
 var $ianmackenzie$elm_geometry$BoundingBox2d$minY = function (_v0) {
 	var boundingBox = _v0;
-	return boundingBox.ba;
+	return boundingBox.a9;
 };
 var $ianmackenzie$elm_units$Quantity$Quantity = $elm$core$Basics$identity;
 var $ianmackenzie$elm_units$Quantity$minus = F2(
@@ -10713,8 +10958,8 @@ var $ianmackenzie$elm_geometry$Point2d$distanceFrom = F2(
 	function (_v0, _v1) {
 		var p1 = _v0;
 		var p2 = _v1;
-		var deltaY = p2._ - p1._;
-		var deltaX = p2.Z - p1.Z;
+		var deltaY = p2.Z - p1.Z;
+		var deltaX = p2.Y - p1.Y;
 		var largestComponent = A2(
 			$elm$core$Basics$max,
 			$elm$core$Basics$abs(deltaX),
@@ -10733,7 +10978,7 @@ var $ianmackenzie$elm_geometry$Vector2d$from = F2(
 	function (_v0, _v1) {
 		var p1 = _v0;
 		var p2 = _v1;
-		return {Z: p2.Z - p1.Z, _: p2._ - p1._};
+		return {Y: p2.Y - p1.Y, Z: p2.Z - p1.Z};
 	});
 var $ianmackenzie$elm_units$Pixels$inPixels = function (_v0) {
 	var numPixels = _v0;
@@ -10745,13 +10990,13 @@ var $ianmackenzie$elm_geometry$Vector2d$length = function (_v0) {
 	var v = _v0;
 	var largestComponent = A2(
 		$elm$core$Basics$max,
-		$elm$core$Basics$abs(v.Z),
-		$elm$core$Basics$abs(v._));
+		$elm$core$Basics$abs(v.Y),
+		$elm$core$Basics$abs(v.Z));
 	if (!largestComponent) {
 		return $ianmackenzie$elm_units$Quantity$zero;
 	} else {
-		var scaledY = v._ / largestComponent;
-		var scaledX = v.Z / largestComponent;
+		var scaledY = v.Z / largestComponent;
+		var scaledX = v.Y / largestComponent;
 		var scaledLength = $elm$core$Basics$sqrt((scaledX * scaledX) + (scaledY * scaledY));
 		return scaledLength * largestComponent;
 	}
@@ -10760,7 +11005,7 @@ var $ianmackenzie$elm_geometry$Vector2d$plus = F2(
 	function (_v0, _v1) {
 		var v2 = _v0;
 		var v1 = _v1;
-		return {Z: v1.Z + v2.Z, _: v1._ + v2._};
+		return {Y: v1.Y + v2.Y, Z: v1.Z + v2.Z};
 	});
 var $ianmackenzie$elm_units$Quantity$ratio = F2(
 	function (_v0, _v1) {
@@ -10772,15 +11017,15 @@ var $ianmackenzie$elm_units_prefixed$Units$Quantity$ratio = $ianmackenzie$elm_un
 var $ianmackenzie$elm_geometry$Vector2d$scaleBy = F2(
 	function (k, _v0) {
 		var v = _v0;
-		return {Z: k * v.Z, _: k * v._};
+		return {Y: k * v.Y, Z: k * v.Z};
 	});
 var $ianmackenzie$elm_geometry$Vector2d$sumHelp = F3(
 	function (sumX, sumY, vectors) {
 		sumHelp:
 		while (true) {
 			if (vectors.b) {
-				var x = vectors.a.Z;
-				var y = vectors.a._;
+				var x = vectors.a.Y;
+				var y = vectors.a.Z;
 				var rest = vectors.b;
 				var $temp$sumX = sumX + x,
 					$temp$sumY = sumY + y,
@@ -10790,18 +11035,18 @@ var $ianmackenzie$elm_geometry$Vector2d$sumHelp = F3(
 				vectors = $temp$vectors;
 				continue sumHelp;
 			} else {
-				return {Z: sumX, _: sumY};
+				return {Y: sumX, Z: sumY};
 			}
 		}
 	});
 var $ianmackenzie$elm_geometry$Vector2d$sum = function (vectors) {
 	return A3($ianmackenzie$elm_geometry$Vector2d$sumHelp, 0, 0, vectors);
 };
-var $ianmackenzie$elm_geometry$Vector2d$zero = {Z: 0, _: 0};
+var $ianmackenzie$elm_geometry$Vector2d$zero = {Y: 0, Z: 0};
 var $gampleman$elm_visualization$Force$ManyBody$applyForce = F4(
 	function (alpha, theta, qtree, vertex) {
 		var isFarAway = function (treePart) {
-			var distance = A2($ianmackenzie$elm_geometry$Point2d$distanceFrom, vertex.fB, treePart.dF.fB);
+			var distance = A2($ianmackenzie$elm_geometry$Point2d$distanceFrom, vertex.fB, treePart.dE.fB);
 			var _v2 = $ianmackenzie$elm_geometry$BoundingBox2d$dimensions(treePart.e_);
 			var width = _v2.a;
 			return _Utils_cmp(
@@ -10817,7 +11062,7 @@ var $gampleman$elm_visualization$Force$ManyBody$applyForce = F4(
 				return $elm$core$Basics$isNaN(weight) ? $ianmackenzie$elm_geometry$Vector2d$zero : A2($ianmackenzie$elm_geometry$Vector2d$scaleBy, weight, delta);
 			});
 		var useAggregate = function (treePart) {
-			return A2(calculateVelocity, vertex, treePart.dF);
+			return A2(calculateVelocity, vertex, treePart.dE);
 		};
 		switch (qtree.$) {
 			case 0:
@@ -10864,7 +11109,7 @@ var $gampleman$elm_visualization$Force$ManyBody$applyForce = F4(
 	});
 var $ianmackenzie$elm_geometry$Point2d$coordinates = function (_v0) {
 	var p = _v0;
-	return _Utils_Tuple2(p.Z, p._);
+	return _Utils_Tuple2(p.Y, p.Z);
 };
 var $ianmackenzie$elm_units$Quantity$divideBy = F2(
 	function (divisor, _v0) {
@@ -10884,7 +11129,7 @@ var $ianmackenzie$elm_geometry$Point2d$xy = F2(
 	function (_v0, _v1) {
 		var x = _v0;
 		var y = _v1;
-		return {Z: x, _: y};
+		return {Y: x, Z: y};
 	});
 var $gampleman$elm_visualization$Force$ManyBody$constructSuperPoint = F2(
 	function (first, rest) {
@@ -10955,11 +11200,11 @@ var $ianmackenzie$elm_units$Quantity$lessThanOrEqualTo = F2(
 	});
 var $ianmackenzie$elm_geometry$Point2d$xCoordinate = function (_v0) {
 	var p = _v0;
-	return p.Z;
+	return p.Y;
 };
 var $ianmackenzie$elm_geometry$Point2d$yCoordinate = function (_v0) {
 	var p = _v0;
-	return p._;
+	return p.Z;
 };
 var $ianmackenzie$elm_geometry$BoundingBox2d$contains = F2(
 	function (point, boundingBox) {
@@ -10999,11 +11244,11 @@ var $ianmackenzie$elm_units$Quantity$min = F2(
 		return A2($elm$core$Basics$min, x, y);
 	});
 var $ianmackenzie$elm_geometry$BoundingBox2d$fromExtrema = function (given) {
-	return (A2($ianmackenzie$elm_units$Quantity$lessThanOrEqualTo, given.a7, given.a9) && A2($ianmackenzie$elm_units$Quantity$lessThanOrEqualTo, given.a8, given.ba)) ? given : {
+	return (A2($ianmackenzie$elm_units$Quantity$lessThanOrEqualTo, given.a6, given.a8) && A2($ianmackenzie$elm_units$Quantity$lessThanOrEqualTo, given.a7, given.a9)) ? given : {
+		a6: A2($ianmackenzie$elm_units$Quantity$max, given.a8, given.a6),
 		a7: A2($ianmackenzie$elm_units$Quantity$max, given.a9, given.a7),
-		a8: A2($ianmackenzie$elm_units$Quantity$max, given.ba, given.a8),
-		a9: A2($ianmackenzie$elm_units$Quantity$min, given.a9, given.a7),
-		ba: A2($ianmackenzie$elm_units$Quantity$min, given.ba, given.a8)
+		a8: A2($ianmackenzie$elm_units$Quantity$min, given.a8, given.a6),
+		a9: A2($ianmackenzie$elm_units$Quantity$min, given.a9, given.a7)
 	};
 };
 var $ianmackenzie$elm_units_prefixed$Units$Quantity$minus = $ianmackenzie$elm_units$Quantity$minus;
@@ -11019,11 +11264,11 @@ var $ianmackenzie$elm_units$Quantity$interpolateFrom = F3(
 	});
 var $ianmackenzie$elm_geometry$BoundingBox2d$midX = function (_v0) {
 	var boundingBox = _v0;
-	return A3($ianmackenzie$elm_units$Quantity$interpolateFrom, boundingBox.a9, boundingBox.a7, 0.5);
+	return A3($ianmackenzie$elm_units$Quantity$interpolateFrom, boundingBox.a8, boundingBox.a6, 0.5);
 };
 var $ianmackenzie$elm_geometry$BoundingBox2d$midY = function (_v0) {
 	var boundingBox = _v0;
-	return A3($ianmackenzie$elm_units$Quantity$interpolateFrom, boundingBox.ba, boundingBox.a8, 0.5);
+	return A3($ianmackenzie$elm_units$Quantity$interpolateFrom, boundingBox.a9, boundingBox.a7, 0.5);
 };
 var $ianmackenzie$elm_geometry$BoundingBox2d$centerPoint = function (boundingBox) {
 	return A2(
@@ -11042,25 +11287,25 @@ var $gampleman$elm_visualization$Force$QuadTree$quadrant = F2(
 		var midX = _v1.a;
 		var midY = _v1.b;
 		var _v2 = $ianmackenzie$elm_geometry$BoundingBox2d$extrema(boundingBox);
-		var minX = _v2.a9;
-		var minY = _v2.ba;
-		var maxX = _v2.a7;
-		var maxY = _v2.a8;
+		var minX = _v2.a8;
+		var minY = _v2.a9;
+		var maxX = _v2.a6;
+		var maxY = _v2.a7;
 		return A2($ianmackenzie$elm_units_prefixed$Units$Quantity$greaterThanOrEqualTo, midY, y) ? (A2($ianmackenzie$elm_units_prefixed$Units$Quantity$greaterThanOrEqualTo, midX, x) ? 0 : 1) : (A2($ianmackenzie$elm_units_prefixed$Units$Quantity$greaterThanOrEqualTo, midX, x) ? 2 : 3);
 	});
 var $ianmackenzie$elm_geometry$BoundingBox2d$singleton = function (point) {
 	return {
-		a7: $ianmackenzie$elm_geometry$Point2d$xCoordinate(point),
-		a8: $ianmackenzie$elm_geometry$Point2d$yCoordinate(point),
-		a9: $ianmackenzie$elm_geometry$Point2d$xCoordinate(point),
-		ba: $ianmackenzie$elm_geometry$Point2d$yCoordinate(point)
+		a6: $ianmackenzie$elm_geometry$Point2d$xCoordinate(point),
+		a7: $ianmackenzie$elm_geometry$Point2d$yCoordinate(point),
+		a8: $ianmackenzie$elm_geometry$Point2d$xCoordinate(point),
+		a9: $ianmackenzie$elm_geometry$Point2d$yCoordinate(point)
 	};
 };
 var $gampleman$elm_visualization$Force$QuadTree$singleton = F2(
 	function (toPoint, vertex) {
 		return $gampleman$elm_visualization$Force$QuadTree$Leaf(
 			{
-				dF: 0,
+				dE: 0,
 				e_: $ianmackenzie$elm_geometry$BoundingBox2d$singleton(
 					toPoint(vertex)),
 				e2: _Utils_Tuple2(vertex, _List_Nil)
@@ -11071,10 +11316,10 @@ var $ianmackenzie$elm_geometry$BoundingBox2d$union = F2(
 		var b2 = $ianmackenzie$elm_geometry$BoundingBox2d$extrema(secondBox);
 		var b1 = $ianmackenzie$elm_geometry$BoundingBox2d$extrema(firstBox);
 		return {
+			a6: A2($ianmackenzie$elm_units$Quantity$max, b1.a6, b2.a6),
 			a7: A2($ianmackenzie$elm_units$Quantity$max, b1.a7, b2.a7),
-			a8: A2($ianmackenzie$elm_units$Quantity$max, b1.a8, b2.a8),
-			a9: A2($ianmackenzie$elm_units$Quantity$min, b1.a9, b2.a9),
-			ba: A2($ianmackenzie$elm_units$Quantity$min, b1.ba, b2.ba)
+			a8: A2($ianmackenzie$elm_units$Quantity$min, b1.a8, b2.a8),
+			a9: A2($ianmackenzie$elm_units$Quantity$min, b1.a9, b2.a9)
 		};
 	});
 var $gampleman$elm_visualization$Force$QuadTree$insertBy = F3(
@@ -11083,7 +11328,7 @@ var $gampleman$elm_visualization$Force$QuadTree$insertBy = F3(
 			case 0:
 				return $gampleman$elm_visualization$Force$QuadTree$Leaf(
 					{
-						dF: 0,
+						dE: 0,
 						e_: $ianmackenzie$elm_geometry$BoundingBox2d$singleton(
 							toPoint(vertex)),
 						e2: _Utils_Tuple2(vertex, _List_Nil)
@@ -11098,7 +11343,7 @@ var $gampleman$elm_visualization$Force$QuadTree$insertBy = F3(
 				if (_Utils_cmp(newSize, maxSize) > -1) {
 					var initial = $gampleman$elm_visualization$Force$QuadTree$Node(
 						{
-							dF: 0,
+							dE: 0,
 							e_: A2(
 								$ianmackenzie$elm_geometry$BoundingBox2d$union,
 								leaf.e_,
@@ -11117,7 +11362,7 @@ var $gampleman$elm_visualization$Force$QuadTree$insertBy = F3(
 				} else {
 					return $gampleman$elm_visualization$Force$QuadTree$Leaf(
 						{
-							dF: 0,
+							dE: 0,
 							e_: A2(
 								$ianmackenzie$elm_geometry$BoundingBox2d$union,
 								leaf.e_,
@@ -11137,7 +11382,7 @@ var $gampleman$elm_visualization$Force$QuadTree$insertBy = F3(
 						case 0:
 							return $gampleman$elm_visualization$Force$QuadTree$Node(
 								{
-									dF: node.dF,
+									dE: node.dE,
 									e_: node.e_,
 									fs: A3($gampleman$elm_visualization$Force$QuadTree$insertBy, toPoint, vertex, node.fs),
 									fu: node.fu,
@@ -11147,7 +11392,7 @@ var $gampleman$elm_visualization$Force$QuadTree$insertBy = F3(
 						case 2:
 							return $gampleman$elm_visualization$Force$QuadTree$Node(
 								{
-									dF: node.dF,
+									dE: node.dE,
 									e_: node.e_,
 									fs: node.fs,
 									fu: node.fu,
@@ -11157,7 +11402,7 @@ var $gampleman$elm_visualization$Force$QuadTree$insertBy = F3(
 						case 1:
 							return $gampleman$elm_visualization$Force$QuadTree$Node(
 								{
-									dF: node.dF,
+									dE: node.dE,
 									e_: node.e_,
 									fs: node.fs,
 									fu: A3($gampleman$elm_visualization$Force$QuadTree$insertBy, toPoint, vertex, node.fu),
@@ -11167,7 +11412,7 @@ var $gampleman$elm_visualization$Force$QuadTree$insertBy = F3(
 						default:
 							return $gampleman$elm_visualization$Force$QuadTree$Node(
 								{
-									dF: node.dF,
+									dE: node.dE,
 									e_: node.e_,
 									fs: node.fs,
 									fu: node.fu,
@@ -11177,10 +11422,10 @@ var $gampleman$elm_visualization$Force$QuadTree$insertBy = F3(
 					}
 				} else {
 					var _v3 = $ianmackenzie$elm_geometry$BoundingBox2d$extrema(node.e_);
-					var minX = _v3.a9;
-					var minY = _v3.ba;
-					var maxX = _v3.a7;
-					var maxY = _v3.a8;
+					var minX = _v3.a8;
+					var minY = _v3.a9;
+					var maxX = _v3.a6;
+					var maxY = _v3.a7;
 					var _v4 = $ianmackenzie$elm_geometry$BoundingBox2d$dimensions(node.e_);
 					var width = _v4.a;
 					var height = _v4.b;
@@ -11189,13 +11434,13 @@ var $gampleman$elm_visualization$Force$QuadTree$insertBy = F3(
 						case 0:
 							return $gampleman$elm_visualization$Force$QuadTree$Node(
 								{
-									dF: 0,
+									dE: 0,
 									e_: $ianmackenzie$elm_geometry$BoundingBox2d$fromExtrema(
 										{
-											a7: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$plus, width, maxX),
-											a8: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$plus, height, maxY),
-											a9: minX,
-											ba: minY
+											a6: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$plus, width, maxX),
+											a7: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$plus, height, maxY),
+											a8: minX,
+											a9: minY
 										}),
 									fs: A2($gampleman$elm_visualization$Force$QuadTree$singleton, toPoint, vertex),
 									fu: $gampleman$elm_visualization$Force$QuadTree$Empty,
@@ -11205,13 +11450,13 @@ var $gampleman$elm_visualization$Force$QuadTree$insertBy = F3(
 						case 2:
 							return $gampleman$elm_visualization$Force$QuadTree$Node(
 								{
-									dF: 0,
+									dE: 0,
 									e_: $ianmackenzie$elm_geometry$BoundingBox2d$fromExtrema(
 										{
-											a7: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$plus, width, maxX),
-											a8: maxY,
-											a9: minX,
-											ba: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$minus, height, minY)
+											a6: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$plus, width, maxX),
+											a7: maxY,
+											a8: minX,
+											a9: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$minus, height, minY)
 										}),
 									fs: $gampleman$elm_visualization$Force$QuadTree$Empty,
 									fu: qtree,
@@ -11221,13 +11466,13 @@ var $gampleman$elm_visualization$Force$QuadTree$insertBy = F3(
 						case 1:
 							return $gampleman$elm_visualization$Force$QuadTree$Node(
 								{
-									dF: 0,
+									dE: 0,
 									e_: $ianmackenzie$elm_geometry$BoundingBox2d$fromExtrema(
 										{
-											a7: maxX,
-											a8: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$plus, height, maxY),
-											a9: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$minus, width, minX),
-											ba: minY
+											a6: maxX,
+											a7: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$plus, height, maxY),
+											a8: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$minus, width, minX),
+											a9: minY
 										}),
 									fs: $gampleman$elm_visualization$Force$QuadTree$Empty,
 									fu: A2($gampleman$elm_visualization$Force$QuadTree$singleton, toPoint, vertex),
@@ -11237,13 +11482,13 @@ var $gampleman$elm_visualization$Force$QuadTree$insertBy = F3(
 						default:
 							return $gampleman$elm_visualization$Force$QuadTree$Node(
 								{
-									dF: 0,
+									dE: 0,
 									e_: $ianmackenzie$elm_geometry$BoundingBox2d$fromExtrema(
 										{
-											a7: maxX,
-											a8: maxY,
-											a9: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$minus, width, minX),
-											ba: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$minus, height, minY)
+											a6: maxX,
+											a7: maxY,
+											a8: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$minus, width, minX),
+											a9: A2($ianmackenzie$elm_units_prefixed$Units$Quantity$minus, height, minY)
 										}),
 									fs: qtree,
 									fu: $gampleman$elm_visualization$Force$QuadTree$Empty,
@@ -11283,10 +11528,10 @@ var $gampleman$elm_visualization$Force$QuadTree$getAggregate = function (qtree) 
 		case 0:
 			return $elm$core$Maybe$Nothing;
 		case 1:
-			var aggregate = qtree.a.dF;
+			var aggregate = qtree.a.dE;
 			return $elm$core$Maybe$Just(aggregate);
 		default:
-			var aggregate = qtree.a.dF;
+			var aggregate = qtree.a.dE;
 			return $elm$core$Maybe$Just(aggregate);
 	}
 };
@@ -11304,7 +11549,7 @@ var $gampleman$elm_visualization$Force$QuadTree$performAggregate = F2(
 				var rest = _v1.b;
 				return $gampleman$elm_visualization$Force$QuadTree$Leaf(
 					{
-						dF: A2(combineVertices, first, rest),
+						dE: A2(combineVertices, first, rest),
 						e_: leaf.e_,
 						e2: _Utils_Tuple2(first, rest)
 					});
@@ -11326,7 +11571,7 @@ var $gampleman$elm_visualization$Force$QuadTree$performAggregate = F2(
 					var xs = subresults.b;
 					return $gampleman$elm_visualization$Force$QuadTree$Node(
 						{
-							dF: A2(combineAggregates, x, xs),
+							dE: A2(combineAggregates, x, xs),
 							e_: node.e_,
 							fs: newNe,
 							fu: newNw,
@@ -11351,9 +11596,9 @@ var $gampleman$elm_visualization$Force$ManyBody$manyBody = F3(
 			return _Utils_update(
 				vertex,
 				{
-					bT: A2(
+					bS: A2(
 						$ianmackenzie$elm_geometry$Vector2d$plus,
-						vertex.bT,
+						vertex.bS,
 						A4($gampleman$elm_visualization$Force$ManyBody$applyForce, alpha, theta, withAggregates, vertex))
 				});
 		};
@@ -11361,7 +11606,7 @@ var $gampleman$elm_visualization$Force$ManyBody$manyBody = F3(
 	});
 var $ianmackenzie$elm_geometry$Point2d$pixels = F2(
 	function (x, y) {
-		return {Z: x, _: y};
+		return {Y: x, Z: y};
 	});
 var $ianmackenzie$elm_geometry$Vector2d$toPixels = function (_v0) {
 	var vectorComponents = _v0;
@@ -11374,8 +11619,8 @@ var $gampleman$elm_visualization$Force$ManyBody$wrapper = F4(
 			function (_v1) {
 				var key = _v1.a;
 				var point = _v1.b;
-				var x = point.Z;
-				var y = point._;
+				var x = point.Y;
+				var y = point.Z;
 				var strength = A2(
 					$elm$core$Maybe$withDefault,
 					0,
@@ -11384,7 +11629,7 @@ var $gampleman$elm_visualization$Force$ManyBody$wrapper = F4(
 					d7: key,
 					fB: A2($ianmackenzie$elm_geometry$Point2d$pixels, x, y),
 					fN: strength,
-					bT: $ianmackenzie$elm_geometry$Vector2d$zero
+					bS: $ianmackenzie$elm_geometry$Vector2d$zero
 				};
 			},
 			$elm$core$Dict$toList(points));
@@ -11394,11 +11639,11 @@ var $gampleman$elm_visualization$Force$ManyBody$wrapper = F4(
 					return $elm$core$Maybe$Nothing;
 				} else {
 					var point = maybePoint.a;
-					var dv = $ianmackenzie$elm_geometry$Vector2d$toPixels(newVertex.bT);
+					var dv = $ianmackenzie$elm_geometry$Vector2d$toPixels(newVertex.bS);
 					return $elm$core$Maybe$Just(
 						_Utils_update(
 							point,
-							{an: point.an + dv.Z, ao: point.ao + dv._}));
+							{am: point.am + dv.Y, an: point.an + dv.Z}));
 				}
 			});
 		var newVertices = A3($gampleman$elm_visualization$Force$ManyBody$manyBody, alpha, theta, vertices);
@@ -11425,7 +11670,7 @@ var $gampleman$elm_visualization$Force$applyForce = F3(
 						function (_v2, ent, _v3) {
 							var sx0 = _v3.a;
 							var sy0 = _v3.b;
-							return _Utils_Tuple2(sx0 + ent.Z, sy0 + ent._);
+							return _Utils_Tuple2(sx0 + ent.Y, sy0 + ent.Z);
 						}),
 					_Utils_Tuple2(0, 0),
 					entities);
@@ -11439,7 +11684,7 @@ var $gampleman$elm_visualization$Force$applyForce = F3(
 						function (_v4, ent) {
 							return _Utils_update(
 								ent,
-								{Z: ent.Z - sx, _: ent._ - sy});
+								{Y: ent.Y - sx, Z: ent.Z - sy});
 						}),
 					entities);
 			case 1:
@@ -11460,15 +11705,15 @@ var $gampleman$elm_visualization$Force$applyForce = F3(
 									var target = _v5.fR;
 									var distance = _v5.e9;
 									var strength = _v5.fN;
-									var bias = _v5.cn;
+									var bias = _v5.cm;
 									var _v6 = _Utils_Tuple2(
 										A2($elm$core$Dict$get, source, ents),
 										A2($elm$core$Dict$get, target, ents));
 									if ((!_v6.a.$) && (!_v6.b.$)) {
 										var sourceNode = _v6.a.a;
 										var targetNode = _v6.b.a;
-										var y = ((targetNode._ + targetNode.ao) - sourceNode._) - sourceNode.ao;
-										var x = ((targetNode.Z + targetNode.an) - sourceNode.Z) - sourceNode.an;
+										var y = ((targetNode.Z + targetNode.an) - sourceNode.Z) - sourceNode.an;
+										var x = ((targetNode.Y + targetNode.am) - sourceNode.Y) - sourceNode.am;
 										var d = $elm$core$Basics$sqrt(
 											A2($elm$core$Basics$pow, x, 2) + A2($elm$core$Basics$pow, y, 2));
 										var l = (((d - distance) / d) * alpha) * strength;
@@ -11479,7 +11724,7 @@ var $gampleman$elm_visualization$Force$applyForce = F3(
 												function (tn) {
 													return _Utils_update(
 														tn,
-														{an: tn.an + ((x * l) * (1 - bias)), ao: tn.ao + ((y * l) * (1 - bias))});
+														{am: tn.am + ((x * l) * (1 - bias)), an: tn.an + ((y * l) * (1 - bias))});
 												}),
 											A3(
 												$elm$core$Dict$update,
@@ -11488,7 +11733,7 @@ var $gampleman$elm_visualization$Force$applyForce = F3(
 													function (sn) {
 														return _Utils_update(
 															sn,
-															{an: sn.an - ((x * l) * bias), ao: sn.ao - ((y * l) * bias)});
+															{am: sn.am - ((x * l) * bias), an: sn.an - ((y * l) * bias)});
 													}),
 												ents));
 									} else {
@@ -11529,25 +11774,25 @@ var $gampleman$elm_visualization$Force$tick = F2(
 		var updateEntity = function (ent) {
 			return _Utils_update(
 				ent,
-				{an: ent.an * state.bU, ao: ent.ao * state.bU, Z: ent.Z + (ent.an * state.bU), _: ent._ + (ent.ao * state.bU)});
+				{am: ent.am * state.bT, an: ent.an * state.bT, Y: ent.Y + (ent.am * state.bT), Z: ent.Z + (ent.an * state.bT)});
 		};
 		var dictNodes = A3(
 			$elm$core$List$foldl,
 			function (node) {
-				return A2($elm$core$Dict$insert, node.b2, node);
+				return A2($elm$core$Dict$insert, node.b1, node);
 			},
 			$elm$core$Dict$empty,
 			nodes);
-		var alpha = state.a$ + ((state.dH - state.a$) * state.cj);
+		var alpha = state.a_ + ((state.dG - state.a_) * state.ci);
 		var newNodes = A3(
 			$elm$core$List$foldl,
 			$gampleman$elm_visualization$Force$applyForce(alpha),
 			dictNodes,
-			state.dX);
+			state.dW);
 		return _Utils_Tuple2(
 			_Utils_update(
 				state,
-				{a$: alpha}),
+				{a_: alpha}),
 			A2(
 				$elm$core$List$map,
 				updateEntity,
@@ -11626,7 +11871,7 @@ var $gampleman$elm_visualization$Force$customLinks = F2(
 					var distance = _v0.e9;
 					var strength = _v0.fN;
 					return {
-						cn: count(source) / (count(source) + count(target)),
+						cm: count(source) / (count(source) + count(target)),
 						e9: distance,
 						fL: source,
 						fN: A2(
@@ -11654,9 +11899,9 @@ var $elm_community$graph$Graph$edges = function (graph) {
 				F2(
 					function (node2, e) {
 						return $elm$core$List$cons(
-							{aq: node1, fo: e, aW: node2});
+							{ap: node1, fo: e, aV: node2});
 					}),
-				ctx.c3);
+				ctx.c2);
 		});
 	return A3(
 		flippedFoldl,
@@ -11671,16 +11916,16 @@ var $author$project$GossipGraph$Renderer$getLinks = function (graph) {
 		function (edge) {
 			return {
 				e9: 150,
-				fL: edge.aq,
+				fL: edge.ap,
 				fN: $elm$core$Maybe$Just(3),
-				fR: edge.aW
+				fR: edge.aV
 			};
 		},
 		A2(
 			$elm$core$List$filter,
 			function (_v0) {
-				var from = _v0.aq;
-				var to = _v0.aW;
+				var from = _v0.ap;
+				var to = _v0.aV;
 				return !_Utils_eq(from, to);
 			},
 			$elm_community$graph$Graph$edges(graph)));
@@ -11704,30 +11949,21 @@ var $gampleman$elm_visualization$Force$manyBodyStrength = function (strength) {
 				return _Utils_Tuple2(key, strength);
 			}));
 };
-var $elm_community$graph$Graph$insert = F2(
-	function (nodeContext, graph) {
-		return A3(
-			$elm_community$graph$Graph$update,
-			nodeContext.ej.b2,
-			$elm$core$Basics$always(
-				$elm$core$Maybe$Just(nodeContext)),
-			graph);
-	});
 var $elm_community$graph$Graph$mapNodes = function (f) {
 	return A2(
 		$elm_community$graph$Graph$fold,
 		function (_v0) {
 			var node = _v0.ej;
-			var incoming = _v0.m;
-			var outgoing = _v0.c3;
+			var incoming = _v0.d1;
+			var outgoing = _v0.c2;
 			return $elm_community$graph$Graph$insert(
 				{
-					m: incoming,
+					d1: incoming,
 					ej: {
-						b2: node.b2,
+						b1: node.b1,
 						fo: f(node.fo)
 					},
-					c3: outgoing
+					c2: outgoing
 				});
 		},
 		$elm_community$graph$Graph$empty);
@@ -11786,26 +12022,26 @@ var $elm$core$Basics$asin = _Basics_asin;
 var $author$project$GossipGraph$Renderer$radialOffsetValue = F4(
 	function (source, target, xoff, yoff) {
 		var _v0 = _Utils_Tuple2(
-			_Utils_cmp(source.Z, target.Z) > 0,
-			_Utils_cmp(source._, target._) > 0);
+			_Utils_cmp(source.Y, target.Y) > 0,
+			_Utils_cmp(source.Z, target.Z) > 0);
 		if (_v0.a) {
 			if (_v0.b) {
-				return _Utils_Tuple2(source.Z - xoff, source._ - yoff);
+				return _Utils_Tuple2(source.Y - xoff, source.Z - yoff);
 			} else {
-				return _Utils_Tuple2(source.Z - xoff, source._ + yoff);
+				return _Utils_Tuple2(source.Y - xoff, source.Z + yoff);
 			}
 		} else {
 			if (_v0.b) {
-				return _Utils_Tuple2(source.Z + xoff, source._ - yoff);
+				return _Utils_Tuple2(source.Y + xoff, source.Z - yoff);
 			} else {
-				return _Utils_Tuple2(source.Z + xoff, source._ + yoff);
+				return _Utils_Tuple2(source.Y + xoff, source.Z + yoff);
 			}
 		}
 	});
 var $author$project$GossipGraph$Renderer$radialOffset = F4(
 	function (source, target, sourceOffset, targetOffset) {
-		var dy = $elm$core$Basics$abs(source._ - target._);
-		var dx = $elm$core$Basics$abs(source.Z - target.Z);
+		var dy = $elm$core$Basics$abs(source.Z - target.Z);
+		var dx = $elm$core$Basics$abs(source.Y - target.Y);
 		var hyp = $elm$core$Basics$sqrt((dx * dx) + (dy * dy));
 		var angle = $elm$core$Basics$asin(dy / hyp);
 		var sourceOffsetX = sourceOffset * $elm$core$Basics$cos(angle);
@@ -11903,8 +12139,8 @@ var $elm_community$typed_svg$TypedSvg$Attributes$y2 = function (position) {
 };
 var $author$project$GossipGraph$Renderer$renderEdgeDirected = F4(
 	function (settings, extraAttributes, source, target) {
-		var r2 = settings.aR + (2 * settings.bn);
-		var r1 = settings.aR;
+		var r2 = settings.aQ + (2 * settings.bm);
+		var r1 = settings.aQ;
 		var _v0 = A4($author$project$GossipGraph$Renderer$radialOffset, source, target, r1, r2);
 		var src = _v0.a;
 		var tgt = _v0.b;
@@ -11914,7 +12150,7 @@ var $author$project$GossipGraph$Renderer$renderEdgeDirected = F4(
 				_List_fromArray(
 					[
 						$elm_community$typed_svg$TypedSvg$Attributes$strokeWidth(
-						$elm_community$typed_svg$TypedSvg$Types$px(settings.b0)),
+						$elm_community$typed_svg$TypedSvg$Types$px(settings.b$)),
 						$elm_community$typed_svg$TypedSvg$Attributes$stroke(
 						$elm_community$typed_svg$TypedSvg$Types$Paint($avh4$elm_color$Color$black)),
 						$elm_community$typed_svg$TypedSvg$Attributes$markerEnd('url(#arrow-head-end)'),
@@ -11953,8 +12189,8 @@ var $author$project$GossipGraph$Renderer$angularOffset = F3(
 	function (_v0, offset, node) {
 		var x = _v0.a;
 		var y = _v0.b;
-		var dy = y - node._;
-		var dx = x - node.Z;
+		var dy = y - node.Z;
+		var dx = x - node.Y;
 		var _v1 = $elm$core$Basics$toPolar(
 			_Utils_Tuple2(dx, dy));
 		var r = _v1.a;
@@ -11964,12 +12200,12 @@ var $author$project$GossipGraph$Renderer$angularOffset = F3(
 			_Utils_Tuple2(r, newAngle));
 		var newX = _v2.a;
 		var newY = _v2.b;
-		return _Utils_Tuple2(node.Z + newX, node._ + newY);
+		return _Utils_Tuple2(node.Y + newX, node.Z + newY);
 	});
 var $author$project$GossipGraph$Renderer$renderEdgeOffset = F4(
 	function (settings, extraAttributes, source, target) {
-		var r2 = settings.aR + (2 * settings.bn);
-		var r1 = settings.aR;
+		var r2 = settings.aQ + (2 * settings.bm);
+		var r1 = settings.aQ;
 		var _v0 = A4($author$project$GossipGraph$Renderer$radialOffset, source, target, r1, r2);
 		var newSource = _v0.a;
 		var newTarget = _v0.b;
@@ -11981,7 +12217,7 @@ var $author$project$GossipGraph$Renderer$renderEdgeOffset = F4(
 				_List_fromArray(
 					[
 						$elm_community$typed_svg$TypedSvg$Attributes$strokeWidth(
-						$elm_community$typed_svg$TypedSvg$Types$px(settings.b0)),
+						$elm_community$typed_svg$TypedSvg$Types$px(settings.b$)),
 						$elm_community$typed_svg$TypedSvg$Attributes$stroke(
 						$elm_community$typed_svg$TypedSvg$Types$Paint($avh4$elm_color$Color$black)),
 						$elm_community$typed_svg$TypedSvg$Attributes$markerEnd('url(#arrow-head-end)'),
@@ -12006,7 +12242,7 @@ var $author$project$GossipGraph$Renderer$renderEdge = F3(
 				A2(
 					$gampleman$elm_visualization$Force$entity,
 					0,
-					{b2: -1, cZ: '?'})),
+					{b1: -1, cY: '?'})),
 			$elm$core$Maybe$map(
 				A2(
 					$elm$core$Basics$composeR,
@@ -12017,18 +12253,18 @@ var $author$project$GossipGraph$Renderer$renderEdge = F3(
 						return $.fo;
 					})));
 		var source = retrieveEntity(
-			A2($elm_community$graph$Graph$get, edge.aq, graph));
+			A2($elm_community$graph$Graph$get, edge.ap, graph));
 		var target = retrieveEntity(
-			A2($elm_community$graph$Graph$get, edge.aW, graph));
+			A2($elm_community$graph$Graph$get, edge.aV, graph));
 		var dashed = (!edge.fo.d8) ? _List_fromArray(
 			[
 				$elm_community$typed_svg$TypedSvg$Attributes$strokeDasharray(
-				$elm$core$String$fromFloat(settings.b0 * 2))
+				$elm$core$String$fromFloat(settings.b$ * 2))
 			]) : _List_Nil;
 		return A2(
 			$elm$core$List$any,
 			function (e) {
-				return _Utils_eq(edge.aq, e.aW) && _Utils_eq(edge.aW, e.aq);
+				return _Utils_eq(edge.ap, e.aV) && _Utils_eq(edge.aV, e.ap);
 			},
 			$elm_community$graph$Graph$edges(graph)) ? A4($author$project$GossipGraph$Renderer$renderEdgeOffset, settings, dashed, source, target) : A4($author$project$GossipGraph$Renderer$renderEdgeDirected, settings, dashed, source, target);
 	});
@@ -12108,7 +12344,7 @@ var $author$project$GossipGraph$Renderer$renderNode = F2(
 					_List_fromArray(
 						[
 							$elm_community$typed_svg$TypedSvg$Attributes$r(
-							$elm_community$typed_svg$TypedSvg$Types$px(settings.aR)),
+							$elm_community$typed_svg$TypedSvg$Types$px(settings.aQ)),
 							$elm_community$typed_svg$TypedSvg$Attributes$fill(
 							$elm_community$typed_svg$TypedSvg$Types$Paint($avh4$elm_color$Color$white)),
 							$elm_community$typed_svg$TypedSvg$Attributes$stroke(
@@ -12116,9 +12352,9 @@ var $author$project$GossipGraph$Renderer$renderNode = F2(
 							$elm_community$typed_svg$TypedSvg$Attributes$strokeWidth(
 							$elm_community$typed_svg$TypedSvg$Types$px(1)),
 							$elm_community$typed_svg$TypedSvg$Attributes$cx(
-							$elm_community$typed_svg$TypedSvg$Types$px(node.fo.Z)),
+							$elm_community$typed_svg$TypedSvg$Types$px(node.fo.Y)),
 							$elm_community$typed_svg$TypedSvg$Attributes$cy(
-							$elm_community$typed_svg$TypedSvg$Types$px(node.fo._))
+							$elm_community$typed_svg$TypedSvg$Types$px(node.fo.Z))
 						]),
 					_List_fromArray(
 						[
@@ -12128,7 +12364,7 @@ var $author$project$GossipGraph$Renderer$renderNode = F2(
 							_List_fromArray(
 								[
 									$elm_community$typed_svg$TypedSvg$Core$text(
-									$elm$core$String$fromChar(node.fo.eO.cZ))
+									$elm$core$String$fromChar(node.fo.eO.cY))
 								]))
 						])),
 					A2(
@@ -12137,27 +12373,27 @@ var $author$project$GossipGraph$Renderer$renderNode = F2(
 						[
 							$elm_community$typed_svg$TypedSvg$Attributes$textAnchor(2),
 							$elm_community$typed_svg$TypedSvg$Attributes$x(
-							$elm_community$typed_svg$TypedSvg$Types$px(node.fo.Z)),
+							$elm_community$typed_svg$TypedSvg$Types$px(node.fo.Y)),
 							$elm_community$typed_svg$TypedSvg$Attributes$y(
-							$elm_community$typed_svg$TypedSvg$Types$px(node.fo._)),
+							$elm_community$typed_svg$TypedSvg$Types$px(node.fo.Z)),
 							$elm_community$typed_svg$TypedSvg$Attributes$dy(
-							$elm_community$typed_svg$TypedSvg$Types$px(settings.aR / 3))
+							$elm_community$typed_svg$TypedSvg$Types$px(settings.aQ / 3))
 						]),
 					_List_fromArray(
 						[
 							$elm_community$typed_svg$TypedSvg$Core$text(
-							$elm$core$String$fromChar(node.fo.eO.cZ))
+							$elm$core$String$fromChar(node.fo.eO.cY))
 						]))
 				]));
 	});
 var $gampleman$elm_visualization$Force$simulation = function (forces) {
 	return {
-		a$: 1.0,
-		cj: 1 - A2($elm$core$Basics$pow, 0.001, 1 / 300),
-		dH: 0.0,
-		dX: forces,
-		cW: 0.001,
-		bU: 0.6
+		a_: 1.0,
+		ci: 1 - A2($elm$core$Basics$pow, 0.001, 1 / 300),
+		dG: 0.0,
+		dW: forces,
+		cV: 0.001,
+		bT: 0.6
 	};
 };
 var $elm_community$typed_svg$TypedSvg$svg = $elm_community$typed_svg$TypedSvg$Core$node('svg');
@@ -12184,7 +12420,7 @@ var $author$project$GossipGraph$Renderer$updateGraphWithList = function () {
 			function (node, graph) {
 				return A3(
 					$elm_community$graph$Graph$update,
-					node.b2,
+					node.b1,
 					graphUpdater(node),
 					graph);
 			}));
@@ -12218,10 +12454,10 @@ var $author$project$GossipGraph$Renderer$renderGraph = F2(
 				A2(
 					$elm$core$List$map,
 					function ($) {
-						return $.b2;
+						return $.b1;
 					},
 					$elm_community$graph$Graph$nodes(entityGraph))),
-				A2($gampleman$elm_visualization$Force$center, settings.cq / 2, settings.cp / 2)
+				A2($gampleman$elm_visualization$Force$center, settings.cp / 2, settings.co / 2)
 			]);
 		var computedGraph = A2(
 			$author$project$GossipGraph$Renderer$updateGraphWithList,
@@ -12239,7 +12475,7 @@ var $author$project$GossipGraph$Renderer$renderGraph = F2(
 			$elm_community$typed_svg$TypedSvg$svg,
 			_List_fromArray(
 				[
-					A4($elm_community$typed_svg$TypedSvg$Attributes$viewBox, 0, 0, settings.cq, settings.cp),
+					A4($elm_community$typed_svg$TypedSvg$Attributes$viewBox, 0, 0, settings.cp, settings.co),
 					A2(
 					$elm_community$typed_svg$TypedSvg$Attributes$preserveAspectRatio,
 					A2($elm_community$typed_svg$TypedSvg$Types$Align, 1, 1),
@@ -12265,7 +12501,7 @@ var $author$project$GossipGraph$Renderer$renderGraph = F2(
 						A2(
 							$elm$core$List$filter,
 							function (e) {
-								return !_Utils_eq(e.aq, e.aW);
+								return !_Utils_eq(e.ap, e.aV);
 							},
 							$elm_community$graph$Graph$edges(computedGraph)))),
 					A2(
@@ -12313,7 +12549,7 @@ var $author$project$GossipProtocol$GossipProtocol$isSunGraph = function (graph) 
 				F2(
 					function (ctx, acc) {
 						return $elm_community$intdict$IntDict$isEmpty(
-							A2($elm_community$intdict$IntDict$remove, ctx.ej.b2, ctx.c3)) ? A2($elm$core$List$cons, ctx.ej.b2, acc) : acc;
+							A2($elm_community$intdict$IntDict$remove, ctx.ej.b1, ctx.c2)) ? A2($elm$core$List$cons, ctx.ej.b1, acc) : acc;
 					}),
 				_List_Nil,
 				g));
@@ -12377,8 +12613,8 @@ var $author$project$Main$sunInfoView = function (graph) {
 var $author$project$Main$gossipGraphView = function (model) {
 	var graphIsValid = function () {
 		var _v1 = _Utils_Tuple2(
-			$elm$core$String$isEmpty(model.ab),
-			model.u);
+			$elm$core$String$isEmpty(model.aa),
+			model.t);
 		if ((!_v1.a) && (!_v1.b.$)) {
 			return true;
 		} else {
@@ -12439,7 +12675,7 @@ var $author$project$Main$gossipGraphView = function (model) {
 									[
 										$elm$html$Html$Attributes$type_('text'),
 										$elm$html$Html$Attributes$id('gossip-graph-input'),
-										$elm$html$Html$Attributes$value(model.ab),
+										$elm$html$Html$Attributes$value(model.aa),
 										$elm$html$Html$Events$onInput($author$project$Main$ChangeGossipGraph),
 										$elm$html$Html$Attributes$placeholder('Gossip graph representation')
 									]),
@@ -12482,14 +12718,14 @@ var $author$project$Main$gossipGraphView = function (model) {
 										$elm$html$Html$Attributes$type_('text'),
 										$elm$html$Html$Attributes$id('canonical-graph-input'),
 										$elm$html$Html$Attributes$disabled(true),
-										$elm$html$Html$Attributes$value(model.bX),
+										$elm$html$Html$Attributes$value(model.bW),
 										$elm$html$Html$Attributes$placeholder('Canonical representation')
 									]),
 								_List_Nil),
 								A2($author$project$Main$helpButtonView, 'Canonical Representation', $author$project$Main$canonicalRepresentationInfoView)
 							]))
 					])),
-				$elm$core$String$isEmpty(model.ab) ? A2(
+				$elm$core$String$isEmpty(model.aa) ? A2(
 				$elm$html$Html$div,
 				_List_fromArray(
 					[
@@ -12519,9 +12755,9 @@ var $author$project$Main$gossipGraphView = function (model) {
 					]),
 				_List_fromArray(
 					[
-						A2($author$project$GossipGraph$Renderer$render, model.u, model.cA),
+						A2($author$project$GossipGraph$Renderer$render, model.t, model.cz),
 						function () {
-						var _v0 = model.u;
+						var _v0 = model.t;
 						if (!_v0.$) {
 							return A2(
 								$elm$html$Html$div,
@@ -12531,9 +12767,9 @@ var $author$project$Main$gossipGraphView = function (model) {
 									]),
 								_List_fromArray(
 									[
-										A2($author$project$Main$connectionInfoView, 0, model.u),
-										A2($author$project$Main$connectionInfoView, 1, model.u),
-										$author$project$Main$sunInfoView(model.u)
+										A2($author$project$Main$connectionInfoView, 0, model.t),
+										A2($author$project$Main$connectionInfoView, 1, model.t),
+										$author$project$Main$sunInfoView(model.t)
 									]));
 						} else {
 							return A2($elm$html$Html$div, _List_Nil, _List_Nil);
@@ -12884,7 +13120,7 @@ var $author$project$Main$executionTreeModalView = function (model) {
 							$elm$html$Html$Attributes$min('0'),
 							$elm$html$Html$Attributes$max('5'),
 							$elm$html$Html$Attributes$value(
-							$elm$core$String$fromInt(model.bv)),
+							$elm$core$String$fromInt(model.bu)),
 							$elm$html$Html$Events$onInput($author$project$Main$ChangeExecutionTreeDepth)
 						]),
 					_List_Nil),
@@ -12950,12 +13186,12 @@ var $author$project$Main$historyHelpView = _List_fromArray(
 var $author$project$GossipGraph$Call$renderString = F2(
 	function (agents, call) {
 		var _v0 = _Utils_Tuple2(
-			A2($author$project$GossipGraph$Agent$fromId, agents, call.aq),
-			A2($author$project$GossipGraph$Agent$fromId, agents, call.aW));
+			A2($author$project$GossipGraph$Agent$fromId, agents, call.ap),
+			A2($author$project$GossipGraph$Agent$fromId, agents, call.aV));
 		if ((!_v0.a.$) && (!_v0.b.$)) {
 			var from = _v0.a.a;
 			var to = _v0.b.a;
-			return $elm$core$String$fromChar(from.cZ) + (' 📞 ' + $elm$core$String$fromChar(to.cZ));
+			return $elm$core$String$fromChar(from.cY) + (' 📞 ' + $elm$core$String$fromChar(to.cY));
 		} else {
 			return '❌';
 		}
@@ -12964,7 +13200,7 @@ var $zwilias$elm_rosetree$Tree$restructureHelp = F4(
 	function (fLabel, fTree, acc, stack) {
 		restructureHelp:
 		while (true) {
-			var _v0 = acc.z;
+			var _v0 = acc.y;
 			if (!_v0.b) {
 				var node = A2(
 					fTree,
@@ -13006,7 +13242,7 @@ var $zwilias$elm_rosetree$Tree$restructureHelp = F4(
 									fLabel(l),
 									_List_Nil),
 								acc.f),
-							z: rest
+							y: rest
 						}),
 						$temp$stack = stack;
 					fLabel = $temp$fLabel;
@@ -13024,13 +13260,13 @@ var $zwilias$elm_rosetree$Tree$restructureHelp = F4(
 						$temp$acc = {
 						f: _List_Nil,
 						fo: fLabel(l),
-						z: cs
+						y: cs
 					},
 						$temp$stack = A2(
 						$elm$core$List$cons,
 						_Utils_update(
 							acc,
-							{z: rest}),
+							{y: rest}),
 						stack);
 					fLabel = $temp$fLabel;
 					fTree = $temp$fTree;
@@ -13052,7 +13288,7 @@ var $zwilias$elm_rosetree$Tree$restructure = F3(
 			{
 				f: _List_Nil,
 				fo: convertLabel(l),
-				z: c
+				y: c
 			},
 			_List_Nil);
 	});
@@ -13089,7 +13325,7 @@ var $author$project$Main$historyView = function (model) {
 							_List_fromArray(
 								[
 									_Utils_Tuple2('call', true),
-									_Utils_Tuple2('current', !model.ai)
+									_Utils_Tuple2('current', !model.ah)
 								])),
 							$elm$html$Html$Attributes$title('Initial Graph')
 						]),
@@ -13111,7 +13347,7 @@ var $author$project$Main$historyView = function (model) {
 						]));
 			default:
 				var n = node.a;
-				var _v1 = model.aM;
+				var _v1 = model.aL;
 				if (!_v1.$) {
 					var agents = _v1.a;
 					return A2(
@@ -13126,7 +13362,7 @@ var $author$project$Main$historyView = function (model) {
 										_Utils_Tuple2('call', true),
 										_Utils_Tuple2(
 										'current',
-										_Utils_eq(model.ai, n.fl))
+										_Utils_eq(model.ah, n.fl))
 									]))
 							]),
 						_List_fromArray(
@@ -13210,7 +13446,7 @@ var $author$project$Main$historyView = function (model) {
 					]),
 				_List_fromArray(
 					[
-						renderTree(model.x)
+						renderTree(model.w)
 					]))
 			]));
 };
@@ -13225,7 +13461,7 @@ var $author$project$Main$modalView = function (model) {
 				_List_fromArray(
 					[
 						_Utils_Tuple2('modal-overlay', true),
-						_Utils_Tuple2('visible', model.V.bl)
+						_Utils_Tuple2('visible', model.U.bk)
 					]))
 			]),
 		_List_fromArray(
@@ -13251,7 +13487,7 @@ var $author$project$Main$modalView = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$elm$html$Html$text(model.V.ce)
+										$elm$html$Html$text(model.U.cd)
 									])),
 								A2(
 								$elm$html$Html$button,
@@ -13272,7 +13508,7 @@ var $author$project$Main$modalView = function (model) {
 							[
 								$elm$html$Html$Attributes$class('modal-content')
 							]),
-						model.V.cs)
+						model.U.cr)
 					]))
 			]));
 };
@@ -13447,7 +13683,7 @@ var $author$project$Main$protocolHelpView = _List_fromArray(
 var $elm$html$Html$select = _VirtualDom_node('select');
 var $author$project$Main$protocolView = function (model) {
 	var protocolExplanation = function () {
-		var _v2 = A2($elm$core$Dict$get, model.at, $author$project$GossipProtocol$Conditions$Predefined$explanation);
+		var _v2 = A2($elm$core$Dict$get, model.as, $author$project$GossipProtocol$Conditions$Predefined$explanation);
 		if (!_v2.$) {
 			var explanation = _v2.a;
 			return _List_fromArray(
@@ -13484,7 +13720,7 @@ var $author$project$Main$protocolView = function (model) {
 						]))
 				]);
 		} else {
-			return (model.at === 'custom') ? _List_fromArray(
+			return (model.as === 'custom') ? _List_fromArray(
 				[
 					A2(
 					$elm$html$Html$p,
@@ -13583,7 +13819,7 @@ var $author$project$Main$protocolView = function (model) {
 						'Current protocol: ' + A2(
 							$elm$core$Maybe$withDefault,
 							'?',
-							A2($elm$core$Dict$get, model.at, $author$project$GossipProtocol$Conditions$Predefined$name)),
+							A2($elm$core$Dict$get, model.as, $author$project$GossipProtocol$Conditions$Predefined$name)),
 						protocolExplanation)
 					])),
 				A2(
@@ -13600,14 +13836,14 @@ var $author$project$Main$protocolView = function (model) {
 						$elm$html$Html$Attributes$class('call-list')
 					]),
 				function () {
-					var _v0 = _Utils_Tuple2(model.aM, model.u);
+					var _v0 = _Utils_Tuple2(model.aL, model.t);
 					if ((!_v0.a.$) && (!_v0.b.$)) {
 						var agents = _v0.a.a;
 						var graph = _v0.b.a;
 						var calls = A3(
 							$author$project$GossipProtocol$GossipProtocol$selectCalls,
 							graph,
-							model.aU,
+							model.aT,
 							A3(
 								$elm$core$List$foldr,
 								F2(
@@ -13620,8 +13856,8 @@ var $author$project$Main$protocolView = function (model) {
 										}
 									}),
 								_List_Nil,
-								$zwilias$elm_rosetree$Tree$flatten(model.x)));
-						return $elm$core$String$isEmpty(model.ab) ? _List_fromArray(
+								$zwilias$elm_rosetree$Tree$flatten(model.w)));
+						return $elm$core$String$isEmpty(model.aa) ? _List_fromArray(
 							[
 								$elm$html$Html$text('None')
 							]) : ($elm$core$List$isEmpty(calls) ? _List_fromArray(
@@ -13665,7 +13901,7 @@ var $author$project$Main$view = function (model) {
 				$author$project$Main$callSequenceView(model),
 				$author$project$Main$modalView(model)
 			]),
-		ce: 'Tools for Gossip'
+		cd: 'Tools for Gossip'
 	};
 };
 var $author$project$Main$main = $elm$browser$Browser$document(
