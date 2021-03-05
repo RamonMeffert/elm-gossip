@@ -196,6 +196,11 @@ isWeaklyConnected kind graph =
 
 {-| A relation P is strongly connected if, for all nodes, there exists a path 
 between nodes in P or P⁻¹
+
+Nope, this isn't right either -- ABC aBc abC is reported as being strongly connected while it isn't.
+
+Working on a new version...
+
 -}
 isStronglyConnected : Kind -> Graph Agent Relation -> Bool
 isStronglyConnected kind graph =
