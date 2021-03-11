@@ -77,6 +77,7 @@ type alias Model =
     , formula : Protocol
     , dragDrop : DragDrop.Model DragId DropId
     , dragFocus : Maybe Int
+    , constituentPickerVisible : Bool
     }
 
 
@@ -110,6 +111,7 @@ init _ =
       , formula = Predefined.formulaAny
       , dragDrop = DragDrop.init
       , dragFocus = Nothing
+      , constituentPickerVisible = False
       }
     , Cmd.none
     )
@@ -145,6 +147,8 @@ type PMessage
     | ToggleConnective Formula.NodeId
     | DeleteNode Formula.NodeId
     | ToggleNegation Formula.NodeId
+    | TogglePopover
+    | AppendConstituent( Formula.BoolElement ProtocolConstituent)
 
 
 update : Message -> Model -> ( Model, Cmd Message )
@@ -216,7 +220,7 @@ updateProtocol msg model =
                 | dragDrop = newModel 
                 , formula = newFormula
                 , protocolCondition = evaluateFormulaAsProtocolCondition newFormula
-                    
+                , protocolName = "custom"
               }
             , DragDrop.getDragstartEvent message
                 |> Maybe.map (.event >> dragstart)
@@ -235,6 +239,7 @@ updateProtocol msg model =
                     ({ model 
                         | formula = newFormula
                         , protocolCondition = evaluateFormulaAsProtocolCondition newFormula
+                        , protocolName = "custom"
                         }
                     , Cmd.none)
 
@@ -247,6 +252,7 @@ updateProtocol msg model =
                     ({ model 
                         | formula = newFormula
                         , protocolCondition = evaluateFormulaAsProtocolCondition newFormula
+                        , protocolName = "custom"
                         }
                     , Cmd.none)
 
@@ -260,8 +266,28 @@ updateProtocol msg model =
             ({ model 
                 | formula = newFormula
                 , protocolCondition = evaluateFormulaAsProtocolCondition newFormula
+                , protocolName = "custom"
                 }
             , Cmd.none)
+        
+        AppendConstituent constituent ->
+            let
+                newFormula = Formula.append Formula.Or constituent model.formula
+            in
+            ({ model 
+                | formula = newFormula
+                , protocolCondition = evaluateFormulaAsProtocolCondition newFormula
+                , protocolName = "custom"
+                , constituentPickerVisible = False
+                }
+            , Cmd.none)
+
+        TogglePopover ->
+            ( { model
+                | constituentPickerVisible = not model.constituentPickerVisible
+              }
+            , Cmd.none
+            )
 
 
 {-| Updates the formula after a drag-and-drop event
@@ -561,20 +587,24 @@ changeProtocol : String -> Model -> (Model, Cmd Message)
 changeProtocol protocolName model =
     let
         condition = Dict.get protocolName Predefined.condition
+
+        formula = Dict.get protocolName Predefined.formula
     in
-    case condition of
-        Just c ->
+    case (condition, formula) of
+        (Just c, Just f) ->
             ( { model
                 | protocolCondition = c
                 , protocolName = protocolName
                 , history = Tree.singleton Root
+                , formula = f
               }
             , Cmd.none)
-        Nothing ->
+        _ ->
             ( { model
                 | protocolCondition = Predefined.any
                 , protocolName = "any"
                 , history = Tree.singleton Root
+                , formula = Predefined.formulaAny
               }
             , Cmd.none
             )
@@ -762,6 +792,7 @@ historyHelpView : List (Html msg)
 historyHelpView =
     [ p [] [ text "This section shows the history of calls that have been made. You can click any of the calls to time-travel to that state of the gossip graph." ]
     ]
+
 
 historyView : Model -> Html Message
 historyView model =
@@ -1182,9 +1213,27 @@ deleteButton id =
         [ Icon.viewIcon Icon.trash ]
 
 
-protocolView : Protocol -> Maybe Formula.NodeId -> Html Message
-protocolView formula dragFocus =
+protocolView : Model -> Html Message
+protocolView model =
     let
+        protocolExplanation =
+            case Dict.get model.protocolName Predefined.explanation of
+                Just explanation ->
+                    [ blockquote []
+                        [ p [] explanation
+                        , footer []
+                            [ Html.cite [] [ text "Based on " , Html.a [ href "https://doi.org/10/cvpm" ] [ text "van Ditmarsch et al. (2018)" ] ]
+                            ]
+                        ]
+                    ]
+
+                Nothing ->
+                    if model.protocolName == "custom" then
+                        [ p [] [ text "Custom" ] ]
+
+                    else
+                        [ p [] [ text "Unknown protocol" ] ]
+
         transform : Formula.NodeId 
             -> Formula.BoolElement ProtocolConstituent 
             -> List (Html Message) 
@@ -1198,14 +1247,14 @@ protocolView formula dragFocus =
 
                 draggability : List (Attribute Message)
                 draggability = 
-                    if isDragFocus id dragFocus then 
+                    if isDragFocus id model.dragFocus then 
                         DragDrop.draggable (\msg -> ProtocolMessage (DragDropMsg msg)) id
                     else 
                         []
 
                 droppability : List (Attribute Message)
                 droppability =
-                    case dragFocus of
+                    case model.dragFocus of
                         Just _ ->
                             DragDrop.droppable (\msg -> ProtocolMessage(DragDropMsg msg)) id
                         Nothing ->
@@ -1242,8 +1291,79 @@ protocolView formula dragFocus =
     in
     section [ id "protocols" ]
         [ header []
-            [ h2 [] [ text "Gossip Protocols" ] ]
-        , div [ id "protocol-builder" ] (Formula.cata transform [] formula)
+            [ h2 [] [ text "Gossip Protocols" ] 
+            , helpButtonView "Gossip Protocols" protocolHelpView
+            ]
+        , div [ id "protocol-builder" ] (Formula.cata transform [] model.formula)
+        , div [ id "add-protocol-component" ]
+            [ button [ type_ "button", onClick <| ProtocolMessage TogglePopover ]
+                [ Icon.viewIcon Icon.plus
+                , text " Add constituent"
+                ]
+            ]
+        , div [ id "constituent-popover", classList [ ( "visible", model.constituentPickerVisible ) ] ]
+            [ div [ class "window" ]
+                [ header []
+                    [ strong []
+                        [ text "Constituents" ]
+                    , button [ type_ "button", title "Close window", onClick (ProtocolMessage TogglePopover) ] [ Icon.viewIcon Icon.times ]
+                    ]
+                , div [ class "constituents" ]
+                    [ button [ type_ "button", onClick <| ProtocolMessage (AppendConstituent <| Formula.Constituent NotNegated Verum) ] 
+                        [ renderProtocolConstituent Verum ]
+                    , button [ type_ "button", onClick <| ProtocolMessage (AppendConstituent <| Formula.Constituent NotNegated Falsum) ] 
+                        [ renderProtocolConstituent Falsum ]
+                    , button [ type_ "button", onClick <| ProtocolMessage (AppendConstituent <| Formula.Constituent NotNegated Empty) ] 
+                        [ renderProtocolConstituent Empty ]
+                    , button [ type_ "button", onClick <| ProtocolMessage (AppendConstituent <| Formula.Constituent NotNegated LastTo) ] 
+                        [ renderProtocolConstituent LastTo ]
+                    , button [ type_ "button", onClick <| ProtocolMessage (AppendConstituent <| Formula.Constituent NotNegated LastFrom) ] 
+                        [ renderProtocolConstituent LastFrom ]
+                    , button [ type_ "button", onClick <| ProtocolMessage (AppendConstituent <| Formula.Constituent NotNegated HasCalled) ] 
+                        [ renderProtocolConstituent HasCalled ]
+                    , button [ type_ "button", onClick <| ProtocolMessage (AppendConstituent <| Formula.Constituent NotNegated WasCalledBy) ] 
+                        [ renderProtocolConstituent WasCalledBy ]
+                    , button [ type_ "button", onClick <| ProtocolMessage (AppendConstituent <| Formula.Constituent NotNegated KnowsSecret) ] 
+                        [ renderProtocolConstituent KnowsSecret ]
+                    ]
+                ]
+            ]
+        , div [ class "input-group" ]
+            [ select [ on "change" (Json.map ChangeProtocol targetValue), value model.protocolName ]
+                (List.map (\k -> option [ value k ] [ text <| Maybe.withDefault "?" <| Dict.get k Predefined.name ]) (Dict.keys Predefined.name)
+                    ++ [ option [ value "custom", disabled True ] [ text "Custom" ] ]
+                )
+            , helpButtonView ("Current protocol: " ++ (Maybe.withDefault "?" <| Dict.get model.protocolName Predefined.name)) protocolExplanation
+            ]
+        , h3 [] [ text "Possible calls" ]
+        , div [ class "call-list" ]
+            (case ( model.agents, model.graph ) of
+                ( Ok agents, Ok graph ) ->
+                    let
+                        calls =
+                            GossipProtocol.selectCalls graph model.protocolCondition (Tree.flatten model.history |> List.foldr (\el acc ->
+                                case el of
+                                    Node n ->
+                                        n.call :: acc
+
+                                    _ ->
+                                        acc
+                            ) [])
+                    in
+                    if String.isEmpty model.inputGossipGraph then
+                        [ text "None" ]
+
+                    else if List.isEmpty calls then
+                        [ text "All possible calls have been made." ]
+
+                    else
+                        List.map (\call -> div [ class "call", onClick (ExecuteCall call) ] [ text <| Call.renderString agents call ]) calls
+
+                _ ->
+                    -- TODO: propagate errors from model.callSequence, .agents, .graph instead of the error below
+                    [ Alert.render Alert.Information "The call sequence below is impossible. I'll start looking for possible calls again when I understand the call sequence!"
+                    ]
+            )
         ]
 
 
@@ -1339,7 +1459,7 @@ view model =
         [ headerView
         , gossipGraphView model
         , historyView model
-        , protocolView model.formula model.dragFocus
+        , protocolView model
         , callSequenceView model
         , modalView model
         ]

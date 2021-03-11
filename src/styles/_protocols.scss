@@ -48,23 +48,23 @@
     }
 
     .constituent .controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .drag-handle {
         background-color: rgba(0,0,0,0.1);
         display: flex;
         align-items: center;
         justify-content: center;
-
-        .drag-handle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 2rem;
-            color: rgba(0,0,0,.3);
-            cursor: move;
-            transition: color .1s;
-        
-            &:hover {
-                color: rgba(0,0,0,.7);
-            }
+        width: 2rem;
+        color: rgba(0,0,0,.3);
+        cursor: move;
+        transition: color .1s;
+    
+        &:hover {
+            color: rgba(0,0,0,.7);
         }
     }
 
@@ -98,5 +98,101 @@
         &:checked::after {
             color: theme.$baseTextColor;
         }
+    }
+}
+
+#add-protocol-component {
+    display: flex;
+    justify-content: center;
+    margin-bottom: v.$pad-v;
+}
+
+#constituent-popover {
+    position: relative;
+    width: 100%;
+
+    .window {
+        display: none;
+    }
+
+    &.visible .window {
+        display: block;
+    }
+
+    .window {
+        position: absolute;
+        top: 0;
+        left: calc(25% - #{v.$pad-h / 2} + 1px);;
+        @include m.box;
+        box-shadow: 0 .2rem 1rem rgba(0,0,0,.2);
+        width: calc(50% - #{v.$pad-h} - 6px);
+
+        .constituents {
+            flex-wrap: wrap;
+            display: flex;
+            width: 100%;
+
+            button {
+                width: calc(50% - #{v.$pad-h / 2});
+                box-sizing: border-box;
+
+                &:nth-child(2n - 1) {
+                    margin-right: v.$pad-h / 2;
+                }
+
+                &:nth-child(2n) {
+                    margin-left: v.$pad-h / 2;
+                }
+
+                &:not(:nth-child(1)):not(:nth-child(2)) {
+                    margin-top: v.$pad-v;
+                }
+            }
+        }
+
+        header {
+            // Close button
+            button {
+                position: absolute;
+                top: v.$pad-v - .5rem;
+                right: v.$pad-h - .5rem;
+                border: none;
+                background-color: transparent;
+                padding: 0;
+                margin: 0;
+                line-height: 2rem;
+                width: 2rem;
+                &:hover {
+                    background-color: color.scale(theme.$baseTextColor, $alpha: -90%);
+                }                
+            }
+        }
+
+        // The two things below are the triangle at the top of the popover window
+        $triangleSize: .8rem;
+
+        &::before, &::after {
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 0;
+            left: calc(50% - #{$triangleSize});
+            border-left: $triangleSize solid transparent;
+            border-right: $triangleSize solid transparent;
+
+        }
+
+        // Fake border
+        &::before {
+            top: calc(-1 * #{$triangleSize} - 1px);
+            border-bottom: $triangleSize solid color.scale(theme.$baseTextColor, $alpha: -90%);
+        }
+
+        // Background color
+        &::after {
+            top: calc(-1 * #{$triangleSize} + 1.5px);
+            border-bottom: $triangleSize solid theme.$baseBgColor;
+        }
+
     }
 }

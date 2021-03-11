@@ -85,6 +85,17 @@ condition =
         ]
 
 
+formula : Dict String (Formula.Formula ProtocolConstituent)
+formula =
+    Dict.fromList
+        [ ( "any", formulaAny )
+        , ( "tok", formulaTok )
+        , ( "spi", formulaSpi )
+        , ( "co",  formulaCo )
+        , ( "wco", formulaWco )
+        , ( "lns", formulaLns )
+        ]
+
 
 formulaAny : Formula.Formula ProtocolConstituent
 formulaAny =  Formula.singleton 0 (Formula.Constituent NotNegated Verum)
