@@ -1,4 +1,4 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 import Browser exposing (Document)
 import CallSequence.CallSequence
@@ -18,14 +18,19 @@ import GossipProtocol.GossipProtocol as GossipProtocol
 import Graph exposing (Graph)
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html5.DragDrop as DragDrop
 import Html.Events exposing (..)
 import Json.Decode as Json
 import Utils.Alert as Alert
 import Tree exposing (Tree)
 import Tree.Zipper
-import Tree.Zipper
-import GossipProtocol.GossipProtocol exposing (HistoryNode(..))
+import GossipProtocol.BooleanFormula as Formula exposing (Negation(..))
+import GossipProtocol.GossipProtocol exposing (HistoryNode(..), evaluateFormulaAsProtocolCondition)
+import GossipProtocol.Conditions.Constituents exposing (ProtocolConstituent(..))
 
+
+
+port dragstart : Json.Value -> Cmd msg
 
 
 -- MAIN
@@ -45,6 +50,14 @@ main =
 -- MODEL
 
 
+
+type alias DragId = Formula.NodeId
+
+type alias DropId = Formula.NodeId
+
+type alias Protocol = Formula.Formula ProtocolConstituent
+
+
 type alias Model =
     { inputGossipGraph : String
     , canonicalGossipGraph : String
@@ -61,6 +74,9 @@ type alias Model =
     , historyInitialGraph : Graph Agent Relation
     , executionTreeDepth : Int
     , modal : { visible : Bool, title : String, content : List (Html Message) }
+    , formula : Protocol
+    , dragDrop : DragDrop.Model DragId DropId
+    , dragFocus : Maybe Int
     }
 
 
@@ -76,7 +92,7 @@ init _ =
       , graph = Ok Graph.empty
       , agents = Ok []
       , relations = Ok []
-      , protocolCondition = Predefined.any
+      , protocolCondition = evaluateFormulaAsProtocolCondition Predefined.formulaAny
       , protocolName = "any"
       , executionTreeDepth = 5
       , graphSettings =
@@ -91,6 +107,9 @@ init _ =
             , title = ""
             , content = []
             }
+      , formula = Predefined.formulaAny
+      , dragDrop = DragDrop.init
+      , dragFocus = Nothing
       }
     , Cmd.none
     )
@@ -116,6 +135,16 @@ type Message
     | HideModal
     | ChangeExecutionTreeDepth String
     | GenerateExecutionTree
+    | ProtocolMessage PMessage
+
+
+type PMessage
+    = DragDropMsg (DragDrop.Msg DragId DropId)
+    | SetDragFocus DragId
+    | ClearDragFocus
+    | ToggleConnective Formula.NodeId
+    | DeleteNode Formula.NodeId
+    | ToggleNegation Formula.NodeId
 
 
 update : Message -> Model -> ( Model, Cmd Message )
@@ -162,11 +191,106 @@ update msg model =
         GenerateExecutionTree ->
             generateExecutionTree model
 
+        ProtocolMessage message ->
+            updateProtocol message model
 
+
+updateProtocol : PMessage -> Model -> (Model, Cmd Message)
+updateProtocol msg model =
+    case msg of
+        DragDropMsg message ->
+            let
+                ( newModel, result ) =
+                    -- TODO: Consider using updateSticky
+                    DragDrop.update message model.dragDrop
+
+                newFormula = 
+                    case result of
+                        Just (dragId, dropId, position) ->
+                            updateFormula dragId dropId position model.formula
+                        
+                        Nothing ->
+                            model.formula
+            in
+            ( { model 
+                | dragDrop = newModel 
+                , formula = newFormula
+                , protocolCondition = evaluateFormulaAsProtocolCondition newFormula
+                    
+              }
+            , DragDrop.getDragstartEvent message
+                |> Maybe.map (.event >> dragstart)
+                |> Maybe.withDefault Cmd.none
+            )
+
+        SetDragFocus index ->
+            ({ model | dragFocus = Just index }, Cmd.none)
+
+        ClearDragFocus ->
+            ({ model | dragFocus = Nothing }, Cmd.none)
+
+        ToggleConnective index ->
+            case Formula.toggleConnective model.formula index of
+                Just newFormula ->
+                    ({ model 
+                        | formula = newFormula
+                        , protocolCondition = evaluateFormulaAsProtocolCondition newFormula
+                        }
+                    , Cmd.none)
+
+                Nothing ->
+                    (model, Cmd.none)
+
+        ToggleNegation index ->
+            case Formula.toggleNegation model.formula index of
+                Just newFormula ->
+                    ({ model 
+                        | formula = newFormula
+                        , protocolCondition = evaluateFormulaAsProtocolCondition newFormula
+                        }
+                    , Cmd.none)
+
+                Nothing ->
+                    (model, Cmd.none)
+        
+        DeleteNode id ->
+            let 
+                newFormula = Formula.pruneTreeAt id model.formula 
+            in
+            ({ model 
+                | formula = newFormula
+                , protocolCondition = evaluateFormulaAsProtocolCondition newFormula
+                }
+            , Cmd.none)
+
+
+{-| Updates the formula after a drag-and-drop event
+
+-}
+updateFormula : DragId -> DropId -> DragDrop.Position -> Protocol -> Protocol
+updateFormula dragId dropId position formula =
+    let
+        dragged = Formula.subTreeAt dragId formula
+        droppedOn = Formula.subTreeAt dropId formula
+
+    in
+    -- disallow dropping an element on itself
+    if dragId /= dropId then
+        case (dragged, droppedOn) of
+            (Just draggedElement, Just droppedElement) ->
+                Formula.pruneTreeAt dragId formula
+                    |> \newFormula -> 
+                            Formula.replaceTreeAt dropId newFormula 
+                                (Formula.makeConnective (Formula.highestIndex formula + 1) Formula.Or droppedElement draggedElement)
+                    |> Maybe.withDefault formula
+            _ ->
+                formula
+    else
+        formula
 -- VIEW
 
 
-insertExampleGraph : String -> Model -> ({ inputGossipGraph : String, canonicalGossipGraph : String, inputCallSequence : String, graph : Result String (Graph Agent Relation), agents : Result String (List Agent), relations : Result String (List Relation), protocolCondition : GossipProtocol.GossipProtocol.ProtocolCondition, protocolName : String, graphSettings : GossipGraph.Renderer.GraphSettings, callSequence : Result CallSequence.Parser.Error (CallSequence.CallSequence.CallSequence), historyLocation : Int, history : Tree HistoryNode, historyInitialGraph : Graph Agent Relation, executionTreeDepth : Int, modal : { visible : Bool, title : String, content : List (Html Message) } }, Cmd Message)
+insertExampleGraph : String -> Model -> (Model, Cmd Message)
 insertExampleGraph graph model =
     update (ChangeGossipGraph graph) model
     |> \(mo, me) -> ({ mo | modal = (\md -> { md | visible = False }) mo.modal }, me)
@@ -966,11 +1090,167 @@ protocolHelpView =
         , text " icon will tell you the rules of the selected protocol."
         ]
     , Alert.render Alert.Information "In the next version of this application, you will be able to define custom gossip protocols using the constituents defined by van Ditmarsch et al. (2018)."
-    ] 
+    ]
 
 
-protocolView : Model -> Html Message
-protocolView model =
+renderProtocolConstituent : ProtocolConstituent -> Html msg
+renderProtocolConstituent constituent =
+    case constituent of
+        Empty ->
+            span [ class "protocol-constituent" ]
+                [ text "σ"
+                , sub [] [ text "x" ]
+                , text " = ϵ"
+                ]
+
+        Verum ->
+            span [ class "protocol-constituent" ]
+                [ text "⊤" ]
+
+        Falsum ->
+            span [ class "protocol-constituent" ]
+                [ text "⊥" ]
+
+        LastTo ->
+            span [ class "protocol-constituent" ]
+                [ text "σ"
+                , sub [] [ text "x" ]
+                , text " = τ;zx"
+                ]
+
+        LastFrom ->
+            span [ class "protocol-constituent" ]
+                [ text "σ"
+                , sub [] [ text "x" ]
+                , text " = τ;xz"
+                ]
+
+        HasCalled ->
+            span [ class "protocol-constituent" ]
+                [ text "xy ∈ σ"
+                , sub [] [ text "x" ]
+                ]
+
+        WasCalledBy ->
+            span [ class "protocol-constituent" ]
+                [ text "yx ∈ σ"
+                , sub [] [ text "x" ]
+                ]
+
+        KnowsSecret ->
+            span [ class "protocol-constituent" ]
+                [ text "S"
+                , sup [] [ text "σ" ]
+                , text "xy"
+                ]
+
+
+isDragFocus : Formula.NodeId -> Maybe Formula.NodeId -> Bool
+isDragFocus index dragFocus =
+    case dragFocus of
+        Nothing ->
+            False
+
+        Just i ->
+            index == i
+
+dragHandle : Formula.NodeId -> Html Message
+dragHandle index =
+    div [ class "drag-handle"
+        , Html.Events.onMouseOver (ProtocolMessage (SetDragFocus index))
+        , Html.Events.onMouseLeave (ProtocolMessage ClearDragFocus)
+        ]
+        [ Icon.viewIcon Icon.gripVertical ]
+
+
+negationToggle : Formula.NodeId -> Negation -> Html Message
+negationToggle id negationState =
+    let
+        isChecked = negationState == Negated
+    in
+    
+    input [ type_ "checkbox"
+          , class "negation"
+          , checked isChecked
+          , onClick (ProtocolMessage (ToggleNegation id))
+          ]
+        []
+
+deleteButton : Formula.NodeId -> Html Message
+deleteButton id =
+    button [ onClick (ProtocolMessage(DeleteNode id)), class "delete-constituent" ]
+        [ Icon.viewIcon Icon.trash ]
+
+
+protocolView : Protocol -> Maybe Formula.NodeId -> Html Message
+protocolView formula dragFocus =
+    let
+        transform : Formula.NodeId 
+            -> Formula.BoolElement ProtocolConstituent 
+            -> List (Html Message) 
+            -> List (Html Message) 
+            -> List (Html Message)
+        transform id label left right =
+            let
+                junctionToString : Formula.Junction -> String
+                junctionToString j =
+                    if j == Formula.And then "∧" else "∨"
+
+                draggability : List (Attribute Message)
+                draggability = 
+                    if isDragFocus id dragFocus then 
+                        DragDrop.draggable (\msg -> ProtocolMessage (DragDropMsg msg)) id
+                    else 
+                        []
+
+                droppability : List (Attribute Message)
+                droppability =
+                    case dragFocus of
+                        Just _ ->
+                            DragDrop.droppable (\msg -> ProtocolMessage(DragDropMsg msg)) id
+                        Nothing ->
+                            []
+            in
+            case label of
+                Formula.Connective junction ->
+                    [ ul (draggability ++ droppability)
+                        [ dragHandle id
+                        , div [ class "children" ] 
+                            [ li [] left
+                            , li [ class "junction"
+                                , onClick <| ProtocolMessage (ToggleConnective id)
+                                ] 
+                                [ text <| junctionToString junction ]
+                            , li [] right
+                            ]
+                        ] 
+                    ]
+                
+                Formula.Constituent negation value ->
+                    ( div (class "constituent" :: (draggability ++ droppability))
+                        [ div [ class "controls" ] 
+                            [ dragHandle id
+                            , negationToggle id negation
+                            ]
+                        , renderProtocolConstituent value
+                        , deleteButton id
+                        ]
+                    )
+                    :: left ++ right
+                    
+            
+    in
+    section [ id "protocols" ]
+        [ header []
+            [ h2 [] [ text "Gossip Protocols" ] ]
+        , div [ id "protocol-builder" ] (Formula.cata transform [] formula)
+        ]
+
+
+
+
+protocolViewOld : Model -> Html Message
+protocolViewOld model =
     let
         protocolExplanation =
             case Dict.get model.protocolName Predefined.explanation of
@@ -1059,7 +1339,7 @@ view model =
         [ headerView
         , gossipGraphView model
         , historyView model
-        , protocolView model
+        , protocolView model.formula model.dragFocus
         , callSequenceView model
         , modalView model
         ]

@@ -10,7 +10,8 @@ import IntDict
 import List
 import Set exposing (Set)
 import Tree exposing (Tree)
-
+import GossipProtocol.BooleanFormula as Formula
+import GossipProtocol.Conditions.Constituents as Constituents
 
 {-| Protocol conditions
 import GossipGraph.Relation
@@ -264,3 +265,64 @@ generateExecutionTree index graph condition sequence depth state =
 
     else
         nextState
+
+{-| Produces a function that takes in a set of agents, relations and a call history
+
+-}
+evaluateFormulaAsProtocolCondition : Formula.Formula Constituents.ProtocolConstituent -> ProtocolCondition
+evaluateFormulaAsProtocolCondition formula (x, y) relations sequence =
+    let
+        transform : Formula.NodeId 
+            -> Formula.BoolElement Constituents.ProtocolConstituent 
+            -> Bool 
+            -> Bool
+            -> Bool
+        transform id label left right =
+            case label of
+                Formula.Connective junction ->
+                    case junction of
+                        Formula.Or ->
+                            left || right
+
+                        Formula.And ->
+                            left && right
+                
+                Formula.Constituent negation value ->
+                    let 
+                        sigma_x = CallSequence.CallSequence.containing sequence x
+
+                        negate =
+                            case negation of
+                                Formula.Negated -> (\a -> not a)
+
+                                Formula.NotNegated -> identity
+                    in
+                    
+                    case value of
+                        Constituents.Verum -> 
+                            negate True
+
+                        Constituents.Falsum -> 
+                            negate False
+                        
+                        Constituents.Empty ->
+                            negate <| Constituents.empty sequence
+
+                        Constituents.LastTo ->
+                            negate <| Constituents.lastTo x sigma_x
+
+                        Constituents.LastFrom ->
+                            negate <| Constituents.lastFrom x sigma_x
+
+                        Constituents.HasCalled ->
+                            negate <| Constituents.hasCalled x y sigma_x
+
+                        Constituents.WasCalledBy ->
+                            negate <| Constituents.wasCalledBy x y sigma_x
+
+                        Constituents.KnowsSecret ->
+                            negate <| Constituents.knowsSecret x y relations
+
+
+    in
+    Formula.cata transform True formula

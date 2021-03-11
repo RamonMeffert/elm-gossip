@@ -8,6 +8,11 @@ import Dict exposing (Dict)
 import GossipProtocol.Conditions.Constituents exposing (..)
 import GossipProtocol.GossipProtocol exposing (ProtocolCondition)
 import Html exposing (Html, p, sup, text)
+import GossipProtocol.BooleanFormula as Formula exposing (Junction(..), Negation(..))
+
+
+
+type alias Protocol = Formula.Formula ProtocolConstituent
 
 
 any : ProtocolCondition
@@ -78,6 +83,25 @@ condition =
         , ( "wco", wco )
         , ( "lns", lns )
         ]
+
+
+
+formulaAny : Formula.Formula ProtocolConstituent
+formulaAny =  Formula.singleton 0 (Formula.Constituent NotNegated Verum)
+
+
+formulaTok = Formula.singleton 0 (Formula.Constituent NotNegated Empty) 
+            |> Formula.append Or (Formula.Constituent NotNegated LastTo)
+
+formulaSpi = Formula.singleton 0 (Formula.Constituent NotNegated Empty) 
+            |> Formula.append Or (Formula.Constituent NotNegated LastFrom)
+
+formulaCo = Formula.singleton 0 (Formula.Constituent Negated HasCalled) 
+            |> Formula.append And (Formula.Constituent Negated WasCalledBy)
+
+formulaWco = Formula.singleton 0 (Formula.Constituent NotNegated HasCalled)
+
+formulaLns = Formula.singleton 0 (Formula.Constituent Negated KnowsSecret)
 
 
 explanation : Dict String (List (Html msg))
