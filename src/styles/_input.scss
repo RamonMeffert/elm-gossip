@@ -9,7 +9,10 @@ input[type=text]:disabled {
     cursor: not-allowed;
 }
 
-input:not([type=checkbox]), button, select {
+input:not([type=checkbox]),
+button, 
+select, 
+a.button {
     -webkit-appearance: none;
     -moz-appearance:    none;
     appearance:         none;
@@ -31,12 +34,14 @@ input:not([type=checkbox]), button, select {
 }
 
 button,
-input[type=button] {
+input[type=button],
+a.button {
     appearance: none;
     background-color: color.scale(theme.$baseTextColor, $alpha: -90%);
     transition: background-color .1s;
     border-radius: v.$border-radius;
     cursor: default;
+    text-decoration: none;
 
     &:disabled {
         color: color.scale(theme.$baseTextColor, $alpha: -50%);
@@ -49,6 +54,26 @@ input[type=button] {
 
     &:not(:disabled):active {
         background-color: color.scale(theme.$baseTextColor, $alpha: -85%);
+    }
+
+    &.icon {
+        padding-left: v.$pad-h / 3 * 2;
+
+        svg {
+            margin-right: v.$pad-h / 2;
+        }
+    }
+
+    &.transparent {
+        background-color: transparent;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+
+        &:hover {
+            text-decoration: underline;
+            background-color: transparent;
+        }
     }
 }
 

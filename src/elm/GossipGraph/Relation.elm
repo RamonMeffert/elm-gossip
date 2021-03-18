@@ -14,7 +14,6 @@ module GossipGraph.Relation exposing (..)
 
 -}
 
-import Dict exposing (Dict)
 import GossipGraph.Agent exposing (Agent, AgentId)
 import Graph exposing (Edge, NodeContext)
 import IntDict

@@ -20,6 +20,7 @@ import TypedSvg.Attributes exposing (class, cx, cy, dy, fill, id, markerEnd, mar
 import TypedSvg.Core exposing (Attribute, Svg, text)
 import TypedSvg.Types exposing (Align(..), AnchorAlignment(..), Length(..), MeetOrSlice(..), Paint(..), Scale(..), px)
 import Utils.Alert as Alert
+import TypedSvg.Types exposing (FloodColor(..))
 
 
 
@@ -89,7 +90,7 @@ renderGraph graph settings =
                 |> Force.computeSimulation (Force.simulation forces)
                 |> updateGraphWithList entityGraph
     in
-    svg [ viewBox 0 0 settings.canvasWidth settings.canvasHeight, preserveAspectRatio (Align ScaleMid ScaleMid) Meet ]
+    svg [ viewBox 0 0 settings.canvasWidth settings.canvasHeight, preserveAspectRatio (Align ScaleMid ScaleMid) Meet  ]
         [ defs []
             (arrowHeads settings)
         , g [ class [ "links" ] ] <| List.map (renderEdge computedGraph settings) <| List.filter (\e -> e.from /= e.to) <| Graph.edges computedGraph
@@ -155,7 +156,7 @@ renderNode settings node =
         [ circle
             [ r (px settings.nodeRadius)
             , fill <| Paint Color.white
-            , stroke <| Paint <| Color.black
+            , stroke <| Paint Color.black
             , strokeWidth (px 1)
             , cx (px node.label.x)
             , cy (px node.label.y)
