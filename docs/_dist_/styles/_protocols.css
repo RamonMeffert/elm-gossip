@@ -2,60 +2,68 @@
 #protocol-builder {
   margin-bottom: 0.8rem;
 }
-
-#add-protocol-component {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 0.8rem;
-}
-
-#protocol-formula {
-  margin-bottom: 0.8rem;
+#protocol-builder .junction {
   text-align: center;
-  border-radius: 0.3rem;
-  border: 2px solid rgba(0, 0, 0, 0.15);
-  background-color: white;
+}
+#protocol-builder > ul {
+  margin: 0 !important;
+}
+#protocol-builder ul {
   display: flex;
-  justify-content: space-between;
-}
-#protocol-formula .formula, #protocol-formula .label {
-  line-height: 2rem;
-  padding: 0 1rem;
-}
-#protocol-formula .label {
-  background-color: rgba(0, 0, 0, 0.1);
-}
-#protocol-formula button {
-  border-width: 0 0 0 0;
-  border-radius: 0;
-}
-
-#protocols ul {
-  margin: 0;
+  list-style: none;
+  margin: 4px 0 4px 0;
   padding: 0;
 }
-#protocols li {
-  list-style: none;
-  position: relative;
-  text-align: center;
+#protocol-builder ul .children {
+  flex-grow: 1;
 }
-#protocols .condition,
-#protocols .group,
-#protocols .empty {
+#protocol-builder ul,
+#protocol-builder .junction,
+#protocol-builder ul .constituent {
+  margin: 0.4rem 0.6rem;
+}
+#protocol-builder ul,
+#protocol-builder .constituent {
   border-radius: 0.3rem;
   border: 2px solid rgba(0, 0, 0, 0.15);
   background-color: white;
-  cursor: grab;
+  background-color: white;
   overflow: hidden;
 }
-#protocols .condition .negation,
-#protocols .group .negation,
-#protocols .empty .negation {
+#protocol-builder .constituent {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+}
+#protocol-builder .constituent .protocol-constituent {
+  display: flex;
+  align-items: center;
+}
+#protocol-builder .constituent .controls {
+  display: flex;
+  justify-content: center;
+}
+#protocol-builder .drag-handle {
+  background-color: rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  color: rgba(0, 0, 0, 0.3);
+  cursor: move;
+  transition: color 0.1s;
+}
+#protocol-builder .drag-handle:hover {
+  color: rgba(0, 0, 0, 0.7);
+}
+#protocol-builder .delete-constituent {
+  border-width: 0 0 0 2px;
+  border-radius: 0;
+}
+#protocol-builder .negation {
   appearance: none;
 }
-#protocols .condition .negation::after,
-#protocols .group .negation::after,
-#protocols .empty .negation::after {
+#protocol-builder .negation::after {
   content: "¬";
   color: rgba(0, 0, 0, 0.25);
   font-weight: bold;
@@ -65,138 +73,33 @@
   background-color: rgba(0, 0, 0, 0.1);
   transition: all 0.1s;
 }
-#protocols .condition .negation:hover::after,
-#protocols .group .negation:hover::after,
-#protocols .empty .negation:hover::after {
+#protocol-builder .negation:hover::after {
   background-color: rgba(0, 0, 0, 0.05);
 }
-#protocols .condition .negation:active::after,
-#protocols .group .negation:active::after,
-#protocols .empty .negation:active::after {
+#protocol-builder .negation:active::after {
   background-color: rgba(0, 0, 0, 0.15);
 }
-#protocols .condition .negation:checked::after,
-#protocols .group .negation:checked::after,
-#protocols .empty .negation:checked::after {
+#protocol-builder .negation:checked::after {
   color: black;
 }
-#protocols .condition button,
-#protocols .group button,
-#protocols .empty button {
-  border-width: 0;
-  border-radius: 0;
-}
-#protocols .condition {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-#protocols .group {
-  display: flex;
-}
-#protocols .group header {
-  display: flex;
-  flex-direction: column;
-  border-right: 2px solid rgba(0, 0, 0, 0.15);
-  margin: 0;
-}
-#protocols .group .content {
-  padding: 0.8rem 1rem;
-  display: flex;
-  flex-grow: 1;
-}
-#protocols .group .content ul {
-  display: block;
-  width: 100%;
-}
-#protocols .connective,
-#protocols .swap-candidate .connective {
-  cursor: pointer;
-  margin: 0.4rem auto;
-  padding: 0;
+
+#add-protocol-component {
   display: flex;
   justify-content: center;
-  align-items: center;
-  width: 2rem;
-  box-sizing: border-box;
-  position: relative;
-  border-radius: 0.3rem;
-  border: 2px solid rgba(0, 0, 0, 0.15);
-  background-color: white;
-  font-weight: bold;
-  background-color: white;
-  color: black;
+  margin-bottom: 0.8rem;
 }
-#protocols .connective.or,
-#protocols .swap-candidate .connective.or {
-  padding: 0 1rem 0 3rem;
-}
-#protocols .connective.or::before,
-#protocols .swap-candidate .connective.or::before {
-  content: "∧";
-  position: absolute;
-  left: 0;
-  width: 2rem;
-  display: block;
-  background-color: rgba(0, 0, 0, 0.1);
-  color: rgba(0, 0, 0, 0.25);
-}
-#protocols .connective.and,
-#protocols .swap-candidate .connective.and {
-  padding: 0 3rem 0 1rem;
-}
-#protocols .connective.and::after,
-#protocols .swap-candidate .connective.and::after {
-  content: "∨";
-  position: absolute;
-  right: 0;
-  width: 2rem;
-  display: block;
-  background-color: rgba(0, 0, 0, 0.1);
-  color: rgba(0, 0, 0, 0.25);
-}
-#protocols .empty {
-  background-color: rgba(0, 0, 0, 0.1);
-  border: none;
-  padding: 1.5rem;
-}
-#protocols .group-hoveredover {
-  position: relative;
-  overflow: hidden;
-}
-#protocols .group-hoveredover::before,
-#protocols .group-hoveredover::after {
-  position: absolute;
-  top: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 50%;
-  padding: calc(.8rem - 1px) 0;
-  z-index: 10;
-}
-#protocols .group-hoveredover::before {
-  content: "Move after group";
-  background-color: yellow;
-  left: 0;
-}
-#protocols .group-hoveredover::after {
-  content: "Move inside group";
-  background-color: blue;
-  left: 50%;
-  color: white;
-}
-#protocols #constituent-popover {
+
+#constituent-popover {
   position: relative;
   width: 100%;
 }
-#protocols #constituent-popover .window {
+#constituent-popover .window {
   display: none;
 }
-#protocols #constituent-popover.visible .window {
+#constituent-popover.visible .window {
   display: block;
 }
-#protocols #constituent-popover .window {
+#constituent-popover .window {
   position: absolute;
   top: 0;
   left: calc(25% - 0.5rem + 1px);
@@ -207,25 +110,25 @@
   box-shadow: 0 0.2rem 1rem rgba(0, 0, 0, 0.2);
   width: calc(50% - 1rem - 6px);
 }
-#protocols #constituent-popover .window .constituents {
+#constituent-popover .window .constituents {
   flex-wrap: wrap;
   display: flex;
   width: 100%;
 }
-#protocols #constituent-popover .window .constituents button {
+#constituent-popover .window .constituents button {
   width: calc(50% - 0.5rem);
   box-sizing: border-box;
 }
-#protocols #constituent-popover .window .constituents button:nth-child(2n-1) {
+#constituent-popover .window .constituents button:nth-child(2n-1) {
   margin-right: 0.5rem;
 }
-#protocols #constituent-popover .window .constituents button:nth-child(2n) {
+#constituent-popover .window .constituents button:nth-child(2n) {
   margin-left: 0.5rem;
 }
-#protocols #constituent-popover .window .constituents button:not(:nth-child(1)):not(:nth-child(2)) {
+#constituent-popover .window .constituents button:not(:nth-child(1)):not(:nth-child(2)) {
   margin-top: 0.8rem;
 }
-#protocols #constituent-popover .window header button {
+#constituent-popover .window header button {
   position: absolute;
   top: 0.3rem;
   right: 0.5rem;
@@ -236,10 +139,10 @@
   line-height: 2rem;
   width: 2rem;
 }
-#protocols #constituent-popover .window header button:hover {
+#constituent-popover .window header button:hover {
   background-color: rgba(0, 0, 0, 0.1);
 }
-#protocols #constituent-popover .window::before, #protocols #constituent-popover .window::after {
+#constituent-popover .window::before, #constituent-popover .window::after {
   content: "";
   position: absolute;
   width: 0;
@@ -248,11 +151,11 @@
   border-left: 0.8rem solid transparent;
   border-right: 0.8rem solid transparent;
 }
-#protocols #constituent-popover .window::before {
+#constituent-popover .window::before {
   top: calc(-1 * 0.8rem - 1px);
   border-bottom: 0.8rem solid rgba(0, 0, 0, 0.1);
 }
-#protocols #constituent-popover .window::after {
+#constituent-popover .window::after {
   top: calc(-1 * 0.8rem + 1.5px);
   border-bottom: 0.8rem solid white;
 }
