@@ -712,7 +712,7 @@ gossipGraphHelpView =
         , a [ href "https://arxiv.org/abs/1907.12321" ] [ text "van Ditmarsch et al. (2019)" ]
         , text "."
         ]
-    , Alert.render Alert.Information "The next version of this application will allow an alternative input format: Instead of the letter-based format, a list-like format will be implemented. The string Ab aB will look like ([[0, 1], [0, 1]], [[0], [1]])."
+    -- , Alert.render Alert.Information "The next version of this application will allow an alternative input format: Instead of the letter-based format, a list-like format will be implemented. The string Ab aB will look like ([[0, 1], [0, 1]], [[0], [1]])."
     ]
 
 
@@ -738,11 +738,30 @@ canonicalRepresentationInfoView =
 
 gossipGraphExamples : List (Html Message)
 gossipGraphExamples =
-    [ p [] [ text "These are some examples" ]
-    , div [ class "input-group" ]
-        [ button [ type_ "button", onClick <| InsertExampleGraph "Abc aBc abC" ] [ text "Only numbers" ]
-        , button [ type_ "button", onClick <| InsertExampleGraph "ABC ABC ABC" ] [ text "All Secrets" ]
-        , button [ type_ "button", onClick <| InsertExampleGraph "Xyaz Axzy ZyAb BaZX Y" ] [ text "Complex example" ]
+    [ p [] [ text "These are some examples to get you started." ]
+    , h4 [] [ text "Only number relations" ]
+    , p [] 
+        [ text "In this example, all agents know each others' phone numbers." 
+        ]
+    , button [ type_ "button", class "icon", onClick <| InsertExampleGraph "Abc aBc abC" ] 
+        [ Icon.viewIcon Icon.arrowRight
+        , text "Load example" 
+        ]
+    , h4 [] [ text "All secret relations" ]
+    , p [] 
+        [ text "In this example, all agents know each others' secrets already." 
+        ]
+    , button [ type_ "button", class "icon", onClick <| InsertExampleGraph "ABC ABC ABC" ] 
+        [ Icon.viewIcon Icon.arrowRight
+        , text "Load example" 
+        ]
+    , h4 [] [ text "A complex example" ]
+    , p [] 
+        [ text "This is an example of a more complex gossip graph." 
+        ]
+    , button [ type_ "button", class "icon", onClick <| InsertExampleGraph "Xyaz Axzy ZyAb BaZX Y" ] 
+        [ Icon.viewIcon Icon.arrowRight
+        , text "Load example" 
         ]
     ]
 
@@ -805,7 +824,16 @@ gossipGraphView model =
 
 historyHelpView : List (Html msg)
 historyHelpView =
-    [ p [] [ text "This section shows the history of calls that have been made. You can click any of the calls to time-travel to that state of the gossip graph." ]
+    [ p [] 
+        [ text """This section shows the history of calls that have been made. You can click any of the calls to 
+                  time-travel to that state of the gossip graph. """
+        , text "Clicking the "
+        , code [] [ Icon.viewIcon Icon.fastForward ]
+        , text " button will present you with a dialog in which you can explore all possible calls (up to a given depth). "
+        , text "Clicking the "
+        , code [] [ Icon.viewIcon Icon.eraser ]
+        , text " button will clear the call history."
+        ]
     ]
 
 
@@ -1136,7 +1164,74 @@ protocolHelpView =
         , code [] [ Icon.viewIcon Icon.question ]
         , text " icon will tell you the rules of the selected protocol."
         ]
-    , Alert.render Alert.Information "In the next version of this application, you will be able to define custom gossip protocols using the constituents defined by van Ditmarsch et al. (2018)."
+    , h4 [] [ text "Building custom protocols" ]
+    , p []
+        [ text """In the paper mentioned above, protocols are defined using a set of so-called constituents. Besides the
+                  protocols mentioned in the paper, this tool allows you to remove, add and reconfigure these 
+                  constituents in order to build new protocols.""" 
+        ]
+    , p []
+        [ text "Using the "
+        , code [] [ Icon.viewIcon Icon.plus, text " Add constituent" ]
+        , text " button, you can choose one of six protocol constituents, as well as "
+        , code [] [ text "⊤"]
+        , text " (True) and "
+        , code [] [ text "⊥" ]
+        , text " (False). "
+        , text "You can remove elements from the formula using the "
+        , code [] [ Icon.viewIcon Icon.trash ]
+        , text " icon, reorder them using the grab handle ("
+        , code [] [ Icon.viewIcon Icon.gripVertical ]
+        , text ") and change whether constituents are negated using the "
+        , code [] [ text "¬" ]
+        , text " toggle. Clicking the conjunction ("
+        , code [] [ text "∧" ]
+        , text ") or disjunction ("
+        , code [] [ text "∨" ]
+        , text ") symbol will toggle between them."
+        ]
+    , h5 [] [ text "Protocol constituents" ]
+    , table [] 
+        [ tr [] 
+            [ th [ ] [ text "Constituent" ]
+            , th [] [ text "Explanation" ]
+            ]
+        , tr [] 
+            [ td [ class "c" ] [ renderProtocolConstituent Empty ]
+            , td [] [ text "There are no calls involving agent x." ]
+            ]
+        , tr [] 
+            [ td [ class "c" ] [ renderProtocolConstituent LastTo ]
+            , td [] [ text "The last call involving agent x was a call to agent x." ]
+            ]
+        , tr [] 
+            [ td [ class "c" ] [ renderProtocolConstituent LastFrom ]
+            , td [] [ text "The last call involving agent x was a call agent x made themselves." ]
+            ]
+        , tr [] 
+            [ td [ class "c" ] [ renderProtocolConstituent HasCalled ]
+            , td [] [ text "Agent x has already called agent y." ]
+            ]
+        , tr [] 
+            [ td [ class "c" ] [ renderProtocolConstituent WasCalledBy ]
+            , td [] [ text "Agent x has already been called by agent y." ]
+            ]
+        , tr [] 
+            [ td [ class "c" ] [ renderProtocolConstituent KnowsSecret ]
+            , td [] [ text "Agent x knows the secret of agent y." ]
+            ]
+        ]
+    , h5 [] [ text "Execution of gossip protocols" ]
+    , p [] [ text "A protocol π(x, y) is evaluated according to the following algorithm:" ]
+    , blockquote [] 
+        [ text "Until all agents are experts and there are x, y ∈ A, such that x ≠ y, Nxy, and π(x, y), select x, y ∈ A, such that x ≠ y, Nxy, and π(x, y), and execute call xy." ] 
+    , p [ class "note" ] 
+        [ em [] [ text "Note: "]
+        , text """when dragging one element on top of another, it will be placed after the element it is dropped on.
+                  This means that dropping the second element of a boolean combination on top of the first one will not
+                  change the combination. For example, if a formula is (A ∨ B), dragging B onto A will not change the
+                  formula."""
+        ]
     ]
 
 
@@ -1245,7 +1340,11 @@ protocolView model =
 
                 Nothing ->
                     if model.protocolName == "custom" then
-                        [ p [] [ text "Custom" ] ]
+                        [ p [] 
+                            [ text "Custom protocols are built from protocol constituents. Click the "
+                            , code [] [ Icon.viewIcon Icon.question ]
+                            , text " button on the protocols section to learn more." ] 
+                        ]
 
                     else
                         [ p [] [ text "Unknown protocol" ] ]
@@ -1341,7 +1440,14 @@ protocolView model =
                 (List.map (\k -> option [ value k ] [ text <| Maybe.withDefault "?" <| Dict.get k Predefined.name ]) (Dict.keys Predefined.name)
                     ++ [ option [ value "custom", disabled True ] [ text "Custom" ] ]
                 )
-            , helpButtonView ("The " ++ (Maybe.withDefault "?" <| Dict.get model.protocolName Predefined.name) ++ " protocol") protocolExplanation
+            , helpButtonView 
+                ( case Dict.get model.protocolName Predefined.name of
+                    Just name ->
+                        "The " ++ name ++ " protocol" 
+                    Nothing ->
+                        "Custom protocols"
+                )
+                protocolExplanation
             ]
         , h3 [] [ text "Possible calls" ]
         , div [ class "call-list" ]
@@ -1390,7 +1496,7 @@ modalView model =
         ]
         [ div [ class "modal-window" ]
             [ header [ class "modal-header" ]
-                [ h1 [] [ text model.modal.title ]
+                [ h3 [] [ text model.modal.title ]
                 , button [ type_ "button", title "Close window", onClick HideModal ] [ Icon.viewIcon Icon.times ]
                 ]
             , div [ class "modal-content" ] model.modal.content
