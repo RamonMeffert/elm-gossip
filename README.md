@@ -20,6 +20,7 @@ Since finishing my thesis, I have been working on implementing new features and 
 - ⏰ Time-travel between multiple graph states after executing calls
 - 🛠 Create your own custom gossip protocols
 - 🌳 Generate execution trees
+- ⚠️ Helpful and human-oriented error messages
 
 ### In progress
 
