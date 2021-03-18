@@ -10890,6 +10890,15 @@ var $elm$html$Html$Attributes$for = $elm$html$Html$Attributes$stringProperty('ht
 var $author$project$Main$InsertExampleGraph = function (a) {
 	return {$: 6, a: a};
 };
+var $lattyware$elm_fontawesome$FontAwesome$Solid$arrowRight = A5(
+	$lattyware$elm_fontawesome$FontAwesome$Icon$Icon,
+	'fas',
+	'arrow-right',
+	448,
+	512,
+	_List_fromArray(
+		['M190.5 66.9l22.2-22.2c9.4-9.4 24.6-9.4 33.9 0L441 239c9.4 9.4 9.4 24.6 0 33.9L246.6 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.2-22.2c-9.5-9.5-9.3-25 .4-34.3L311.4 296H24c-13.3 0-24-10.7-24-24v-32c0-13.3 10.7-24 24-24h287.4L190.9 101.2c-9.8-9.3-10-24.8-.4-34.3z']));
+var $elm$html$Html$h4 = _VirtualDom_node('h4');
 var $author$project$Main$gossipGraphExamples = _List_fromArray(
 	[
 		A2(
@@ -10897,55 +10906,93 @@ var $author$project$Main$gossipGraphExamples = _List_fromArray(
 		_List_Nil,
 		_List_fromArray(
 			[
-				$elm$html$Html$text('These are some examples')
+				$elm$html$Html$text('These are some examples to get you started.')
 			])),
 		A2(
-		$elm$html$Html$div,
+		$elm$html$Html$h4,
+		_List_Nil,
 		_List_fromArray(
 			[
-				$elm$html$Html$Attributes$class('input-group')
+				$elm$html$Html$text('Only number relations')
+			])),
+		A2(
+		$elm$html$Html$p,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('In this example, all agents know each others\' phone numbers.')
+			])),
+		A2(
+		$elm$html$Html$button,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$type_('button'),
+				$elm$html$Html$Attributes$class('icon'),
+				$elm$html$Html$Events$onClick(
+				$author$project$Main$InsertExampleGraph('Abc aBc abC'))
 			]),
 		_List_fromArray(
 			[
-				A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$type_('button'),
-						$elm$html$Html$Events$onClick(
-						$author$project$Main$InsertExampleGraph('Abc aBc abC'))
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Only numbers')
-					])),
-				A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$type_('button'),
-						$elm$html$Html$Events$onClick(
-						$author$project$Main$InsertExampleGraph('ABC ABC ABC'))
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('All Secrets')
-					])),
-				A2(
-				$elm$html$Html$button,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$type_('button'),
-						$elm$html$Html$Events$onClick(
-						$author$project$Main$InsertExampleGraph('Xyaz Axzy ZyAb BaZX Y'))
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Complex example')
-					]))
+				$lattyware$elm_fontawesome$FontAwesome$Icon$viewIcon($lattyware$elm_fontawesome$FontAwesome$Solid$arrowRight),
+				$elm$html$Html$text('Load example')
+			])),
+		A2(
+		$elm$html$Html$h4,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('All secret relations')
+			])),
+		A2(
+		$elm$html$Html$p,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('In this example, all agents know each others\' secrets already.')
+			])),
+		A2(
+		$elm$html$Html$button,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$type_('button'),
+				$elm$html$Html$Attributes$class('icon'),
+				$elm$html$Html$Events$onClick(
+				$author$project$Main$InsertExampleGraph('ABC ABC ABC'))
+			]),
+		_List_fromArray(
+			[
+				$lattyware$elm_fontawesome$FontAwesome$Icon$viewIcon($lattyware$elm_fontawesome$FontAwesome$Solid$arrowRight),
+				$elm$html$Html$text('Load example')
+			])),
+		A2(
+		$elm$html$Html$h4,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('A complex example')
+			])),
+		A2(
+		$elm$html$Html$p,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('This is an example of a more complex gossip graph.')
+			])),
+		A2(
+		$elm$html$Html$button,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$type_('button'),
+				$elm$html$Html$Attributes$class('icon'),
+				$elm$html$Html$Events$onClick(
+				$author$project$Main$InsertExampleGraph('Xyaz Axzy ZyAb BaZX Y'))
+			]),
+		_List_fromArray(
+			[
+				$lattyware$elm_fontawesome$FontAwesome$Icon$viewIcon($lattyware$elm_fontawesome$FontAwesome$Solid$arrowRight),
+				$elm$html$Html$text('Load example')
 			]))
 	]);
-var $author$project$Utils$Alert$Information = 0;
 var $elm$html$Html$a = _VirtualDom_node('a');
 var $elm$html$Html$Attributes$href = function (url) {
 	return A2(
@@ -11025,8 +11072,7 @@ var $author$project$Main$gossipGraphHelpView = _List_fromArray(
 						$elm$html$Html$text('van Ditmarsch et al. (2019)')
 					])),
 				$elm$html$Html$text('.')
-			])),
-		A2($author$project$Utils$Alert$render, 0, 'The next version of this application will allow an alternative input format: Instead of the letter-based format, a list-like format will be implemented. The string Ab aB will look like ([[0, 1], [0, 1]], [[0], [1]]).')
+			]))
 	]);
 var $elm$html$Html$label = _VirtualDom_node('label');
 var $elm_community$typed_svg$TypedSvg$Types$Align = F2(
@@ -13874,7 +13920,25 @@ var $author$project$Main$historyHelpView = _List_fromArray(
 		_List_Nil,
 		_List_fromArray(
 			[
-				$elm$html$Html$text('This section shows the history of calls that have been made. You can click any of the calls to time-travel to that state of the gossip graph.')
+				$elm$html$Html$text('This section shows the history of calls that have been made. You can click any of the calls to \n                  time-travel to that state of the gossip graph. '),
+				$elm$html$Html$text('Clicking the '),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$lattyware$elm_fontawesome$FontAwesome$Icon$viewIcon($lattyware$elm_fontawesome$FontAwesome$Solid$fastForward)
+					])),
+				$elm$html$Html$text(' button will present you with a dialog in which you can explore all possible calls (up to a given depth). '),
+				$elm$html$Html$text('Clicking the '),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$lattyware$elm_fontawesome$FontAwesome$Icon$viewIcon($lattyware$elm_fontawesome$FontAwesome$Solid$eraser)
+					])),
+				$elm$html$Html$text(' button will clear the call history.')
 			]))
 	]);
 var $author$project$GossipGraph$Call$renderString = F2(
@@ -14157,6 +14221,7 @@ var $author$project$Main$historyView = function (model) {
 			]));
 };
 var $author$project$Main$HideModal = {$: 8};
+var $elm$html$Html$h3 = _VirtualDom_node('h3');
 var $author$project$Main$modalView = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -14188,7 +14253,7 @@ var $author$project$Main$modalView = function (model) {
 						_List_fromArray(
 							[
 								A2(
-								$elm$html$Html$h1,
+								$elm$html$Html$h3,
 								_List_Nil,
 								_List_fromArray(
 									[
@@ -14227,6 +14292,7 @@ var $author$project$Main$ExecuteCall = function (a) {
 	return {$: 3, a: a};
 };
 var $author$project$GossipProtocol$Conditions$Constituents$Falsum = 1;
+var $author$project$Utils$Alert$Information = 0;
 var $author$project$Main$ProtocolMessage = function (a) {
 	return {$: 12, a: a};
 };
@@ -14743,7 +14809,6 @@ var $author$project$GossipProtocol$Conditions$Predefined$explanation = $elm$core
 				]))
 		]));
 var $elm$html$Html$footer = _VirtualDom_node('footer');
-var $elm$html$Html$h3 = _VirtualDom_node('h3');
 var $author$project$Main$isDragFocus = F2(
 	function (index, dragFocus) {
 		if (dragFocus.$ === 1) {
@@ -14782,6 +14847,12 @@ var $lattyware$elm_fontawesome$FontAwesome$Solid$plus = A5(
 	512,
 	_List_fromArray(
 		['M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z']));
+var $elm$html$Html$em = _VirtualDom_node('em');
+var $elm$html$Html$h5 = _VirtualDom_node('h5');
+var $elm$html$Html$table = _VirtualDom_node('table');
+var $elm$html$Html$td = _VirtualDom_node('td');
+var $elm$html$Html$th = _VirtualDom_node('th');
+var $elm$html$Html$tr = _VirtualDom_node('tr');
 var $author$project$Main$protocolHelpView = _List_fromArray(
 	[
 		A2(
@@ -14811,7 +14882,302 @@ var $author$project$Main$protocolHelpView = _List_fromArray(
 					])),
 				$elm$html$Html$text(' icon will tell you the rules of the selected protocol.')
 			])),
-		A2($author$project$Utils$Alert$render, 0, 'In the next version of this application, you will be able to define custom gossip protocols using the constituents defined by van Ditmarsch et al. (2018).')
+		A2(
+		$elm$html$Html$h4,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('Building custom protocols')
+			])),
+		A2(
+		$elm$html$Html$p,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('In the paper mentioned above, protocols are defined using a set of so-called constituents. Besides the\n                  protocols mentioned in the paper, this tool allows you to remove, add and reconfigure these \n                  constituents in order to build new protocols.')
+			])),
+		A2(
+		$elm$html$Html$p,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('Using the '),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$lattyware$elm_fontawesome$FontAwesome$Icon$viewIcon($lattyware$elm_fontawesome$FontAwesome$Solid$plus),
+						$elm$html$Html$text(' Add constituent')
+					])),
+				$elm$html$Html$text(' button, you can choose one of six protocol constituents, as well as '),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('⊤')
+					])),
+				$elm$html$Html$text(' (True) and '),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('⊥')
+					])),
+				$elm$html$Html$text(' (False). '),
+				$elm$html$Html$text('You can remove elements from the formula using the '),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$lattyware$elm_fontawesome$FontAwesome$Icon$viewIcon($lattyware$elm_fontawesome$FontAwesome$Solid$trash)
+					])),
+				$elm$html$Html$text(' icon, reorder them using the grab handle ('),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$lattyware$elm_fontawesome$FontAwesome$Icon$viewIcon($lattyware$elm_fontawesome$FontAwesome$Solid$gripVertical)
+					])),
+				$elm$html$Html$text(') and change whether constituents are negated using the '),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('¬')
+					])),
+				$elm$html$Html$text(' toggle. Clicking the conjunction ('),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('∧')
+					])),
+				$elm$html$Html$text(') or disjunction ('),
+				A2(
+				$elm$html$Html$code,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('∨')
+					])),
+				$elm$html$Html$text(') symbol will toggle between them.')
+			])),
+		A2(
+		$elm$html$Html$h5,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('Protocol constituents')
+			])),
+		A2(
+		$elm$html$Html$table,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$tr,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$th,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Constituent')
+							])),
+						A2(
+						$elm$html$Html$th,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Explanation')
+							]))
+					])),
+				A2(
+				$elm$html$Html$tr,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$td,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('c')
+							]),
+						_List_fromArray(
+							[
+								$author$project$Main$renderProtocolConstituent(2)
+							])),
+						A2(
+						$elm$html$Html$td,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('There are no calls involving agent x.')
+							]))
+					])),
+				A2(
+				$elm$html$Html$tr,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$td,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('c')
+							]),
+						_List_fromArray(
+							[
+								$author$project$Main$renderProtocolConstituent(3)
+							])),
+						A2(
+						$elm$html$Html$td,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('The last call involving agent x was a call to agent x.')
+							]))
+					])),
+				A2(
+				$elm$html$Html$tr,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$td,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('c')
+							]),
+						_List_fromArray(
+							[
+								$author$project$Main$renderProtocolConstituent(4)
+							])),
+						A2(
+						$elm$html$Html$td,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('The last call involving agent x was a call agent x made themselves.')
+							]))
+					])),
+				A2(
+				$elm$html$Html$tr,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$td,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('c')
+							]),
+						_List_fromArray(
+							[
+								$author$project$Main$renderProtocolConstituent(5)
+							])),
+						A2(
+						$elm$html$Html$td,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Agent x has already called agent y.')
+							]))
+					])),
+				A2(
+				$elm$html$Html$tr,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$td,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('c')
+							]),
+						_List_fromArray(
+							[
+								$author$project$Main$renderProtocolConstituent(6)
+							])),
+						A2(
+						$elm$html$Html$td,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Agent x has already been called by agent y.')
+							]))
+					])),
+				A2(
+				$elm$html$Html$tr,
+				_List_Nil,
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$td,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('c')
+							]),
+						_List_fromArray(
+							[
+								$author$project$Main$renderProtocolConstituent(7)
+							])),
+						A2(
+						$elm$html$Html$td,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Agent x knows the secret of agent y.')
+							]))
+					]))
+			])),
+		A2(
+		$elm$html$Html$h5,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('Execution of gossip protocols')
+			])),
+		A2(
+		$elm$html$Html$p,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('A protocol π(x, y) is evaluated according to the following algorithm:')
+			])),
+		A2(
+		$elm$html$Html$blockquote,
+		_List_Nil,
+		_List_fromArray(
+			[
+				$elm$html$Html$text('Until all agents are experts and there are x, y ∈ A, such that x ≠ y, Nxy, and π(x, y), select x, y ∈ A, such that x ≠ y, Nxy, and π(x, y), and execute call xy.')
+			])),
+		A2(
+		$elm$html$Html$p,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('note')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$em,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Note: ')
+					])),
+				$elm$html$Html$text('when dragging one element on top of another, it will be placed after the element it is dropped on.\n                  This means that dropping the second element of a boolean combination on top of the first one will not\n                  change the combination. For example, if a formula is (A ∨ B), dragging B onto A will not change the\n                  formula.')
+			]))
 	]);
 var $elm$html$Html$select = _VirtualDom_node('select');
 var $author$project$Main$protocolView = function (model) {
@@ -14821,8 +15187,8 @@ var $author$project$Main$protocolView = function (model) {
 				return (!j) ? '∧' : '∨';
 			};
 			var droppability = function () {
-				var _v4 = model.a2;
-				if (!_v4.$) {
+				var _v5 = model.a2;
+				if (!_v5.$) {
 					return A2(
 						$norpan$elm_html5_drag_drop$Html5$DragDrop$droppable,
 						function (msg) {
@@ -14909,9 +15275,9 @@ var $author$project$Main$protocolView = function (model) {
 			}
 		});
 	var protocolExplanation = function () {
-		var _v2 = A2($elm$core$Dict$get, model.H, $author$project$GossipProtocol$Conditions$Predefined$explanation);
-		if (!_v2.$) {
-			var explanation = _v2.a;
+		var _v3 = A2($elm$core$Dict$get, model.H, $author$project$GossipProtocol$Conditions$Predefined$explanation);
+		if (!_v3.$) {
+			var explanation = _v3.a;
 			return _List_fromArray(
 				[
 					A2(
@@ -14953,7 +15319,15 @@ var $author$project$Main$protocolView = function (model) {
 					_List_Nil,
 					_List_fromArray(
 						[
-							$elm$html$Html$text('Custom')
+							$elm$html$Html$text('Custom protocols are built from protocol constituents. Click the '),
+							A2(
+							$elm$html$Html$code,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$lattyware$elm_fontawesome$FontAwesome$Icon$viewIcon($lattyware$elm_fontawesome$FontAwesome$Solid$question)
+								])),
+							$elm$html$Html$text(' button on the protocols section to learn more.')
 						]))
 				]) : _List_fromArray(
 				[
@@ -15139,10 +15513,15 @@ var $author$project$Main$protocolView = function (model) {
 								]))),
 						A2(
 						$author$project$Main$helpButtonView,
-						'The ' + (A2(
-							$elm$core$Maybe$withDefault,
-							'?',
-							A2($elm$core$Dict$get, model.H, $author$project$GossipProtocol$Conditions$Predefined$name)) + ' protocol'),
+						function () {
+							var _v0 = A2($elm$core$Dict$get, model.H, $author$project$GossipProtocol$Conditions$Predefined$name);
+							if (!_v0.$) {
+								var name = _v0.a;
+								return 'The ' + (name + ' protocol');
+							} else {
+								return 'Custom protocols';
+							}
+						}(),
 						protocolExplanation)
 					])),
 				A2(
@@ -15159,10 +15538,10 @@ var $author$project$Main$protocolView = function (model) {
 						$elm$html$Html$Attributes$class('call-list')
 					]),
 				function () {
-					var _v0 = _Utils_Tuple2(model.aN, model.t);
-					if ((!_v0.a.$) && (!_v0.b.$)) {
-						var agents = _v0.a.a;
-						var graph = _v0.b.a;
+					var _v1 = _Utils_Tuple2(model.aN, model.t);
+					if ((!_v1.a.$) && (!_v1.b.$)) {
+						var agents = _v1.a.a;
+						var graph = _v1.b.a;
 						var calls = A3(
 							$author$project$GossipProtocol$GossipProtocol$selectCalls,
 							graph,
