@@ -235,8 +235,7 @@ generateExecutionTree index graph condition sequence depth state =
         possibleCalls =
             selectCalls graph condition sequence 
                 |> Array.fromList 
-                |> Array.toIndexedList 
-                |> Debug.log "Possible calls according to exec tree"
+                |> Array.toIndexedList
 
         nextIndex =
             index + List.length possibleCalls
