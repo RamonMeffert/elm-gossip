@@ -1,12 +1,9 @@
 module CallSequence.Renderer exposing (..)
 
 import CallSequence.CallSequence exposing (CallSequence)
-import FontAwesome.Icon as Icon exposing (Icon)
-import FontAwesome.Solid as Icon
-import GossipGraph.Agent as Agent exposing (Agent)
-import GossipGraph.Call as Call exposing (Call)
-import Html exposing (Html, div, text)
-import Html.Attributes exposing (class, id)
+import GossipGraph.Agent exposing (Agent)
+import GossipGraph.Call as Call
+import Html exposing (Html, text)
 import Utils.Alert as Alert
 
 

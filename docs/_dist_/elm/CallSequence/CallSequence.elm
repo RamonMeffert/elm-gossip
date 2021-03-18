@@ -1,12 +1,8 @@
 module CallSequence.CallSequence exposing (..)
 
 import GossipGraph.Agent exposing (AgentId)
-import GossipGraph.Call as Call exposing (Call, includes)
-import GossipGraph.Relation as Relation exposing (Kind(..))
-import Graph
-import IntDict
-import List exposing (head)
-import List.Extra exposing (mapAccumr)
+import GossipGraph.Call exposing (Call, includes)
+import GossipGraph.Relation exposing (Kind(..))
 
 
 {-| A list of consecutive calls. Ordered latest to first call to improve lookup speed.

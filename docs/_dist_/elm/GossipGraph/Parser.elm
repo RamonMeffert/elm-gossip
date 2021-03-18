@@ -3,7 +3,6 @@ module GossipGraph.Parser exposing (..)
 import GossipGraph.Agent as Agent exposing (Agent)
 import GossipGraph.Relation as Relation exposing (Kind(..), Relation)
 import Graph exposing (Graph, Node, NodeContext)
-import Html exposing (i)
 import Set
 import Utils.General exposing (pluralize)
 import Utils.List exposing (distinct, dropWhile, takeWhile)
