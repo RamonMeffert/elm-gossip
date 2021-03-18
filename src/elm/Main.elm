@@ -8,6 +8,7 @@ import Dict
 import FontAwesome.Attributes as Icon
 import FontAwesome.Icon as Icon
 import FontAwesome.Solid as Icon
+import FontAwesome.Brands as Icon
 import GossipGraph.Agent exposing (Agent)
 import GossipGraph.Call as Call exposing (Call)
 import GossipGraph.Parser
@@ -95,12 +96,12 @@ init _ =
       , relations = Ok []
       , protocolCondition = evaluateFormulaAsProtocolCondition Predefined.formulaAny
       , protocolName = "any"
-      , executionTreeDepth = 5
+      , executionTreeDepth = 3
       , graphSettings =
             { nodeRadius = 20
             , edgeWidth = 1.5
             , arrowLength = 6
-            , canvasWidth = 800
+            , canvasWidth = 400
             , canvasHeight = 400
             }
       , modal =
@@ -137,6 +138,7 @@ type Message
     | HideModal
     | ChangeExecutionTreeDepth String
     | GenerateExecutionTree
+    | ClearExecutionTree
     | ProtocolMessage PMessage
 
 
@@ -194,6 +196,14 @@ update msg model =
 
         GenerateExecutionTree ->
             generateExecutionTree model
+
+        ClearExecutionTree ->
+            ({ model 
+                | history = Tree.singleton Root
+                , historyInitialGraph = Result.withDefault Graph.empty model.graph 
+                , historyLocation = 0
+                }
+            , Cmd.none)
 
         ProtocolMessage message ->
             updateProtocol message model
@@ -449,7 +459,7 @@ executeCall model call =
                     }
                     |> (\{ callHistory, state, index } ->
                             { callHistory = 
-                                Tree.Zipper.mapTree (Tree.prependChild <| Tree.singleton (Node { call = call, index = index + 1, state = Call.execute state call })) callHistory 
+                                Tree.Zipper.mapTree (Tree.prependChild <| Tree.singleton (Node { call = call, index = index + 1, state = Call.execute state call, nodeHistory = [] })) callHistory 
                                     |> (\z -> Maybe.withDefault callHistory (Tree.Zipper.firstChild z))
                             , state = Call.execute state call
                             , index = index + 1
@@ -495,7 +505,7 @@ executeCallSequence model =
                     List.foldr
                         (\call { callHistory, state, index } ->
                             { callHistory = 
-                                Tree.Zipper.mapTree (Tree.prependChild <| Tree.singleton (Node { call = call, index = index + 1, state = Call.execute state call })) callHistory 
+                                Tree.Zipper.mapTree (Tree.prependChild <| Tree.singleton (Node { call = call, index = index + 1, state = Call.execute state call, nodeHistory = [] })) callHistory 
                                     |> (\z -> Maybe.withDefault callHistory (Tree.Zipper.firstChild z))
                             , state = Call.execute state call
                             , index = index + 1
@@ -611,8 +621,9 @@ changeProtocol protocolName model =
 
 
 helpButtonView : String -> List (Html Message) -> Html Message
-helpButtonView title content =
-    button [ class "help", onClick (ShowModal title content) ] [ Icon.viewIcon Icon.question ]
+helpButtonView title_ content =
+    button [ class "help", title <| "Information about " ++ String.toLower title_, onClick (ShowModal title_ content) ] 
+        [ Icon.viewIcon Icon.question ]
 
 
 headerHelpView : List (Html msg)
@@ -648,19 +659,23 @@ headerHelpView =
 headerView : Html Message
 headerView =
     header [ id "header" ]
-        [ div []
-            [ h1 [] [ text "Tools for Gossip" ]
-            , p [ class "subtitle" ]
-                [ text "Bachelor's project" ]
-            , p [ class "subtitle" ]
-                [ text "R.A. Meffert ("
-                , a [ href "mailto:r.a.meffert@student.rug.nl" ] [ text "r.a.meffert@student.rug.nl" ]
-                , text ")"
-                ]
-            , p [ class "subtitle" ]
-                [ text "Supervisor: Dr. B.R.M. Gattinger" ]
+        [ div [ class "title" ]
+            [ img [ id "logo", src "logo-small.svg", title "ElmGossip Logo" ] []
+            , div []
+                [ h1 [] [ text "ElmGossip" ] ]
             ]
-        , helpButtonView "Tools for Gossip" headerHelpView
+        , div [ class "info" ]
+            [ a [ class "transparent icon button"
+                , href "https://github.com/ramonmeffert/tools-for-gossip"
+                , title "Source code (opens in a new tab)" 
+                , target "_blank"
+                ] 
+                [ Icon.viewIcon Icon.github
+                , text "Source code"
+                ]
+            , button [ class "transparent help icon", title "About this tool", onClick (ShowModal "ElmGossip" headerHelpView) ] 
+                [ Icon.viewIcon Icon.infoCircle, text "About" ]
+            ]
         ]
 
 
@@ -753,7 +768,7 @@ gossipGraphView model =
             [ label [ for "gossip-graph-input" ] [ text "Gossip graph input" ]
             , div [ class "input-group" ]
                 [ input [ type_ "text", id "gossip-graph-input", value model.inputGossipGraph, onInput ChangeGossipGraph, placeholder "Gossip graph representation" ] []
-                , button [ type_ "button", onClick <| ShowModal "Gossip Graph input examples" gossipGraphExamples ] [ text "Examples" ]
+                , button [ type_ "button", title "Select one of several predefined gossip graphs",  onClick <| ShowModal "Gossip Graph input examples" gossipGraphExamples ] [ text "Examples" ]
                 ]
             , label [ for "canonical-graph-input" ] [ text "Canonical representation" ]
             , div [ class "input-group" ]
@@ -781,10 +796,10 @@ gossipGraphView model =
                     Err _ ->
                         div [] []
                 ]
-        , div [ id "export-buttons", class "input-group right" ]
-            [ button [ disabled (not graphIsValid), onClick (ShowModal "Coming soon" [ p [] [ Alert.render Alert.Information "This feature is coming soon." ] ]) ] [ text "Generate LaTeX file" ]
-            , button [ disabled (not graphIsValid), onClick (ShowModal "Coming soon" [ p [] [ Alert.render Alert.Information "This feature is coming soon." ] ]) ] [ text "Copy GraphViz DOT code" ]
-            ]
+        -- , div [ id "export-buttons", class "input-group right" ]
+        --     [ button [ disabled (not graphIsValid), onClick (ShowModal "Coming soon" [ p [] [ Alert.render Alert.Information "This feature is coming soon." ] ]) ] [ text "Generate LaTeX file" ]
+        --     , button [ disabled (not graphIsValid), onClick (ShowModal "Coming soon" [ p [] [ Alert.render Alert.Information "This feature is coming soon." ] ]) ] [ text "Copy GraphViz DOT code" ]
+        --     ]
         ]
 
 
@@ -842,7 +857,8 @@ historyView model =
         [ header [] 
             [ h2 [] [ text "Call history" ]
             , div [ class "input-set" ]
-                [ button [ type_ "button", onClick (ShowModal "Execution Tree" (executionTreeModalView model)) ] [ Icon.viewIcon Icon.fastForward ]
+                [ button [ type_ "button", title "Clear the call history", onClick ClearExecutionTree ] [ Icon.viewIcon Icon.eraser ]
+                , button [ type_ "button", title "Generate an execution tree", onClick (ShowModal "Execution Tree" (executionTreeModalView model)) ] [ Icon.viewIcon Icon.fastForward ]
                 , helpButtonView "Call history" historyHelpView
                 ]
             ]
@@ -1094,7 +1110,7 @@ callSequenceView model =
                 , disabled <| not permitted
                 , title
                     (if permitted then
-                        "Execute the calls in this sequence on the gossip graph"
+                        "Execute this call sequence on the gossip graph"
 
                      else
                         "The call sequence must be permitted before it can be executed"
@@ -1296,9 +1312,9 @@ protocolView model =
             ]
         , div [ id "protocol-builder" ] (Formula.cata transform [] model.formula)
         , div [ id "add-protocol-component" ]
-            [ button [ type_ "button", onClick <| ProtocolMessage TogglePopover ]
+            [ button [ type_ "button", class "icon", onClick <| ProtocolMessage TogglePopover ]
                 [ Icon.viewIcon Icon.plus
-                , text " Add constituent"
+                , text "Add constituent"
                 ]
             ]
         , div [ id "constituent-popover", classList [ ( "visible", model.constituentPickerVisible ) ] ]
@@ -1309,22 +1325,14 @@ protocolView model =
                     , button [ type_ "button", title "Close window", onClick (ProtocolMessage TogglePopover) ] [ Icon.viewIcon Icon.times ]
                     ]
                 , div [ class "constituents" ]
-                    [ button [ type_ "button", onClick <| ProtocolMessage (AppendConstituent <| Formula.Constituent NotNegated Verum) ] 
-                        [ renderProtocolConstituent Verum ]
-                    , button [ type_ "button", onClick <| ProtocolMessage (AppendConstituent <| Formula.Constituent NotNegated Falsum) ] 
-                        [ renderProtocolConstituent Falsum ]
-                    , button [ type_ "button", onClick <| ProtocolMessage (AppendConstituent <| Formula.Constituent NotNegated Empty) ] 
-                        [ renderProtocolConstituent Empty ]
-                    , button [ type_ "button", onClick <| ProtocolMessage (AppendConstituent <| Formula.Constituent NotNegated LastTo) ] 
-                        [ renderProtocolConstituent LastTo ]
-                    , button [ type_ "button", onClick <| ProtocolMessage (AppendConstituent <| Formula.Constituent NotNegated LastFrom) ] 
-                        [ renderProtocolConstituent LastFrom ]
-                    , button [ type_ "button", onClick <| ProtocolMessage (AppendConstituent <| Formula.Constituent NotNegated HasCalled) ] 
-                        [ renderProtocolConstituent HasCalled ]
-                    , button [ type_ "button", onClick <| ProtocolMessage (AppendConstituent <| Formula.Constituent NotNegated WasCalledBy) ] 
-                        [ renderProtocolConstituent WasCalledBy ]
-                    , button [ type_ "button", onClick <| ProtocolMessage (AppendConstituent <| Formula.Constituent NotNegated KnowsSecret) ] 
-                        [ renderProtocolConstituent KnowsSecret ]
+                    [ addProtocolConstituentButton Verum
+                    , addProtocolConstituentButton Falsum
+                    , addProtocolConstituentButton Empty
+                    , addProtocolConstituentButton LastTo
+                    , addProtocolConstituentButton LastFrom
+                    , addProtocolConstituentButton HasCalled
+                    , addProtocolConstituentButton WasCalledBy
+                    , addProtocolConstituentButton KnowsSecret
                     ]
                 ]
             ]
@@ -1333,7 +1341,7 @@ protocolView model =
                 (List.map (\k -> option [ value k ] [ text <| Maybe.withDefault "?" <| Dict.get k Predefined.name ]) (Dict.keys Predefined.name)
                     ++ [ option [ value "custom", disabled True ] [ text "Custom" ] ]
                 )
-            , helpButtonView ("Current protocol: " ++ (Maybe.withDefault "?" <| Dict.get model.protocolName Predefined.name)) protocolExplanation
+            , helpButtonView ("The " ++ (Maybe.withDefault "?" <| Dict.get model.protocolName Predefined.name) ++ " protocol") protocolExplanation
             ]
         , h3 [] [ text "Possible calls" ]
         , div [ class "call-list" ]
@@ -1367,72 +1375,10 @@ protocolView model =
         ]
 
 
-
-
-protocolViewOld : Model -> Html Message
-protocolViewOld model =
-    let
-        protocolExplanation =
-            case Dict.get model.protocolName Predefined.explanation of
-                Just explanation ->
-                    [ blockquote []
-                        [ p [] explanation
-                        , footer []
-                            [ Html.cite [] [ text "Based on " , Html.a [ href "https://doi.org/10/cvpm" ] [ text "van Ditmarsch et al. (2018)" ] ]
-                            ]
-                        ]
-                    ]
-
-                Nothing ->
-                    if model.protocolName == "custom" then
-                        [ p [] [ text "Custom" ] ]
-
-                    else
-                        [ p [] [ text "Unknown protocol" ] ]
-    in
-    section [ id "protocols" ]
-        [ header []
-            [ h2 [] [ text "Gossip Protocols" ]
-            , helpButtonView "Gossip Protocols" protocolHelpView
-            ]
-        , div [ class "input-group" ]
-            [ select [ on "change" (Json.map ChangeProtocol targetValue) ]
-                (List.map (\k -> option [ value k ] [ text <| Maybe.withDefault "?" <| Dict.get k Predefined.name ]) (Dict.keys Predefined.name)
-                    ++ [ option [ value "custom", disabled True ] [ text "Custom" ] ]
-                )
-            , helpButtonView ("Current protocol: " ++ (Maybe.withDefault "?" <| Dict.get model.protocolName Predefined.name)) protocolExplanation
-            ]
-        , h3 [] [ text "Possible calls" ]
-        , div [ class "call-list" ]
-            (case ( model.agents, model.graph ) of
-                ( Ok agents, Ok graph ) ->
-                    let
-                        calls =
-                            GossipProtocol.selectCalls graph model.protocolCondition (Tree.flatten model.history |> List.foldr (\el acc ->
-                                case el of
-                                    Node n ->
-                                        n.call :: acc
-
-                                    _ ->
-                                        acc
-                            ) [])
-                    in
-                    if String.isEmpty model.inputGossipGraph then
-                        [ text "None" ]
-
-                    else if List.isEmpty calls then
-                        [ text "All possible calls have been made." ]
-
-                    else
-                        List.map (\call -> div [ class "call", onClick (ExecuteCall call) ] [ text <| Call.renderString agents call ]) calls
-
-                _ ->
-                    -- TODO: propagate errors from model.callSequence, .agents, .graph instead of the error below
-                    [ Alert.render Alert.Information "The call sequence below is impossible. I'll start looking for possible calls again when I understand the call sequence!"
-                    ]
-            )
-        ]
-
+addProtocolConstituentButton : ProtocolConstituent -> Html Message
+addProtocolConstituentButton constituent = 
+    button [ type_ "button", onClick <| ProtocolMessage (AppendConstituent <| Formula.Constituent NotNegated constituent) ] 
+        [ renderProtocolConstituent constituent ]
 
 modalView : Model -> Html Message
 modalView model =
@@ -1444,7 +1390,7 @@ modalView model =
         ]
         [ div [ class "modal-window" ]
             [ header [ class "modal-header" ]
-                [ h4 [] [ text model.modal.title ]
+                [ h1 [] [ text model.modal.title ]
                 , button [ type_ "button", title "Close window", onClick HideModal ] [ Icon.viewIcon Icon.times ]
                 ]
             , div [ class "modal-content" ] model.modal.content
@@ -1454,13 +1400,13 @@ modalView model =
 
 view : Model -> Document Message
 view model =
-    { title = "Tools for Gossip"
+    { title = "ElmGossip"
     , body =
         [ headerView
-        , gossipGraphView model
-        , historyView model
         , protocolView model
         , callSequenceView model
+        , historyView model
+        , gossipGraphView model
         , modalView model
         ]
     }

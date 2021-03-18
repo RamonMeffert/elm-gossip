@@ -4,19 +4,21 @@
 @use 'variables' as v;
 
 #protocol-builder {
-    ul {
-        list-style: none;
-        margin: 4px 0 4px 0;
-        padding: 0;
-        display: flex;
-    }
+    margin-bottom: v.$pad-v;
     
     .junction {
         text-align: center;
     }
 
+    & > ul {
+        margin: 0 !important;
+    }
+
     ul {
         display: flex;
+        list-style: none;
+        margin: 4px 0 4px 0;
+        padding: 0;
 
         .children {
             flex-grow: 1;
@@ -49,7 +51,6 @@
 
     .constituent .controls {
         display: flex;
-        align-items: center;
         justify-content: center;
     }
 

@@ -26,6 +26,7 @@ type HistoryNode
         { call : Call
         , index : Int
         , state : Graph Agent Relation
+        , nodeHistory : CallSequence
         }
     | DeadEnd
 
@@ -232,7 +233,10 @@ generateExecutionTree index graph condition sequence depth state =
     let
         -- Select the calls that are possible on the current state of the graph
         possibleCalls =
-            selectCalls graph condition sequence |> Array.fromList |> Array.toIndexedList
+            selectCalls graph condition sequence 
+                |> Array.fromList 
+                |> Array.toIndexedList 
+                |> Debug.log "Possible calls according to exec tree"
 
         nextIndex =
             index + List.length possibleCalls
@@ -244,7 +248,22 @@ generateExecutionTree index graph condition sequence depth state =
             else
                 List.foldr
                     (\( ind, call ) acc ->
-                        Tree.prependChild (Tree.singleton (Node { call = call, index = index + ind, state = Call.execute graph call })) acc
+                        Tree.prependChild 
+                            (Tree.singleton 
+                                (Node { call = call
+                                      , index = index + ind
+                                      , state = Call.execute graph call
+                                      , nodeHistory = 
+                                            case Tree.label acc of
+                                                Node info ->
+                                                    call :: info.nodeHistory
+
+                                                _ ->
+                                                    []
+                                      }
+                                )
+                            ) 
+                            acc
                     )
                     state
                     possibleCalls
