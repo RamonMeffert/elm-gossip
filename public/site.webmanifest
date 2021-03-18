@@ -1,14 +1,14 @@
 {
-    "name": "Tools for Gossip",
-    "short_name": "Tools for Gossip",
+    "name": "ElmGossip",
+    "short_name": "ElmGossip",
     "icons": [
         {
-            "src": "android-chrome-192x192.png?v=XBydqrLOLR",
+            "src": "/android-chrome-192x192.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "android-chrome-512x512.png?v=XBydqrLOLR",
+            "src": "/android-chrome-512x512.png",
             "sizes": "512x512",
             "type": "image/png"
         }

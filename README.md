@@ -1,4 +1,4 @@
-# Tools for Gossip
+# ElmGossip
 
 ![Deployment status](https://img.shields.io/github/workflow/status/ramonmeffert/tools-for-gossip/Deployment/gh-pages)
 

@@ -1,4 +1,4 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 import Browser exposing (Document)
 import CallSequence.CallSequence
@@ -8,6 +8,7 @@ import Dict
 import FontAwesome.Attributes as Icon
 import FontAwesome.Icon as Icon
 import FontAwesome.Solid as Icon
+import FontAwesome.Brands as Icon
 import GossipGraph.Agent exposing (Agent)
 import GossipGraph.Call as Call exposing (Call)
 import GossipGraph.Parser
@@ -18,14 +19,19 @@ import GossipProtocol.GossipProtocol as GossipProtocol
 import Graph exposing (Graph)
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html5.DragDrop as DragDrop
 import Html.Events exposing (..)
 import Json.Decode as Json
 import Utils.Alert as Alert
 import Tree exposing (Tree)
 import Tree.Zipper
-import Tree.Zipper
-import GossipProtocol.GossipProtocol exposing (HistoryNode(..))
+import GossipProtocol.BooleanFormula as Formula exposing (Negation(..))
+import GossipProtocol.GossipProtocol exposing (HistoryNode(..), evaluateFormulaAsProtocolCondition)
+import GossipProtocol.Conditions.Constituents exposing (ProtocolConstituent(..))
 
+
+
+port dragstart : Json.Value -> Cmd msg
 
 
 -- MAIN
@@ -45,6 +51,14 @@ main =
 -- MODEL
 
 
+
+type alias DragId = Formula.NodeId
+
+type alias DropId = Formula.NodeId
+
+type alias Protocol = Formula.Formula ProtocolConstituent
+
+
 type alias Model =
     { inputGossipGraph : String
     , canonicalGossipGraph : String
@@ -61,6 +75,10 @@ type alias Model =
     , historyInitialGraph : Graph Agent Relation
     , executionTreeDepth : Int
     , modal : { visible : Bool, title : String, content : List (Html Message) }
+    , formula : Protocol
+    , dragDrop : DragDrop.Model DragId DropId
+    , dragFocus : Maybe Int
+    , constituentPickerVisible : Bool
     }
 
 
@@ -76,14 +94,14 @@ init _ =
       , graph = Ok Graph.empty
       , agents = Ok []
       , relations = Ok []
-      , protocolCondition = Predefined.any
+      , protocolCondition = evaluateFormulaAsProtocolCondition Predefined.formulaAny
       , protocolName = "any"
-      , executionTreeDepth = 5
+      , executionTreeDepth = 3
       , graphSettings =
             { nodeRadius = 20
             , edgeWidth = 1.5
             , arrowLength = 6
-            , canvasWidth = 800
+            , canvasWidth = 400
             , canvasHeight = 400
             }
       , modal =
@@ -91,6 +109,10 @@ init _ =
             , title = ""
             , content = []
             }
+      , formula = Predefined.formulaAny
+      , dragDrop = DragDrop.init
+      , dragFocus = Nothing
+      , constituentPickerVisible = False
       }
     , Cmd.none
     )
@@ -116,6 +138,19 @@ type Message
     | HideModal
     | ChangeExecutionTreeDepth String
     | GenerateExecutionTree
+    | ClearExecutionTree
+    | ProtocolMessage PMessage
+
+
+type PMessage
+    = DragDropMsg (DragDrop.Msg DragId DropId)
+    | SetDragFocus DragId
+    | ClearDragFocus
+    | ToggleConnective Formula.NodeId
+    | DeleteNode Formula.NodeId
+    | ToggleNegation Formula.NodeId
+    | TogglePopover
+    | AppendConstituent( Formula.BoolElement ProtocolConstituent)
 
 
 update : Message -> Model -> ( Model, Cmd Message )
@@ -162,11 +197,136 @@ update msg model =
         GenerateExecutionTree ->
             generateExecutionTree model
 
+        ClearExecutionTree ->
+            ({ model 
+                | history = Tree.singleton Root
+                , historyInitialGraph = Result.withDefault Graph.empty model.graph 
+                , historyLocation = 0
+                }
+            , Cmd.none)
 
+        ProtocolMessage message ->
+            updateProtocol message model
+
+
+updateProtocol : PMessage -> Model -> (Model, Cmd Message)
+updateProtocol msg model =
+    case msg of
+        DragDropMsg message ->
+            let
+                ( newModel, result ) =
+                    -- TODO: Consider using updateSticky
+                    DragDrop.update message model.dragDrop
+
+                newFormula = 
+                    case result of
+                        Just (dragId, dropId, position) ->
+                            updateFormula dragId dropId position model.formula
+                        
+                        Nothing ->
+                            model.formula
+            in
+            ( { model 
+                | dragDrop = newModel 
+                , formula = newFormula
+                , protocolCondition = evaluateFormulaAsProtocolCondition newFormula
+                , protocolName = "custom"
+              }
+            , DragDrop.getDragstartEvent message
+                |> Maybe.map (.event >> dragstart)
+                |> Maybe.withDefault Cmd.none
+            )
+
+        SetDragFocus index ->
+            ({ model | dragFocus = Just index }, Cmd.none)
+
+        ClearDragFocus ->
+            ({ model | dragFocus = Nothing }, Cmd.none)
+
+        ToggleConnective index ->
+            case Formula.toggleConnective model.formula index of
+                Just newFormula ->
+                    ({ model 
+                        | formula = newFormula
+                        , protocolCondition = evaluateFormulaAsProtocolCondition newFormula
+                        , protocolName = "custom"
+                        }
+                    , Cmd.none)
+
+                Nothing ->
+                    (model, Cmd.none)
+
+        ToggleNegation index ->
+            case Formula.toggleNegation model.formula index of
+                Just newFormula ->
+                    ({ model 
+                        | formula = newFormula
+                        , protocolCondition = evaluateFormulaAsProtocolCondition newFormula
+                        , protocolName = "custom"
+                        }
+                    , Cmd.none)
+
+                Nothing ->
+                    (model, Cmd.none)
+        
+        DeleteNode id ->
+            let 
+                newFormula = Formula.pruneTreeAt id model.formula 
+            in
+            ({ model 
+                | formula = newFormula
+                , protocolCondition = evaluateFormulaAsProtocolCondition newFormula
+                , protocolName = "custom"
+                }
+            , Cmd.none)
+        
+        AppendConstituent constituent ->
+            let
+                newFormula = Formula.append Formula.Or constituent model.formula
+            in
+            ({ model 
+                | formula = newFormula
+                , protocolCondition = evaluateFormulaAsProtocolCondition newFormula
+                , protocolName = "custom"
+                , constituentPickerVisible = False
+                }
+            , Cmd.none)
+
+        TogglePopover ->
+            ( { model
+                | constituentPickerVisible = not model.constituentPickerVisible
+              }
+            , Cmd.none
+            )
+
+
+{-| Updates the formula after a drag-and-drop event
+
+-}
+updateFormula : DragId -> DropId -> DragDrop.Position -> Protocol -> Protocol
+updateFormula dragId dropId position formula =
+    let
+        dragged = Formula.subTreeAt dragId formula
+        droppedOn = Formula.subTreeAt dropId formula
+
+    in
+    -- disallow dropping an element on itself
+    if dragId /= dropId then
+        case (dragged, droppedOn) of
+            (Just draggedElement, Just droppedElement) ->
+                Formula.pruneTreeAt dragId formula
+                    |> \newFormula -> 
+                            Formula.replaceTreeAt dropId newFormula 
+                                (Formula.makeConnective (Formula.highestIndex formula + 1) Formula.Or droppedElement draggedElement)
+                    |> Maybe.withDefault formula
+            _ ->
+                formula
+    else
+        formula
 -- VIEW
 
 
-insertExampleGraph : String -> Model -> ({ inputGossipGraph : String, canonicalGossipGraph : String, inputCallSequence : String, graph : Result String (Graph Agent Relation), agents : Result String (List Agent), relations : Result String (List Relation), protocolCondition : GossipProtocol.GossipProtocol.ProtocolCondition, protocolName : String, graphSettings : GossipGraph.Renderer.GraphSettings, callSequence : Result CallSequence.Parser.Error (CallSequence.CallSequence.CallSequence), historyLocation : Int, history : Tree HistoryNode, historyInitialGraph : Graph Agent Relation, executionTreeDepth : Int, modal : { visible : Bool, title : String, content : List (Html Message) } }, Cmd Message)
+insertExampleGraph : String -> Model -> (Model, Cmd Message)
 insertExampleGraph graph model =
     update (ChangeGossipGraph graph) model
     |> \(mo, me) -> ({ mo | modal = (\md -> { md | visible = False }) mo.modal }, me)
@@ -299,7 +459,7 @@ executeCall model call =
                     }
                     |> (\{ callHistory, state, index } ->
                             { callHistory = 
-                                Tree.Zipper.mapTree (Tree.prependChild <| Tree.singleton (Node { call = call, index = index + 1, state = Call.execute state call })) callHistory 
+                                Tree.Zipper.mapTree (Tree.prependChild <| Tree.singleton (Node { call = call, index = index + 1, state = Call.execute state call, nodeHistory = [] })) callHistory 
                                     |> (\z -> Maybe.withDefault callHistory (Tree.Zipper.firstChild z))
                             , state = Call.execute state call
                             , index = index + 1
@@ -345,7 +505,7 @@ executeCallSequence model =
                     List.foldr
                         (\call { callHistory, state, index } ->
                             { callHistory = 
-                                Tree.Zipper.mapTree (Tree.prependChild <| Tree.singleton (Node { call = call, index = index + 1, state = Call.execute state call })) callHistory 
+                                Tree.Zipper.mapTree (Tree.prependChild <| Tree.singleton (Node { call = call, index = index + 1, state = Call.execute state call, nodeHistory = [] })) callHistory 
                                     |> (\z -> Maybe.withDefault callHistory (Tree.Zipper.firstChild z))
                             , state = Call.execute state call
                             , index = index + 1
@@ -437,28 +597,33 @@ changeProtocol : String -> Model -> (Model, Cmd Message)
 changeProtocol protocolName model =
     let
         condition = Dict.get protocolName Predefined.condition
+
+        formula = Dict.get protocolName Predefined.formula
     in
-    case condition of
-        Just c ->
+    case (condition, formula) of
+        (Just c, Just f) ->
             ( { model
                 | protocolCondition = c
                 , protocolName = protocolName
                 , history = Tree.singleton Root
+                , formula = f
               }
             , Cmd.none)
-        Nothing ->
+        _ ->
             ( { model
                 | protocolCondition = Predefined.any
                 , protocolName = "any"
                 , history = Tree.singleton Root
+                , formula = Predefined.formulaAny
               }
             , Cmd.none
             )
 
 
 helpButtonView : String -> List (Html Message) -> Html Message
-helpButtonView title content =
-    button [ class "help", onClick (ShowModal title content) ] [ Icon.viewIcon Icon.question ]
+helpButtonView title_ content =
+    button [ class "help", title <| "Information about " ++ String.toLower title_, onClick (ShowModal title_ content) ] 
+        [ Icon.viewIcon Icon.question ]
 
 
 headerHelpView : List (Html msg)
@@ -494,19 +659,23 @@ headerHelpView =
 headerView : Html Message
 headerView =
     header [ id "header" ]
-        [ div []
-            [ h1 [] [ text "Tools for Gossip" ]
-            , p [ class "subtitle" ]
-                [ text "Bachelor's project" ]
-            , p [ class "subtitle" ]
-                [ text "R.A. Meffert ("
-                , a [ href "mailto:r.a.meffert@student.rug.nl" ] [ text "r.a.meffert@student.rug.nl" ]
-                , text ")"
-                ]
-            , p [ class "subtitle" ]
-                [ text "Supervisor: Dr. B.R.M. Gattinger" ]
+        [ div [ class "title" ]
+            [ img [ id "logo", src "logo-small.svg", title "ElmGossip Logo" ] []
+            , div []
+                [ h1 [] [ text "ElmGossip" ] ]
             ]
-        , helpButtonView "Tools for Gossip" headerHelpView
+        , div [ class "info" ]
+            [ a [ class "transparent icon button"
+                , href "https://github.com/ramonmeffert/tools-for-gossip"
+                , title "Source code (opens in a new tab)" 
+                , target "_blank"
+                ] 
+                [ Icon.viewIcon Icon.github
+                , text "Source code"
+                ]
+            , button [ class "transparent help icon", title "About this tool", onClick (ShowModal "ElmGossip" headerHelpView) ] 
+                [ Icon.viewIcon Icon.infoCircle, text "About" ]
+            ]
         ]
 
 
@@ -599,7 +768,7 @@ gossipGraphView model =
             [ label [ for "gossip-graph-input" ] [ text "Gossip graph input" ]
             , div [ class "input-group" ]
                 [ input [ type_ "text", id "gossip-graph-input", value model.inputGossipGraph, onInput ChangeGossipGraph, placeholder "Gossip graph representation" ] []
-                , button [ type_ "button", onClick <| ShowModal "Gossip Graph input examples" gossipGraphExamples ] [ text "Examples" ]
+                , button [ type_ "button", title "Select one of several predefined gossip graphs",  onClick <| ShowModal "Gossip Graph input examples" gossipGraphExamples ] [ text "Examples" ]
                 ]
             , label [ for "canonical-graph-input" ] [ text "Canonical representation" ]
             , div [ class "input-group" ]
@@ -627,10 +796,10 @@ gossipGraphView model =
                     Err _ ->
                         div [] []
                 ]
-        , div [ id "export-buttons", class "input-group right" ]
-            [ button [ disabled (not graphIsValid), onClick (ShowModal "Coming soon" [ p [] [ Alert.render Alert.Information "This feature is coming soon." ] ]) ] [ text "Generate LaTeX file" ]
-            , button [ disabled (not graphIsValid), onClick (ShowModal "Coming soon" [ p [] [ Alert.render Alert.Information "This feature is coming soon." ] ]) ] [ text "Copy GraphViz DOT code" ]
-            ]
+        -- , div [ id "export-buttons", class "input-group right" ]
+        --     [ button [ disabled (not graphIsValid), onClick (ShowModal "Coming soon" [ p [] [ Alert.render Alert.Information "This feature is coming soon." ] ]) ] [ text "Generate LaTeX file" ]
+        --     , button [ disabled (not graphIsValid), onClick (ShowModal "Coming soon" [ p [] [ Alert.render Alert.Information "This feature is coming soon." ] ]) ] [ text "Copy GraphViz DOT code" ]
+        --     ]
         ]
 
 
@@ -638,6 +807,7 @@ historyHelpView : List (Html msg)
 historyHelpView =
     [ p [] [ text "This section shows the history of calls that have been made. You can click any of the calls to time-travel to that state of the gossip graph." ]
     ]
+
 
 historyView : Model -> Html Message
 historyView model =
@@ -687,7 +857,8 @@ historyView model =
         [ header [] 
             [ h2 [] [ text "Call history" ]
             , div [ class "input-set" ]
-                [ button [ type_ "button", onClick (ShowModal "Execution Tree" (executionTreeModalView model)) ] [ Icon.viewIcon Icon.fastForward ]
+                [ button [ type_ "button", title "Clear the call history", onClick ClearExecutionTree ] [ Icon.viewIcon Icon.eraser ]
+                , button [ type_ "button", title "Generate an execution tree", onClick (ShowModal "Execution Tree" (executionTreeModalView model)) ] [ Icon.viewIcon Icon.fastForward ]
                 , helpButtonView "Call history" historyHelpView
                 ]
             ]
@@ -939,7 +1110,7 @@ callSequenceView model =
                 , disabled <| not permitted
                 , title
                     (if permitted then
-                        "Execute the calls in this sequence on the gossip graph"
+                        "Execute this call sequence on the gossip graph"
 
                      else
                         "The call sequence must be permitted before it can be executed"
@@ -966,7 +1137,96 @@ protocolHelpView =
         , text " icon will tell you the rules of the selected protocol."
         ]
     , Alert.render Alert.Information "In the next version of this application, you will be able to define custom gossip protocols using the constituents defined by van Ditmarsch et al. (2018)."
-    ] 
+    ]
+
+
+renderProtocolConstituent : ProtocolConstituent -> Html msg
+renderProtocolConstituent constituent =
+    case constituent of
+        Empty ->
+            span [ class "protocol-constituent" ]
+                [ text "σ"
+                , sub [] [ text "x" ]
+                , text " = ϵ"
+                ]
+
+        Verum ->
+            span [ class "protocol-constituent" ]
+                [ text "⊤" ]
+
+        Falsum ->
+            span [ class "protocol-constituent" ]
+                [ text "⊥" ]
+
+        LastTo ->
+            span [ class "protocol-constituent" ]
+                [ text "σ"
+                , sub [] [ text "x" ]
+                , text " = τ;zx"
+                ]
+
+        LastFrom ->
+            span [ class "protocol-constituent" ]
+                [ text "σ"
+                , sub [] [ text "x" ]
+                , text " = τ;xz"
+                ]
+
+        HasCalled ->
+            span [ class "protocol-constituent" ]
+                [ text "xy ∈ σ"
+                , sub [] [ text "x" ]
+                ]
+
+        WasCalledBy ->
+            span [ class "protocol-constituent" ]
+                [ text "yx ∈ σ"
+                , sub [] [ text "x" ]
+                ]
+
+        KnowsSecret ->
+            span [ class "protocol-constituent" ]
+                [ text "S"
+                , sup [] [ text "σ" ]
+                , text "xy"
+                ]
+
+
+isDragFocus : Formula.NodeId -> Maybe Formula.NodeId -> Bool
+isDragFocus index dragFocus =
+    case dragFocus of
+        Nothing ->
+            False
+
+        Just i ->
+            index == i
+
+dragHandle : Formula.NodeId -> Html Message
+dragHandle index =
+    div [ class "drag-handle"
+        , Html.Events.onMouseOver (ProtocolMessage (SetDragFocus index))
+        , Html.Events.onMouseLeave (ProtocolMessage ClearDragFocus)
+        ]
+        [ Icon.viewIcon Icon.gripVertical ]
+
+
+negationToggle : Formula.NodeId -> Negation -> Html Message
+negationToggle id negationState =
+    let
+        isChecked = negationState == Negated
+    in
+    
+    input [ type_ "checkbox"
+          , class "negation"
+          , checked isChecked
+          , onClick (ProtocolMessage (ToggleNegation id))
+          ]
+        []
+
+deleteButton : Formula.NodeId -> Html Message
+deleteButton id =
+    button [ onClick (ProtocolMessage(DeleteNode id)), class "delete-constituent" ]
+        [ Icon.viewIcon Icon.trash ]
 
 
 protocolView : Model -> Html Message
@@ -989,18 +1249,99 @@ protocolView model =
 
                     else
                         [ p [] [ text "Unknown protocol" ] ]
+
+        transform : Formula.NodeId 
+            -> Formula.BoolElement ProtocolConstituent 
+            -> List (Html Message) 
+            -> List (Html Message) 
+            -> List (Html Message)
+        transform id label left right =
+            let
+                junctionToString : Formula.Junction -> String
+                junctionToString j =
+                    if j == Formula.And then "∧" else "∨"
+
+                draggability : List (Attribute Message)
+                draggability = 
+                    if isDragFocus id model.dragFocus then 
+                        DragDrop.draggable (\msg -> ProtocolMessage (DragDropMsg msg)) id
+                    else 
+                        []
+
+                droppability : List (Attribute Message)
+                droppability =
+                    case model.dragFocus of
+                        Just _ ->
+                            DragDrop.droppable (\msg -> ProtocolMessage(DragDropMsg msg)) id
+                        Nothing ->
+                            []
+            in
+            case label of
+                Formula.Connective junction ->
+                    [ ul (draggability ++ droppability)
+                        [ dragHandle id
+                        , div [ class "children" ] 
+                            [ li [] left
+                            , li [ class "junction"
+                                , onClick <| ProtocolMessage (ToggleConnective id)
+                                ] 
+                                [ text <| junctionToString junction ]
+                            , li [] right
+                            ]
+                        ] 
+                    ]
+                
+                Formula.Constituent negation value ->
+                    ( div (class "constituent" :: (draggability ++ droppability))
+                        [ div [ class "controls" ] 
+                            [ dragHandle id
+                            , negationToggle id negation
+                            ]
+                        , renderProtocolConstituent value
+                        , deleteButton id
+                        ]
+                    )
+                    :: left ++ right
+                    
+            
     in
     section [ id "protocols" ]
         [ header []
-            [ h2 [] [ text "Gossip Protocols" ]
+            [ h2 [] [ text "Gossip Protocols" ] 
             , helpButtonView "Gossip Protocols" protocolHelpView
             ]
+        , div [ id "protocol-builder" ] (Formula.cata transform [] model.formula)
+        , div [ id "add-protocol-component" ]
+            [ button [ type_ "button", class "icon", onClick <| ProtocolMessage TogglePopover ]
+                [ Icon.viewIcon Icon.plus
+                , text "Add constituent"
+                ]
+            ]
+        , div [ id "constituent-popover", classList [ ( "visible", model.constituentPickerVisible ) ] ]
+            [ div [ class "window" ]
+                [ header []
+                    [ strong []
+                        [ text "Constituents" ]
+                    , button [ type_ "button", title "Close window", onClick (ProtocolMessage TogglePopover) ] [ Icon.viewIcon Icon.times ]
+                    ]
+                , div [ class "constituents" ]
+                    [ addProtocolConstituentButton Verum
+                    , addProtocolConstituentButton Falsum
+                    , addProtocolConstituentButton Empty
+                    , addProtocolConstituentButton LastTo
+                    , addProtocolConstituentButton LastFrom
+                    , addProtocolConstituentButton HasCalled
+                    , addProtocolConstituentButton WasCalledBy
+                    , addProtocolConstituentButton KnowsSecret
+                    ]
+                ]
+            ]
         , div [ class "input-group" ]
-            [ select [ on "change" (Json.map ChangeProtocol targetValue) ]
+            [ select [ on "change" (Json.map ChangeProtocol targetValue), value model.protocolName ]
                 (List.map (\k -> option [ value k ] [ text <| Maybe.withDefault "?" <| Dict.get k Predefined.name ]) (Dict.keys Predefined.name)
                     ++ [ option [ value "custom", disabled True ] [ text "Custom" ] ]
                 )
-            , helpButtonView ("Current protocol: " ++ (Maybe.withDefault "?" <| Dict.get model.protocolName Predefined.name)) protocolExplanation
+            , helpButtonView ("The " ++ (Maybe.withDefault "?" <| Dict.get model.protocolName Predefined.name) ++ " protocol") protocolExplanation
             ]
         , h3 [] [ text "Possible calls" ]
         , div [ class "call-list" ]
@@ -1034,6 +1375,11 @@ protocolView model =
         ]
 
 
+addProtocolConstituentButton : ProtocolConstituent -> Html Message
+addProtocolConstituentButton constituent = 
+    button [ type_ "button", onClick <| ProtocolMessage (AppendConstituent <| Formula.Constituent NotNegated constituent) ] 
+        [ renderProtocolConstituent constituent ]
+
 modalView : Model -> Html Message
 modalView model =
     div
@@ -1044,7 +1390,7 @@ modalView model =
         ]
         [ div [ class "modal-window" ]
             [ header [ class "modal-header" ]
-                [ h4 [] [ text model.modal.title ]
+                [ h1 [] [ text model.modal.title ]
                 , button [ type_ "button", title "Close window", onClick HideModal ] [ Icon.viewIcon Icon.times ]
                 ]
             , div [ class "modal-content" ] model.modal.content
@@ -1054,13 +1400,13 @@ modalView model =
 
 view : Model -> Document Message
 view model =
-    { title = "Tools for Gossip"
+    { title = "ElmGossip"
     , body =
         [ headerView
-        , gossipGraphView model
-        , historyView model
         , protocolView model
         , callSequenceView model
+        , historyView model
+        , gossipGraphView model
         , modalView model
         ]
     }

@@ -9,6 +9,17 @@ import GossipGraph.Relation exposing (Kind(..), Relation, knows)
 import List exposing (head)
 
 
+type ProtocolConstituent
+    = Verum
+    | Falsum
+    | Empty
+    | LastTo
+    | LastFrom
+    | HasCalled
+    | WasCalledBy
+    | KnowsSecret
+
+
 {-| σₓ == ϵ
 
 Returns whether a call sequence is empty. `sequence` should be the subsequence of calls containing `x`.

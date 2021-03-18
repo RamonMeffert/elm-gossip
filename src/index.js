@@ -8,6 +8,11 @@ import Elm from './elm/Main.elm';
 import './styles/main.scss';
 
 // Initialize Elm
-Elm.Main.init({
+var app = Elm.Main.init({
   node: document.querySelector('main'),
+});
+
+// Port for better drag-and-drop support in Firefox
+app.ports.dragstart.subscribe(function(event) {
+  event.dataTransfer.setData('text', '');
 });
