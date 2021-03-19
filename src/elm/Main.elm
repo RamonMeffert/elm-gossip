@@ -1180,6 +1180,9 @@ callSequenceView model =
 
                 _ ->
                     False
+
+        empty : Bool
+        empty = String.isEmpty model.inputCallSequence
     in
     section [ id "sequences" ]
         [ header []
@@ -1191,10 +1194,10 @@ callSequenceView model =
                 [ type_ "text"
                 , id "call-sequence-input"
                 , class
-                    (if permitted && not (String.isEmpty model.inputCallSequence) then
+                    (if permitted && not empty then
                         "permitted"
 
-                     else if String.isEmpty model.inputCallSequence then
+                     else if empty then
                         ""
 
                      else
@@ -1205,7 +1208,7 @@ callSequenceView model =
                 , placeholder "Call sequence input"
                 ]
                 []
-            , if String.isEmpty model.inputCallSequence then
+            , if empty then
                 button [ disabled True, class "help", id "call-sequence-validity" ] [ text " " ]
 
               else if permitted then
@@ -1232,12 +1235,15 @@ callSequenceView model =
             , button
                 [ type_ "button"
                 , onClick ExecuteCallSequence
-                , disabled <| not permitted
+                , disabled <| not permitted || empty
                 , title
-                    (if permitted then
+                    (if empty then
+                        "Please fill in a call sequence to execute"
+
+                    else if permitted then
                         "Execute this call sequence on the gossip graph"
 
-                     else
+                    else
                         "The call sequence must be permitted before it can be executed"
                     )
                 ]
