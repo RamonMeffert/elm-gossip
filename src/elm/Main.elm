@@ -734,7 +734,7 @@ headerHelpView =
         ]
     , p []
         [ text "The source code is available on "
-        , a [ href "https://github.com/RamonMeffert/tools-for-gossip" ] [ text "GitHub" ]
+        , a [ href "https://github.com/RamonMeffert/elm-gossip" ] [ text "GitHub" ]
         , text ". Once finished, the accompanying thesis will also be made available."
         ]
     ]
@@ -751,7 +751,7 @@ headerView =
         , div [ class "info" ]
             [ a
                 [ class "transparent icon button"
-                , href "https://github.com/ramonmeffert/tools-for-gossip"
+                , href "https://github.com/ramonmeffert/elm-gossip"
                 , title "Source code (opens in a new tab)"
                 , target "_blank"
                 ]
