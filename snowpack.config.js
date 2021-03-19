@@ -11,7 +11,7 @@ module.exports = {
       "debugger": "dev",
       "optimize": "build"
     }],
-    // "@snowpack/plugin-optimize"
+    "@snowpack/plugin-postcss"
   ],
   install: [
     /* ... */
