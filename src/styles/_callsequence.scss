@@ -95,12 +95,7 @@
         position: relative;
     }
 
-    .call {
-        margin: 0 0 $vsp $hsp;
-    }
-
     .dead-end {
-        width: $nwd;
         height: $nht;
         margin-left: $hsp;
         margin-bottom: $vsp;
@@ -111,7 +106,12 @@
         line-height: $nht;
     }
 
-    ul:not(:first-child) {
+    ul {
+
+        .call {
+            margin: 0 0 $vsp $hsp;
+        }
+
         > li {
             position: relative;
 
@@ -184,7 +184,7 @@
                     display: block;
                     width: $ewd;
                     left: calc(#{-$nwd / 2} - 3px);
-                    height: calc(100% - #{$nht * 2} - #{$vsp * 2});
+                    height: calc(100% - #{$nht * 4} - #{$vsp * 2});
                     top: calc(#{$nht} + 4px);
                     background-color: theme.$baseTextColor;
                 }
