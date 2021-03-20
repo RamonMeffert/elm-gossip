@@ -14,12 +14,12 @@
     z-index: 999;
 
     &.visible {
-        background-color: rgba(0,0,0,0.4);
+        background-color: rgba(0,0,0,0.5);
         display: flex;
 
         .modal-window {
             display: block;
-            box-shadow: 0 .2rem 1rem rgba(0,0,0,0.4);
+            box-shadow: 0 .2rem 4rem rgba(0,0,0,0.4);
             background-color: theme.$baseBgColor;
         }
     }
@@ -33,26 +33,30 @@
         position: relative;
 
         .modal-header {
-            // border-bottom: 2px solid darken(white, 15%);
+            border-bottom: 2px solid color.scale(theme.$baseTextColor, $alpha: -85%);
             display: flex;
             align-items: center;
             margin: 0;
-            padding: v.$pad-v / 2 v.$pad-h / 2 v.$pad-v / 2 v.$pad-h;
+
+            h3 {
+                font-weight: normal;
+                margin: v.$pad-v / 2 v.$pad-h;
+            }
 
             button {
-                border: none;
-                background-color: transparent;
-    
-                &:hover {
-                    background-color: color.scale(theme.$baseTextColor, $alpha: -90%);
-                }                
+                padding: 0;
+                width: 2.7rem + v.$pad-v;
+                height: 2.5rem + v.$pad-v;
+                box-sizing: content-box;
+                border-width: 0;
+                border-radius: 0;
             }
         }
 
         .modal-content {
             max-height: 60vh;
             overflow-y: scroll;
-            margin: 0 v.$pad-h v.$pad-v v.$pad-h;
+            margin: v.$pad-v v.$pad-h;
             line-height: 150%;
 
             h4, h5, h6 {
