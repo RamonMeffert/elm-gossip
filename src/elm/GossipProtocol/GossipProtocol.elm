@@ -27,7 +27,6 @@ type HistoryNode
         { call : Call
         , index : Int
         , state : Graph Agent Relation
-        , nodeHistory : CallSequence
         }
     | DeadEnd
 
@@ -236,7 +235,14 @@ isStronglyConnected kind graph =
             List.length components == 1
 
 
-generateExecutionTree : Int -> Graph Agent Relation -> ProtocolCondition -> CallSequence -> Int -> Tree HistoryNode -> Tree HistoryNode
+generateExecutionTree : 
+    Int 
+    -> Graph Agent Relation 
+    -> ProtocolCondition 
+    -> CallSequence 
+    -> Int 
+    -> Tree HistoryNode 
+    -> Tree HistoryNode
 generateExecutionTree index graph condition sequence depth state =
     let
         -- Select the calls that are possible on the current state of the graph
@@ -261,13 +267,6 @@ generateExecutionTree index graph condition sequence depth state =
                                     { call = call
                                     , index = index + ind
                                     , state = Call.execute graph call
-                                    , nodeHistory =
-                                        case Tree.label acc of
-                                            Node info ->
-                                                call :: info.nodeHistory
-
-                                            _ ->
-                                                []
                                     }
                                 )
                             )
@@ -283,7 +282,7 @@ generateExecutionTree index graph condition sequence depth state =
                     (\ind child ->
                         case Tree.label child of
                             Node n ->
-                                generateExecutionTree (nextIndex * (ind + 1)) n.state condition sequence (depth - 1) child
+                                generateExecutionTree (nextIndex * (ind + 1)) n.state condition (n.call :: sequence) (depth - 1) child
 
                             _ ->
                                 child

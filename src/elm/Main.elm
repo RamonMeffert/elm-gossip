@@ -484,7 +484,7 @@ executeCall model call =
                     }
                         |> (\{ callHistory, state, index } ->
                                 { callHistory =
-                                    Tree.Zipper.mapTree (Tree.prependChild <| Tree.singleton (Node { call = call, index = index + 1, state = Call.execute state call, nodeHistory = [] })) callHistory
+                                    Tree.Zipper.mapTree (Tree.prependChild <| Tree.singleton (Node { call = call, index = index + 1, state = Call.execute state call })) callHistory
                                         |> (\z -> Maybe.withDefault callHistory (Tree.Zipper.firstChild z))
                                 , state = Call.execute state call
                                 , index = index + 1
@@ -540,7 +540,7 @@ executeCallSequence model =
                     List.foldr
                         (\call { callHistory, state, index } ->
                             { callHistory =
-                                Tree.Zipper.mapTree (Tree.prependChild <| Tree.singleton (Node { call = call, index = index + 1, state = Call.execute state call, nodeHistory = [] })) callHistory
+                                Tree.Zipper.mapTree (Tree.prependChild <| Tree.singleton (Node { call = call, index = index + 1, state = Call.execute state call })) callHistory
                                     |> (\z -> Maybe.withDefault callHistory (Tree.Zipper.firstChild z))
                             , state = Call.execute state call
                             , index = index + 1
