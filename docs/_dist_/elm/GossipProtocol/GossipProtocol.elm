@@ -5,13 +5,14 @@ import CallSequence.CallSequence exposing (CallSequence)
 import GossipGraph.Agent exposing (Agent, AgentId)
 import GossipGraph.Call as Call exposing (Call)
 import GossipGraph.Relation as Relation exposing (Kind(..), Relation, knows)
+import GossipProtocol.BooleanFormula as Formula
+import GossipProtocol.Conditions.Constituents as Constituents
 import Graph exposing (DfsNodeVisitor, Graph, NodeContext, NodeId)
 import IntDict
 import List
 import Set exposing (Set)
 import Tree exposing (Tree)
-import GossipProtocol.BooleanFormula as Formula
-import GossipProtocol.Conditions.Constituents as Constituents
+
 
 {-| Protocol conditions
 import GossipGraph.Relation
@@ -26,7 +27,6 @@ type HistoryNode
         { call : Call
         , index : Int
         , state : Graph Agent Relation
-        , nodeHistory : CallSequence
         }
     | DeadEnd
 
@@ -161,7 +161,8 @@ Idea:
 isWeaklyConnected : Kind -> Graph Agent Relation -> Bool
 isWeaklyConnected kind graph =
     let
-        firstNode = List.head <| Graph.nodeIds graph
+        firstNode =
+            List.head <| Graph.nodeIds graph
 
         merger : NodeId -> NodeId -> Relation -> Relation -> Relation
         merger _ _ outLabel _ =
@@ -188,53 +189,66 @@ isWeaklyConnected kind graph =
                 -- Starting at some first node, traverse the graph depth-first and construct the set of reachable agents
                 |> Graph.guidedDfs Graph.alongOutgoingEdges visitor [ fn ] Set.empty
                 -- Add the first agent to the set of reachable agents
-                |> \(reachableAgents, _) -> Set.insert fn reachableAgents
-                -- Check if all agents are reachable
-                |> (\allReachableAgents -> List.all (\agent -> Set.member agent allReachableAgents) (Graph.nodeIds graph))
-        
+                |> (\( reachableAgents, _ ) ->
+                        Set.insert fn reachableAgents
+                            -- Check if all agents are reachable
+                            |> (\allReachableAgents -> List.all (\agent -> Set.member agent allReachableAgents) (Graph.nodeIds graph))
+                   )
+
         Nothing ->
             False
 
+
 {-| Determines whether some relation P of a given kind is strongly connected by
 checking whether the number of connected components for P is equal to 1.
-
 -}
 isStronglyConnected : Kind -> Graph Agent Relation -> Bool
 isStronglyConnected kind graph =
     let
         -- Removes edges from a context that are not of the right kind.
-        -- For example, when we want to find out if the number relation is 
-        -- strongly connected, we need to remove all edges indicating secret 
-        -- relations. When checking for the secret relation, we do not need to 
+        -- For example, when we want to find out if the number relation is
+        -- strongly connected, we need to remove all edges indicating secret
+        -- relations. When checking for the secret relation, we do not need to
         -- remove edges, since a secret relation implies a number relation.
         -- The Relation.isOfKind function takes care of this. However, if we
         -- would want better performance, we could also let kindGraph be the
         -- unmodified graph when analysing the secret relation.
         reduceContext : NodeContext Agent Relation -> NodeContext Agent Relation
         reduceContext context =
-            { context 
+            { context
                 | incoming = IntDict.filter (\_ r -> Relation.isOfKind r kind) context.incoming
                 , outgoing = IntDict.filter (\_ r -> Relation.isOfKind r kind) context.outgoing
             }
 
         -- The subgraph containing only edges that are at least of some kind,
         -- keeping in mind that N ⊆ S
-        kindGraph = Graph.mapContexts reduceContext graph
+        kindGraph =
+            Graph.mapContexts reduceContext graph
     in
     case Graph.stronglyConnectedComponents kindGraph of
-       -- Ok acyclic means the graph is acyclic and therefor cannot be strongly connected
-       Ok _ -> False
-       -- If the graph contains strongly connected components, it is only strongly connected if there is only 1
-       Err components -> List.length components == 1
+        -- Ok acyclic means the graph is acyclic and therefor cannot be strongly connected
+        Ok _ ->
+            False
+
+        -- If the graph contains strongly connected components, it is only strongly connected if there is only 1
+        Err components ->
+            List.length components == 1
 
 
-generateExecutionTree : Int -> Graph Agent Relation -> ProtocolCondition -> CallSequence -> Int -> Tree HistoryNode -> Tree HistoryNode
+generateExecutionTree : 
+    Int 
+    -> Graph Agent Relation 
+    -> ProtocolCondition 
+    -> CallSequence 
+    -> Int 
+    -> Tree HistoryNode 
+    -> Tree HistoryNode
 generateExecutionTree index graph condition sequence depth state =
     let
         -- Select the calls that are possible on the current state of the graph
         possibleCalls =
-            selectCalls graph condition sequence 
-                |> Array.fromList 
+            selectCalls graph condition sequence
+                |> Array.fromList
                 |> Array.toIndexedList
 
         nextIndex =
@@ -247,21 +261,15 @@ generateExecutionTree index graph condition sequence depth state =
             else
                 List.foldr
                     (\( ind, call ) acc ->
-                        Tree.prependChild 
-                            (Tree.singleton 
-                                (Node { call = call
-                                      , index = index + ind
-                                      , state = Call.execute graph call
-                                      , nodeHistory = 
-                                            case Tree.label acc of
-                                                Node info ->
-                                                    call :: info.nodeHistory
-
-                                                _ ->
-                                                    []
-                                      }
+                        Tree.prependChild
+                            (Tree.singleton
+                                (Node
+                                    { call = call
+                                    , index = index + ind
+                                    , state = Call.execute graph call
+                                    }
                                 )
-                            ) 
+                            )
                             acc
                     )
                     state
@@ -274,7 +282,7 @@ generateExecutionTree index graph condition sequence depth state =
                     (\ind child ->
                         case Tree.label child of
                             Node n ->
-                                generateExecutionTree (nextIndex * (ind + 1)) n.state condition sequence (depth - 1) child
+                                generateExecutionTree (nextIndex * (ind + 1)) n.state condition (n.call :: sequence) (depth - 1) child
 
                             _ ->
                                 child
@@ -284,15 +292,16 @@ generateExecutionTree index graph condition sequence depth state =
     else
         nextState
 
-{-| Produces a function that takes in a set of agents, relations and a call history
 
+{-| Produces a function that takes in a set of agents, relations and a call history
 -}
 evaluateFormulaAsProtocolCondition : Formula.Formula Constituents.ProtocolConstituent -> ProtocolCondition
-evaluateFormulaAsProtocolCondition formula (x, y) relations sequence =
+evaluateFormulaAsProtocolCondition formula ( x, y ) relations sequence =
     let
-        transform : Formula.NodeId 
-            -> Formula.BoolElement Constituents.ProtocolConstituent 
-            -> Bool 
+        transform :
+            Formula.NodeId
+            -> Formula.BoolElement Constituents.ProtocolConstituent
+            -> Bool
             -> Bool
             -> Bool
         transform id label left right =
@@ -304,25 +313,27 @@ evaluateFormulaAsProtocolCondition formula (x, y) relations sequence =
 
                         Formula.And ->
                             left && right
-                
+
                 Formula.Constituent negation value ->
-                    let 
-                        sigma_x = CallSequence.CallSequence.containing sequence x
+                    let
+                        sigma_x =
+                            CallSequence.CallSequence.containing sequence x
 
                         negate =
                             case negation of
-                                Formula.Negated -> (\a -> not a)
+                                Formula.Negated ->
+                                    \a -> not a
 
-                                Formula.NotNegated -> identity
+                                Formula.NotNegated ->
+                                    identity
                     in
-                    
                     case value of
-                        Constituents.Verum -> 
+                        Constituents.Verum ->
                             negate True
 
-                        Constituents.Falsum -> 
+                        Constituents.Falsum ->
                             negate False
-                        
+
                         Constituents.Empty ->
                             negate <| Constituents.empty sequence
 
@@ -340,7 +351,5 @@ evaluateFormulaAsProtocolCondition formula (x, y) relations sequence =
 
                         Constituents.KnowsSecret ->
                             negate <| Constituents.knowsSecret x y relations
-
-
     in
     Formula.cata transform True formula

@@ -5,14 +5,14 @@ module GossipProtocol.Conditions.Predefined exposing (..)
 
 import CallSequence.CallSequence exposing (containing)
 import Dict exposing (Dict)
+import GossipProtocol.BooleanFormula as Formula exposing (Junction(..), Negation(..))
 import GossipProtocol.Conditions.Constituents exposing (..)
 import GossipProtocol.GossipProtocol exposing (ProtocolCondition)
 import Html exposing (Html, p, sup, text)
-import GossipProtocol.BooleanFormula as Formula exposing (Junction(..), Negation(..))
 
 
-
-type alias Protocol = Formula.Formula ProtocolConstituent
+type alias Protocol =
+    Formula.Formula ProtocolConstituent
 
 
 any : ProtocolCondition
@@ -91,28 +91,38 @@ formula =
         [ ( "any", formulaAny )
         , ( "tok", formulaTok )
         , ( "spi", formulaSpi )
-        , ( "co",  formulaCo )
+        , ( "co", formulaCo )
         , ( "wco", formulaWco )
         , ( "lns", formulaLns )
         ]
 
 
 formulaAny : Formula.Formula ProtocolConstituent
-formulaAny =  Formula.singleton 0 (Formula.Constituent NotNegated Verum)
+formulaAny =
+    Formula.singleton 0 (Formula.Constituent NotNegated Verum)
 
 
-formulaTok = Formula.singleton 0 (Formula.Constituent NotNegated Empty) 
-            |> Formula.append Or (Formula.Constituent NotNegated LastTo)
+formulaTok =
+    Formula.singleton 0 (Formula.Constituent NotNegated Empty)
+        |> Formula.append Or (Formula.Constituent NotNegated LastTo)
 
-formulaSpi = Formula.singleton 0 (Formula.Constituent NotNegated Empty) 
-            |> Formula.append Or (Formula.Constituent NotNegated LastFrom)
 
-formulaCo = Formula.singleton 0 (Formula.Constituent Negated HasCalled) 
-            |> Formula.append And (Formula.Constituent Negated WasCalledBy)
+formulaSpi =
+    Formula.singleton 0 (Formula.Constituent NotNegated Empty)
+        |> Formula.append Or (Formula.Constituent NotNegated LastFrom)
 
-formulaWco = Formula.singleton 0 (Formula.Constituent NotNegated HasCalled)
 
-formulaLns = Formula.singleton 0 (Formula.Constituent Negated KnowsSecret)
+formulaCo =
+    Formula.singleton 0 (Formula.Constituent Negated HasCalled)
+        |> Formula.append And (Formula.Constituent Negated WasCalledBy)
+
+
+formulaWco =
+    Formula.singleton 0 (Formula.Constituent NotNegated HasCalled)
+
+
+formulaLns =
+    Formula.singleton 0 (Formula.Constituent Negated KnowsSecret)
 
 
 explanation : Dict String (List (Html msg))

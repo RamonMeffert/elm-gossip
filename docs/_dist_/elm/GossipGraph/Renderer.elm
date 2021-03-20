@@ -18,9 +18,8 @@ import Html exposing (Html)
 import TypedSvg exposing (circle, defs, g, line, marker, polygon, svg, text_, title)
 import TypedSvg.Attributes exposing (class, cx, cy, dy, fill, id, markerEnd, markerHeight, markerWidth, orient, points, preserveAspectRatio, r, refX, refY, stroke, strokeDasharray, strokeWidth, textAnchor, viewBox, x, x1, x2, y, y1, y2)
 import TypedSvg.Core exposing (Attribute, Svg, text)
-import TypedSvg.Types exposing (Align(..), AnchorAlignment(..), Length(..), MeetOrSlice(..), Paint(..), Scale(..), px)
+import TypedSvg.Types exposing (Align(..), AnchorAlignment(..), FloodColor(..), Length(..), MeetOrSlice(..), Paint(..), Scale(..), px)
 import Utils.Alert as Alert
-import TypedSvg.Types exposing (FloodColor(..))
 
 
 
@@ -90,7 +89,7 @@ renderGraph graph settings =
                 |> Force.computeSimulation (Force.simulation forces)
                 |> updateGraphWithList entityGraph
     in
-    svg [ viewBox 0 0 settings.canvasWidth settings.canvasHeight, preserveAspectRatio (Align ScaleMid ScaleMid) Meet  ]
+    svg [ viewBox 0 0 settings.canvasWidth settings.canvasHeight, preserveAspectRatio (Align ScaleMid ScaleMid) Meet ]
         [ defs []
             (arrowHeads settings)
         , g [ class [ "links" ] ] <| List.map (renderEdge computedGraph settings) <| List.filter (\e -> e.from /= e.to) <| Graph.edges computedGraph
