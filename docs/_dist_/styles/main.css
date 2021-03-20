@@ -1432,6 +1432,9 @@ label {
   margin: 0 1rem 0.8rem 1rem;
   line-height: 150%;
 }
+.modal-overlay .modal-window .modal-content h4, .modal-overlay .modal-window .modal-content h5, .modal-overlay .modal-window .modal-content h6 {
+  margin-top: 0.8rem;
+}
 .modal-overlay .modal-window .modal-content p:first-child {
   margin-top: 0;
 }
@@ -1440,6 +1443,25 @@ label {
 }
 .modal-overlay .modal-window .modal-content p.note {
   color: rgba(0, 0, 0, 0.5);
+}
+.modal-overlay .modal-window .modal-content table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.modal-overlay .modal-window .modal-content table tr:hover td {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+.modal-overlay .modal-window .modal-content table td {
+  padding: 0.4rem 0.5rem;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.15);
+}
+.modal-overlay .modal-window .modal-content table td.c {
+  text-align: center;
+}
+.modal-overlay .modal-window .modal-content table th {
+  padding: 0.4rem 0.5rem;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.25);
+  text-align: left;
 }
 
 html {
