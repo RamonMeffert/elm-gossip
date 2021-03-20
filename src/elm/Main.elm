@@ -680,62 +680,71 @@ helpButtonView title_ content =
 
 headerHelpView : List (Html msg)
 headerHelpView =
+    let
+        newTabLink content name url =
+            a [ href url
+                , title <| "Go to " ++ name ++ " (opens in a new tab)"
+                , target "_blank" 
+                ]
+                [ content ]
+
+        packageUrl name =
+            let
+                content = code [] [ text name ]
+                url = "https://package.elm-lang.org/packages/" ++ name ++ "/latest/"
+                title = "the " ++ name ++ " package on the Elm package site"
+            in
+            
+            newTabLink content title url
+    in
+    
     [ p []
-        [ text
-            """This application is intended as a tool to gain insight into dynamic gossip.
-            It allows you to visualise gossip graphs, execute different gossip protocols and see how calls influence the state of the gossip graph."""
-        ]
-    , p []
-        [ text
-            "This application was developed by Ramon Meffert ("
-        , a [ href "mailto:r.a.meffert@student.rug.nl" ] [ text "r.a.meffert@student.rug.nl" ]
-        , text ") as part of his bachelor's research project under supervision of Dr. Malvin Gattinger."
+        [ text "ElmGossip is a web tool for exploring and analysing dynamic gossip."
+        , text " This application is developed by "
+        , newTabLink (text "Ramon Meffert") "Ramon's personal website" "https://r3n.nl"
+        , text " and started as part of his "
+        , newTabLink (text "bachelor's research project") "the thesis on the project" "https://fse.studenttheses.ub.rug.nl/23961/"
+        , text " at the University of Groningen under supervision of Dr. "
+        , newTabLink (text "Malvin Gattinger") "Malvin's personal website" "https://malv.in"
+        , text "."
         ]
     , p []
         [ text "This tool is built on the following free software:" ]
     , ul []
         [ li []
-            [ a [ href "https://elm-lang.org/" ] [ text "Elm" ]
+            [ newTabLink (text "Elm") "the Elm website" "https://elm-lang.org"
             , text ", a functional web language, along with (among others) the following packages:"
             , ul []
                 [ li []
-                    [ a [ href "https://package.elm-lang.org/packages/elm-community/graph/latest/" ]
-                        [ code [] [ text "elm-community/graph" ]
-                        ]
+                    [ packageUrl "elm-community/graph"
                     , text " for internal graph representation"
                     ]
                 , li []
-                    [ a [ href "https://package.elm-lang.org/packages/gampleman/elm-visualization/latest/" ]
-                        [ code [] [ text "gampleman/elm-visualization" ]
-                        ]
+                    [ packageUrl "gampleman/elm-visualization"
                     , text " for rendering the graphs"
                     ]
                 , li []
-                    [ a [ href "https://package.elm-lang.org/packages/lattyware/elm-fontawesome/latest/" ]
-                        [ code [] [ text "lattyware/elm-fontawesome" ]
-                        ]
+                    [ packageUrl "lattyware/elm-fontawesome"
                     , text " for the interface icons"
                     ]
                 , li []
-                    [ a [ href "https://package.elm-lang.org/packages/norpan/elm-html5-drag-drop/latest/" ]
-                        [ code [] [ text "norpan/elm-html5-drag-drop" ]
-                        ]
+                    [ packageUrl "norpan/elm-html5-drag-drop"
                     , text " for the drag-and-drop functionality of the protocol builder"
                     ]
                 , li []
-                    [ a [ href "https://package.elm-lang.org/packages/zwilias/elm-rosetree/latest/" ]
-                        [ code [] [ text "zwilias/elm-rosetree" ]
-                        ]
+                    [ packageUrl "zwilias/elm-rosetree"
                     , text " for the call history/execution tree"
                     ]
                 ]
             ]
-        , li [] [ a [ href "https://sass-lang.org/" ] [ text "Sass" ], text " for better CSS" ]
+        , li [] 
+            [ newTabLink ( text "Sass" ) "the Sass website" "https://sass-lang.org/"
+            , text " for better CSS" ]
         ]
     , p []
-        [ text "The source code is available on "
-        , a [ href "https://github.com/RamonMeffert/elm-gossip" ] [ text "GitHub" ]
-        , text ". Once finished, the accompanying thesis will also be made available."
+        [ text "The source code is available on " 
+        , newTabLink (text "GitHub") "the GitHub repository for ElmGossip" "https://github.com/ramonmeffert/elm-gossip"
+        , text "."
         ]
     ]
 
@@ -793,9 +802,9 @@ gossipGraphHelpView =
             """Lastly, the icons in the top-left corner provide some information about the current graph. When you hover over them, you are shown extra details."""
         ]
     , p []
-        [ text "This notation is based on the notation in the appendix of "
-        , a [ href "https://arxiv.org/abs/1907.12321" ] [ text "van Ditmarsch et al. (2019)" ]
-        , text "."
+        [ text "This notation is based on the notation in the appendix of the paper "
+        , a [ href "https://arxiv.org/abs/1907.12321" ] [ text "Strengthening Gossip Protocols using Protocol-Dependent Knowledge" ]
+        , text " by Van Ditmarsch et al. (2019)."
         ]
 
     -- , Alert.render Alert.Information "The next version of this application will allow an alternative input format: Instead of the letter-based format, a list-like format will be implemented. The string Ab aB will look like ([[0, 1], [0, 1]], [[0], [1]])."
@@ -826,28 +835,28 @@ gossipGraphExamples : List (Html Message)
 gossipGraphExamples =
     [ p [] [ text "These are some examples to get you started." ]
     , h4 [] [ text "Only number relations" ]
-    , p []
-        [ text "In this example, all agents know each others' phone numbers."
-        ]
-    , button [ type_ "button", class "icon", onClick <| InsertExampleGraph "Abc aBc abC" ]
+    , button [ type_ "button", class "icon", title "Load the numbers example", style "float" "right", onClick <| InsertExampleGraph "Abc aBc abC" ]
         [ Icon.viewIcon Icon.arrowRight
         , text "Load example"
+        ]
+    , p []
+        [ text "In this example, three agents only know each others' phone numbers."
         ]
     , h4 [] [ text "All secret relations" ]
-    , p []
-        [ text "In this example, all agents know each others' secrets already."
-        ]
-    , button [ type_ "button", class "icon", onClick <| InsertExampleGraph "ABC ABC ABC" ]
+    , button [ type_ "button", class "icon", title "Load the secrets example", style "float" "right", onClick <| InsertExampleGraph "ABC ABC ABC" ]
         [ Icon.viewIcon Icon.arrowRight
         , text "Load example"
+        ]
+    , p []
+        [ text "In this example, three agents know each others' secrets already."
         ]
     , h4 [] [ text "A complex example" ]
-    , p []
-        [ text "This is an example of a more complex gossip graph."
-        ]
-    , button [ type_ "button", class "icon", onClick <| InsertExampleGraph "Xyaz Axzy ZyAb BaZX Y" ]
+    , button [ type_ "button", class "icon", title "Load the complex example", style "float" "right", onClick <| InsertExampleGraph "Xyaz Axzy ZyAb BaZX Y" ]
         [ Icon.viewIcon Icon.arrowRight
         , text "Load example"
+        ]
+    , p []
+        [ text "This is an example of a more complex gossip graph."
         ]
     ]
 
@@ -1182,7 +1191,8 @@ callSequenceView model =
                     False
 
         empty : Bool
-        empty = String.isEmpty model.inputCallSequence
+        empty =
+            String.isEmpty model.inputCallSequence
     in
     section [ id "sequences" ]
         [ header []
@@ -1240,10 +1250,10 @@ callSequenceView model =
                     (if empty then
                         "Please fill in a call sequence to execute"
 
-                    else if permitted then
+                     else if permitted then
                         "Execute this call sequence on the gossip graph"
 
-                    else
+                     else
                         "The call sequence must be permitted before it can be executed"
                     )
                 ]
@@ -1260,9 +1270,9 @@ callSequenceView model =
 protocolHelpView : List (Html msg)
 protocolHelpView =
     [ p []
-        [ text "This section allows you to select one of the gossip protocols as defined by "
-        , a [ href "https://doi.org/10/cvpm" ] [ text "van Ditmarsch et al. (2018)" ]
-        , text ". When you have selected a protocol, the possible calls for that protocol and the current gossip graph, together with the call history, will be shown. "
+        [ text "This section allows you to select one of the gossip protocols as defined in the paper "
+        , a [ href "https://doi.org/10/cvpm" ] [ text "Dynamic Gossip" ]
+        , text " by Van Ditmarsch et al. (2018). When you have selected a protocol, the possible calls for that protocol and the current gossip graph, together with the call history, will be shown. "
         , text "Clicking the "
         , code [] [ Icon.viewIcon Icon.question ]
         , text " icon will tell you the rules of the selected protocol."
@@ -1327,7 +1337,16 @@ protocolHelpView =
     , h5 [] [ text "Execution of gossip protocols" ]
     , p [] [ text "A protocol π(x, y) is evaluated according to the following algorithm:" ]
     , blockquote []
-        [ text "Until all agents are experts and there are x, y ∈ A, such that x ≠ y, Nxy, and π(x, y), select x, y ∈ A, such that x ≠ y, Nxy, and π(x, y), and execute call xy." ]
+        [ text "Until all agents are experts, select x, y ∈ A, such that x ≠ y, Nxy, and π(x, y), and execute call x y." ]
+    , p [] 
+        [ text "Or, more informally: " ]
+    , blockquote [] 
+        [ text "Until all agents know all secrets, and while there still is a distinct pair of agents (x, y) where x knows the number of y, and the protocol condition π(x, y) holds, let x call y." ]
+    , p []
+        [ text "These definitions are due to "
+        , a [ href "https://doi.org/10/cvpm" ] [ text "Van Ditmarsch et al. (2018)" ] 
+        , text "."
+        ]
     , p [ class "note" ]
         [ em [] [ text "Note: " ]
         , text """when dragging one element on top of another, it will be placed after the element it is dropped on.
@@ -1437,10 +1456,11 @@ protocolView model =
         protocolExplanation =
             case Dict.get model.protocolName Predefined.explanation of
                 Just explanation ->
-                    [ blockquote []
+                    [ p [] [ text "This protocol is defined as follows:" ]
+                    , blockquote []
                         [ p [] explanation
                         , footer []
-                            [ Html.cite [] [ text "Based on ", Html.a [ href "https://doi.org/10/cvpm" ] [ text "van Ditmarsch et al. (2018)" ] ]
+                            [ Html.cite [] [ text "Based on the definition in ", Html.a [ href "https://doi.org/10/cvpm" ] [ text "Dynamic Gossip" ], text " (Van Ditmarsch et al., 2018)" ]
                             ]
                         ]
                     ]
