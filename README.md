@@ -37,6 +37,11 @@ Since finishing my thesis, I have been working on implementing new features and 
 
 You can track the progress of these features on the [issues](https://github.com/RamonMeffert/tools-for-gossip/issues) page.
 
+### Future ideas
+
+- Mobile support
+- Turn the site into a Progressive Web App for offline access
+
 ## Running locally
 
 If you want to build this project yourself, you'll need [`yarn`][1] or [`npm`][1].

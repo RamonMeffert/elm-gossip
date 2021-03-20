@@ -1,33 +1,56 @@
-module GossipProtocol.BooleanFormula exposing (Formula, BoolElement(..), Junction(..), Negation(..), empty, 
-    singleton, at, toString, append, replaceTreeAt, pruneTreeAt, subTreeAt,
-    toggleConnective, toggleNegation, isLeaf, NodeId, cata, makeConnective, highestIndex)
-
+module GossipProtocol.BooleanFormula exposing
+    ( BoolElement(..)
+    , Formula
+    , Junction(..)
+    , Negation(..)
+    , NodeId
+    , append
+    , at
+    , cata
+    , empty
+    , highestIndex
+    , isLeaf
+    , makeConnective
+    , pruneTreeAt
+    , replaceTreeAt
+    , singleton
+    , subTreeAt
+    , toString
+    , toggleConnective
+    , toggleNegation
+    )
 
 {-| A module for creating and modifying boolean formulae.
-
 -}
 
-
-import Maybe
-import List exposing (maximum)
 import Html exposing (..)
+import List exposing (maximum)
+import Maybe
 
-{-- NOT exposed so we can guarantee valid formulae
+
+
+{--NOT exposed so we can guarantee valid formulae
 
 -}
 -- TODO: consider adding a leaf type
-type IndexTree label 
+
+
+type IndexTree label
     = Leaf
     | Node NodeId label (IndexTree label) (IndexTree label)
 
 
-type alias NodeId = Int
+type alias NodeId =
+    Int
 
 
-type alias Formula a = IndexTree (BoolElement a)
+type alias Formula a =
+    IndexTree (BoolElement a)
 
 
-type Negation = Negated | NotNegated
+type Negation
+    = Negated
+    | NotNegated
 
 
 type Junction
@@ -45,12 +68,14 @@ invertJunction junction =
     case junction of
         And ->
             Or
+
         Or ->
             And
 
 
 empty : Formula a
-empty = Leaf
+empty =
+    Leaf
 
 
 isLeaf : Formula a -> Bool
@@ -62,11 +87,14 @@ isLeaf formula =
         _ ->
             False
 
+
 highestIndex : Formula a -> Int
 highestIndex formula =
     case formula of
-        Leaf -> 0 -- to make sure the first node has id 0
+        Leaf ->
+            0
 
+        -- to make sure the first node has id 0
         Node index _ left right ->
             maximum [ index, highestIndex left, highestIndex right ]
                 |> Maybe.withDefault 0
@@ -83,18 +111,17 @@ makeConnective id junction left right =
 
 
 {-| Inserts a new boolean element at the end of a formula
-
 -}
 append : Junction -> BoolElement a -> Formula a -> Formula a
 append junction el formula =
     let
-        newIndex = highestIndex formula
+        newIndex =
+            highestIndex formula
     in
-    
     case formula of
         Leaf ->
             singleton newIndex el
-            
+
         Node i leaf Leaf Leaf ->
             -- Insert a node at a leaf
             Node (newIndex + 1) (Connective junction) (singleton i leaf) (singleton (newIndex + 2) el)
@@ -105,18 +132,17 @@ append junction el formula =
 
 
 {-| Tries to find an element at a given index.
-
 -}
 at : Int -> Formula a -> Maybe (BoolElement a)
 at index formula =
     case formula of
         Leaf ->
             Nothing
-        
+
         Node i node left right ->
             if i == index then
                 Just <| node
-            
+
             else
                 case at index left of
                     Nothing ->
@@ -131,11 +157,11 @@ subTreeAt index formula =
     case formula of
         Leaf ->
             Nothing
-        
+
         Node i _ left right ->
             if i == index then
                 Just <| formula
-            
+
             else
                 case subTreeAt index left of
                     Nothing ->
@@ -144,22 +170,22 @@ subTreeAt index formula =
                     Just f ->
                         Just f
 
+
 sameBoolElementType : BoolElement a -> BoolElement a -> Bool
 sameBoolElementType b1 b2 =
-    case (b1, b2) of
-        (Connective _, Connective _) ->
+    case ( b1, b2 ) of
+        ( Connective _, Connective _ ) ->
             True
-        
-        (Constituent _ _, Constituent _ _) ->
+
+        ( Constituent _ _, Constituent _ _ ) ->
             True
 
         _ ->
             False
 
 
-{-| Removes a subtree at a given index from the tree, and makes sure the tree 
+{-| Removes a subtree at a given index from the tree, and makes sure the tree
 remains a valid boolean formula.
-
 -}
 pruneTreeAt : Int -> Formula a -> Formula a
 pruneTreeAt index tree =
@@ -179,40 +205,46 @@ pruneTreeAt index tree =
 
         Node i node left right ->
             let
-                leftIndex = branchIndex left
-                rightIndex = branchIndex right
+                leftIndex =
+                    branchIndex left
+
+                rightIndex =
+                    branchIndex right
             in
-            
             if leftIndex == index then
                 right
+
             else if rightIndex == index then
                 left
+
             else
-                Node i node
+                Node i
+                    node
                     (pruneTreeAt index left)
                     (pruneTreeAt index right)
 
 
-{-| Replaces a tree at an index if one exists and if the original element has 
+{-| Replaces a tree at an index if one exists and if the original element has
 the same type as the replacement
-
 -}
 replaceTreeAt : Int -> Formula a -> Formula a -> Maybe (Formula a)
 replaceTreeAt index original replacement =
     case original of
         Leaf ->
             Nothing
-        
+
         Node i node left right ->
             if i == index then
                 case replacement of
                     Node _ replacementNode _ _ ->
                         -- if sameBoolElementType replacementNode node then
-                            Just replacement
-                        -- else
-                        --     Nothing
+                        Just replacement
+
+                    -- else
+                    --     Nothing
                     _ ->
                         Nothing
+
             else
                 case replaceTreeAt index left replacement of
                     Nothing ->
@@ -224,22 +256,23 @@ replaceTreeAt index original replacement =
 
 
 {-| Toggles a connective based on their index. Since this is not a balanced
-tree, finding the connective is a bit inefficient 
-
+tree, finding the connective is a bit inefficient
 -}
 toggleConnective : Formula a -> NodeId -> Maybe (Formula a)
 toggleConnective formula index =
     case formula of
         Leaf ->
             Nothing
-        
+
         Node i node left right ->
             if i == index then
                 case node of
                     Connective junction ->
                         Just <| Node i (Connective <| invertJunction junction) left right
+
                     _ ->
                         Nothing
+
             else
                 case toggleConnective left index of
                     Nothing ->
@@ -257,7 +290,7 @@ toggleNegation formula index =
     case formula of
         Leaf ->
             Nothing
-        
+
         Node i node left right ->
             if i == index then
                 case node of
@@ -265,12 +298,13 @@ toggleNegation formula index =
                         case negation of
                             Negated ->
                                 Just <| Node i (Constituent NotNegated value) left right
-                            
+
                             NotNegated ->
                                 Just <| Node i (Constituent Negated value) left right
 
                     _ ->
                         Nothing
+
             else
                 case toggleNegation left index of
                     Nothing ->
@@ -286,22 +320,22 @@ toString valueToString formula =
     case formula of
         Leaf ->
             ""
-        
+
         Node i (Connective junction) left right ->
             case junction of
                 And ->
-                    "(" ++ (toString valueToString left) ++ " AND" ++ "[" ++ (String.fromInt i) ++ "] " ++ (toString valueToString right) ++ ")"
+                    "(" ++ toString valueToString left ++ " AND" ++ "[" ++ String.fromInt i ++ "] " ++ toString valueToString right ++ ")"
 
                 Or ->
-                    "(" ++ (toString valueToString left) ++ " OR" ++ "[" ++ (String.fromInt i) ++ "] " ++ (toString valueToString right) ++ ")"
+                    "(" ++ toString valueToString left ++ " OR" ++ "[" ++ String.fromInt i ++ "] " ++ toString valueToString right ++ ")"
 
         Node i (Constituent negation value) _ _ ->
             case negation of
                 Negated ->
-                    "NOT " ++ valueToString value ++ "[" ++ (String.fromInt i) ++ "]"
-                NotNegated ->
-                    valueToString value ++ "[" ++ (String.fromInt i) ++ "]"
+                    "NOT " ++ valueToString value ++ "[" ++ String.fromInt i ++ "]"
 
+                NotNegated ->
+                    valueToString value ++ "[" ++ String.fromInt i ++ "]"
 
 
 {-| Restructures a boolean formula tree into another datatype. A common example
@@ -309,7 +343,7 @@ would be an HTML list.
 
     toList : List (Html msg) -> Html msg
     toList children =
-        li [] 
+        li []
             [ ul [] children ]
 
     toListItem : BoolElement -> Html msg
@@ -317,16 +351,16 @@ would be an HTML list.
         case el of
             Connective junction ->
                 case junction of
-                    And -> 
+                    And ->
                         li [] [ text "AND" ]
 
-                    Or -> 
+                    Or ->
                         li [] [ text "OR" ]
 
             Constituent negated value ->
                 if negated then
                     li [] [ text <| "NOT " ++ value ]
-                else 
+                else
                     li [] [ text value ]
 
     fromList [ Constituent false "a", Constituent false "b", Constituent false "c"]
@@ -363,7 +397,6 @@ restructure transformLabel transformTree formula =
 
 
 {-| The same as `restructure`, but the label transform also takes an index.
-
 -}
 restructureIndexed : (NodeId -> BoolElement b -> a) -> (List a -> a) -> Formula b -> a
 restructureIndexed transformLabel transformTree formula =
@@ -381,12 +414,13 @@ restructureIndexed transformLabel transformTree formula =
         Leaf ->
             transformTree []
 
+
 {-| Produce a catamorphism of a tree.
 
 (TODO: add example)
 
 -}
-cata :  (NodeId -> a -> b -> b -> b) -> b -> IndexTree a -> b
+cata : (NodeId -> a -> b -> b -> b) -> b -> IndexTree a -> b
 cata f acc formula =
     case formula of
         Leaf ->
