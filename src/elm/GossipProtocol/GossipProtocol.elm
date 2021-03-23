@@ -108,38 +108,27 @@ sequencePermittedOn condition graph sequence =
         |> (\( _, _, isPermitted ) -> isPermitted)
 
 
-
--- TODO: move everything below here to GossipGraph
--- TODO: Extract edgeInAnyDirection function as it is used by both isWeaklyConnected and isStronglyConnected
-
-
-{-| An initial gossip graph G = (A, N, S) is a sun iff N is strongly connected
+{-| An initial gossip graph _G = (A, N, S)_ is a sun iff _N_ is strongly connected
 on the restriction of G to the set of non-terminal nodes.
 
-That is: if you prune leaf nodes (i.e. nodes with only incoming edges), N should be strongly connected.
+That is: if you prune terminal nodes (i.e. nodes with only incoming edges), _N_ should be strongly connected.
 
 -}
 isSunGraph : Graph Agent Relation -> Bool
 isSunGraph graph =
     let
-        prune g =
-            Graph.fold
-                (\ctx acc ->
-                    -- if the only outgoing relation is the identity relation,
-                    -- that means there are no outgoing relations and the node can
-                    -- be pruned
-                    if IntDict.remove ctx.node.id ctx.outgoing |> IntDict.isEmpty then
-                        ctx.node.id :: acc
+        isTerminal context =
+            IntDict.remove context.node.id context.outgoing 
+                |> IntDict.isEmpty
 
-                    else
-                        acc
-                )
-                []
-                g
-                |> List.foldr (\nodeid _ -> Graph.remove nodeid graph) g
+        prune context prunedGraph =
+            if isTerminal context then
+                Graph.remove (context.node.id) prunedGraph
+
+            else
+                prunedGraph
     in
-    graph
-        |> prune
+    Graph.fold prune graph graph
         |> isStronglyConnected Number
 
 

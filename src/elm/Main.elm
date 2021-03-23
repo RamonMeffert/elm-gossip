@@ -314,7 +314,7 @@ updateProtocol msg model =
 {-| Updates the formula after a drag-and-drop event
 -}
 updateFormula : DragId -> DropId -> DragDrop.Position -> Protocol -> Protocol
-updateFormula dragId dropId position formula =
+updateFormula dragId dropId _ formula =
     let
         dragged =
             Formula.subTreeAt dragId formula
@@ -499,6 +499,7 @@ executeCall model call =
                 , inputCallSequence = ""
                 , inputGossipGraph = GossipGraph.Parser.toString newGraph.state
                 , callSequence = Ok []
+                , canonicalGossipGraph = GossipGraph.Parser.toCanonicalString newGraph.state
                 , historyInitialGraph =
                     if Graph.isEmpty model.historyInitialGraph then
                         Result.withDefault Graph.empty model.graph
@@ -572,6 +573,7 @@ executeCallSequence model =
                 , inputCallSequence = ""
                 , inputGossipGraph = GossipGraph.Parser.toString newGraph.state
                 , callSequence = Ok []
+                , canonicalGossipGraph = GossipGraph.Parser.toCanonicalString newGraph.state
                 , historyInitialGraph =
                     if Graph.isEmpty model.historyInitialGraph then
                         Result.withDefault Graph.empty model.graph
@@ -620,6 +622,7 @@ timeTravel to model =
                     ( { model
                         | graph = Ok n.state
                         , inputGossipGraph = GossipGraph.Parser.toString n.state
+                        , canonicalGossipGraph = GossipGraph.Parser.toCanonicalString n.state
                         , historyLocation = to
                       }
                     , Cmd.none
@@ -629,6 +632,7 @@ timeTravel to model =
                     ( { model
                         | graph = Ok model.historyInitialGraph
                         , inputGossipGraph = GossipGraph.Parser.toString model.historyInitialGraph
+                        , canonicalGossipGraph = GossipGraph.Parser.toCanonicalString model.historyInitialGraph
                         , historyLocation = to
                       }
                     , Cmd.none
