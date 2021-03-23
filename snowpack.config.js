@@ -13,23 +13,11 @@ module.exports = {
     }],
     "@snowpack/plugin-postcss"
   ],
-  install: [
-    /* ... */
-  ],
-  installOptions: {
-    /* ... */
-  },
   devOptions: {
     "open": "none",
     "output": "stream"
   },
   buildOptions: {
     "out" : "docs"
-  },
-  proxy: {
-    /* ... */
-  },
-  alias: {
-    /* ... */
   },
 };
