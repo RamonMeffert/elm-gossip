@@ -18,6 +18,7 @@ module.exports = {
     "output": "stream"
   },
   buildOptions: {
-    "out" : "docs"
+    "out" : "docs",
+    "minify": false
   },
 };
