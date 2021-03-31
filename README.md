@@ -71,7 +71,7 @@ This will generate a `docs`<sup>2</sup> directory. You can upload this directory
 
 ---
 
-<sup><sup>1</sup> The entire application, bundled for production, weighs in at around 200kb. That includes compiled js, css, and all images!</sup>  
+<sup><sup>1</sup> The entire application, bundled for production, weighs in at around 200kb. That includes compiled js, css, images and all favicons – most of which you won't even load, since they are platform-specific. For example, when loading the application on Firefox, only 129.29KB (45.73KB gzipped) is downloaded.</sup>  
 <sup><sup>2</sup> The application is configured for deployment to GitHub Pages, which expects a `docs` directory.</sup>
 
 <!--Urls-->
