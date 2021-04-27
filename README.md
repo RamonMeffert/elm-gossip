@@ -21,6 +21,7 @@ Since finishing my thesis, I have been working on implementing new features and 
 - 🛠 Create your own custom gossip protocols
 - 🌳 Generate execution trees
 - ⚠️ Helpful and human-oriented error messages
+- 🪶 Lightweight<sup>1</sup>
 
 ### In progress
 
@@ -44,7 +45,7 @@ You can track the progress of these features on the [issues](https://github.com/
 
 ## Running locally
 
-If you want to build this project yourself, you'll need [`yarn`][1] or [`npm`][1].
+If you want to build this project yourself, you'll need [`yarn`][1] (or, alternatively, [`npm`][1]).
 
 To install:
 
@@ -66,11 +67,12 @@ If you want to build a release, you can run the following command:
 yarn build # or npm build
 ```
 
-This will generate a `docs`<sup>1</sup> directory. You can upload this directory to a web server or run a local web server from this directory (e.g. `python3 -m http.server`) to see the project. Since Elm is compiled to Javascript, uploading the compiled files is all you need to do – you don't have to start a web server as everything runs client side.
+This will generate a `docs`<sup>2</sup> directory. You can upload this directory to a web server or run a local web server from this directory (e.g. `python3 -m http.server`) to see the project. Since Elm is compiled to Javascript, uploading the compiled files is all you need to do – you don't have to start a web server as everything runs client side.
 
 ---
 
-<sup><sup>1</sup> To deploy to GitHub Pages, the folder has to be called `docs`.</sup>
+<sup><sup>1</sup> The entire application, bundled for production, weighs in at around 200kb. That includes compiled js, css, images and all favicons – most of which you won't even load, since they are platform-specific. For example, when loading the application on Firefox, only 129.29KB (45.73KB gzipped) is downloaded.</sup>  
+<sup><sup>2</sup> The application is configured for deployment to GitHub Pages, which expects a `docs` directory.</sup>
 
 <!--Urls-->
 

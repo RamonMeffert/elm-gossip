@@ -16,7 +16,7 @@
             "elm-community/intdict": "3.0.0",
             "elm-community/list-extra": "8.2.4",
             "elm-community/typed-svg": "6.0.0",
-            "gampleman/elm-visualization": "2.1.2",
+            "gampleman/elm-visualization": "2.2.0",
             "lattyware/elm-fontawesome": "5.0.0",
             "norpan/elm-html5-drag-drop": "3.1.4",
             "zwilias/elm-rosetree": "1.5.0"
@@ -40,6 +40,7 @@
             "ianmackenzie/elm-units-prefixed": "2.7.0",
             "justinmimbs/date": "3.2.1",
             "justinmimbs/time-extra": "1.1.0",
+            "rtfeldman/elm-hex": "1.0.0",
             "ryannhg/date-format": "2.3.0"
         }
     },
