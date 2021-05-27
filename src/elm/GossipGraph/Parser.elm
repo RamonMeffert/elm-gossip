@@ -58,32 +58,24 @@ parseRelations agents tokens =
 
 
 parseAgents : List LexToken -> Result String (List Agent)
-parseAgents ts =
+parseAgents tokens =
     let
-        -- we need to check the possible names (i.e. the distinct uppercase characters)
-        -- so we can check if every agent in the input is accounted for
-        possibleNames =
-            ts
-                |> List.foldr
-                    (\t acc ->
-                        case t of
-                            Token _ name _ ->
-                                if Char.isUpper name then
-                                    Set.insert name acc
-
-                                else
-                                    acc
-
-                            _ ->
-                                acc
-                    )
-                    Set.empty
-
         numberOfSegments =
-            ts
+            tokens
                 |> List.filter (\t -> t == Separator)
                 |> List.length
                 |> (+) 1
+
+        maybeAddName el acc =
+            case el of
+                Token _ name _ ->
+                    Set.insert (Char.toUpper name) acc
+
+                _ ->
+                    acc
+
+        agentNames =
+            List.foldr maybeAddName Set.empty tokens
 
         -- compares the result of parsing with the result of the function above, and gives
         -- a hopefully useful debug message so the user can correct their input if needed
@@ -91,13 +83,16 @@ parseAgents ts =
         validateNumberOfAgents agents =
             let
                 numberOfNames =
-                    Set.size possibleNames
+                    Set.size agentNames
 
                 numberOfAgents =
                     List.length agents
             in
             if numberOfNames == 0 then
-                Err "Your input does not contain any secret relations. Therefore, I cannot determine the names of the agents. I need every agent to at least know their own secret!"
+                Err
+                    """Your input does not contain any secret relations.
+                Therefore, I cannot determine the names of the agents.
+                I need every agent to at least know their own secret!"""
 
             else if numberOfAgents < numberOfSegments then
                 Err <|
@@ -108,88 +103,104 @@ parseAgents ts =
                         ++ "."
 
             else if numberOfAgents /= numberOfNames then
-                Err <| "Your input contains the names of " ++ pluralize numberOfNames "name" "names" ++ " agents, but I was only able to identify segments representing the relations of the following " ++ pluralize numberOfAgents "agent" "agents" ++ ": " ++ renderCharacterList (List.map (\a -> a.name) agents) ++ ". Make sure every segment contains the identity relation for the agent it represents!"
+                if numberOfAgents > numberOfNames then
+                    Err <|
+                        "Your input contains the "
+                            ++ (if numberOfNames == 1 then
+                                    "name"
+
+                                else
+                                    "names"
+                               )
+                            ++ " of "
+                            ++ pluralize numberOfNames "agent" "agents"
+                            ++ ", but I found segments representing the relations of "
+                            ++ pluralize numberOfAgents "agent" "agents"
+                            ++ " ("
+                            ++ renderCharacterList (List.map (\a -> a.name) agents)
+                            ++ "). That's too many!"
+
+                else
+                    Err <|
+                        "Your input contains the "
+                            ++ (if numberOfNames == 1 then
+                                    "name"
+
+                                else
+                                    "names"
+                               )
+                            ++ " of "
+                            ++ pluralize numberOfNames "agent" "agents"
+                            ++ ", but I only found "
+                            ++ (if numberOfAgents == 1 then
+                                    "one segment,"
+
+                                else
+                                    "segments"
+                               )
+                            ++ " representing "
+                            ++ pluralize numberOfAgents "agent" "agents"
+                            ++ " ("
+                            ++ renderCharacterList (List.map (\a -> a.name) agents)
+                            ++ "). Make sure every agent is represented in their own segment."
 
             else
                 Ok agents
 
-        -- The main parser function works by looping over the list of tokens.
-        -- While keeping track of the names it has encountered, it loops over the segments
-        -- (i.e. the groups of letters between separators), and takes the first character it
-        -- has not encountered yet as the name of a new agent.
-        -- TODO: An improvement to make the parser a bit stricter could be to enforce the agents
-        --       are represented by secret relations, that is, I_S must be satisfied.
-        --       this could be achieved rather simply by skipping over lowercase characters.
-        parser : List Char -> Int -> List LexToken -> Result String (List Agent)
-        parser names pos tokens =
-            case tokens of
+        parser :
+            List LexToken
+            -> Set.Set Char -- segment names
+            -> Set.Set Char -- all names
+            -> Int -- highest id added
+            -> Int -- segment start
+            -> Int -- pos
+            -> Result String (List Agent)
+        parser ts segmentNames allNames highestIdAdded segmentStart pos =
+            case ts of
+                token :: rest ->
+                    case token of
+                        Token kind name id ->
+                            let
+                                ucName =
+                                    Char.toUpper name
+                            in
+                            if Set.member ucName segmentNames then
+                                -- Duplicate agent name in a segment
+                                Err <| "The segment starting at position " ++ String.fromInt segmentStart ++ " has a duplicate agent."
+
+                            else if kind == Number then
+                                -- lowercase character, so just add it to the list of segment names and continue
+                                parser rest (Set.insert ucName segmentNames) allNames highestIdAdded segmentStart (pos + 1)
+                                    |> Result.andThen (\list -> Ok list)
+
+                            else if id > highestIdAdded && not (Set.member ucName allNames) then
+                                -- an agent name we haven't seen before! add it to the list.
+                                parser rest (Set.insert ucName segmentNames) (Set.insert ucName allNames) id segmentStart (pos + 1)
+                                    |> Result.andThen (\list -> Ok ({ id = id, name = ucName } :: list))
+
+                            else
+                                -- an agent name we have seen before. BORING! just continue.
+                                parser rest (Set.insert ucName segmentNames) allNames highestIdAdded segmentStart (pos + 1)
+                                    |> Result.andThen (\list -> Ok list)
+
+                        Separator ->
+                            -- We need to check for multiple separators because that messes up parsing
+                            case List.head rest of
+                                Just Separator ->
+                                    Err <|
+                                        "I found multiple separators at position "
+                                            ++ String.fromInt pos
+                                            ++ ". "
+                                            ++ "This means I can't be sure which segment represents which agent. "
+                                            ++ "Please make sure every segment is separated by exactly one separator!"
+
+                                _ ->
+                                    parser rest Set.empty allNames highestIdAdded (pos + 1) (pos + 1)
+
                 [] ->
                     Ok []
-
-                (Token _ name id) :: rest ->
-                    if Char.isLower name || List.member name names then
-                        -- skip this agent if it is already known, or if its name is lowercase
-                        parser names (pos + 1) rest
-
-                    else
-                        -- take the current character as an agent and skip until the next separator
-                        let
-                            agent =
-                                { id = id, name = name }
-
-                            skippedCharacters =
-                                takeWhile (\a -> not <| a == Separator) rest |> List.length
-                        in
-                        case parser (name :: names) (pos + 1 + skippedCharacters) (dropWhile (\a -> not <| a == Separator) rest) of
-                            Ok nextTokens ->
-                                Ok <| agent :: nextTokens
-
-                            Err e ->
-                                Err e
-
-                Separator :: rest ->
-                    let
-                        nextSegment =
-                            takeWhile ((/=) Separator) rest
-
-                        isLastToken =
-                            List.isEmpty nextSegment && List.isEmpty rest
-
-                        hasConsectiveSeparators =
-                            List.isEmpty nextSegment && not (List.isEmpty rest)
-
-                        agentNames =
-                            List.foldr
-                                (\t acc ->
-                                    case t of
-                                        Token _ name _ ->
-                                            name :: acc
-
-                                        Separator ->
-                                            acc
-                                )
-                                []
-                                nextSegment
-
-                        distinctAgentNames =
-                            agentNames |> distinct
-
-                        hasDuplicates =
-                            List.length agentNames > List.length distinctAgentNames
-                    in
-                    if isLastToken then
-                        Err <| "I expected another segment at position " ++ String.fromInt pos ++ ", but there's nothing else here."
-
-                    else if hasConsectiveSeparators then
-                        Err <| "I found multiple separators at position " ++ String.fromInt pos ++ "."
-
-                    else if hasDuplicates then
-                        Err <| "The segment starting at position " ++ String.fromInt pos ++ " has a duplicate agent."
-
-                    else
-                        parser names (pos + 1) rest
     in
-    parser [] 1 ts
+    parser tokens Set.empty Set.empty -1 1 1
         |> Result.andThen validateNumberOfAgents
 
 
@@ -206,7 +217,7 @@ renderCharacterList : List Char -> String
 renderCharacterList characters =
     characters
         |> List.map (\x -> String.fromList [ '‘', x, '’' ])
-        |> List.intersperse ","
+        |> List.intersperse ", "
         |> List.concatMap String.toList
         |> String.fromList
 
@@ -252,7 +263,8 @@ lexer options string =
                     else
                         Err <| "Only lower- and uppercase letters and separator(s) " ++ renderCharacterList separators ++ " are allowed."
     in
-    String.toList string
+    String.trim string
+        |> String.toList
         |> charLexer 0
 
 
