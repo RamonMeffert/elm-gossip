@@ -36,7 +36,7 @@ port dragstart : Json.Value -> Cmd msg
 -- MAIN
 
 
-main : Program () Model Message
+main : Program String Model Message
 main =
     Browser.document
         { init = init
@@ -77,16 +77,17 @@ type alias Model =
     , history : Tree HistoryNode
     , historyInitialGraph : Graph Agent Relation
     , executionTreeDepth : Int
-    , modal : { visible : Bool, title : String, content : List (Html Message) }
+    , modal : { visible : Bool, title : List (Html Message), content : List (Html Message) }
     , formula : Protocol
     , dragDrop : DragDrop.Model DragId DropId
     , dragFocus : Maybe Int
     , constituentPickerVisible : Bool
+    , applicationVersion : String
     }
 
 
-init : () -> ( Model, Cmd msg )
-init _ =
+init : String -> ( Model, Cmd msg )
+init version =
     ( { inputGossipGraph = ""
       , inputCallSequence = ""
       , canonicalGossipGraph = ""
@@ -109,13 +110,14 @@ init _ =
             }
       , modal =
             { visible = False
-            , title = ""
+            , title = []
             , content = []
             }
       , formula = Predefined.formulaAny
       , dragDrop = DragDrop.init
       , dragFocus = Nothing
       , constituentPickerVisible = False
+      , applicationVersion = version
       }
     , Cmd.none
     )
@@ -138,7 +140,7 @@ type Message
     | ExecuteCallSequence
     | TimeTravel Int
     | InsertExampleGraph String
-    | ShowModal String (List (Html Message))
+    | ShowModal (List (Html Message)) (List (Html Message))
     | HideModal
     | ChangeExecutionTreeDepth String
     | GenerateExecutionTree
@@ -678,7 +680,7 @@ changeProtocol protocolName model =
 
 helpButtonView : String -> List (Html Message) -> Html Message
 helpButtonView title_ content =
-    button [ class "help", title <| "Information about " ++ String.toLower title_, onClick (ShowModal title_ content) ]
+    button [ class "help", title <| "Information about " ++ String.toLower title_, onClick (ShowModal [text title_] content) ]
         [ Icon.viewIcon Icon.question ]
 
 
@@ -753,13 +755,14 @@ headerHelpView =
     ]
 
 
-headerView : Html Message
-headerView =
+headerView : Model -> Html Message
+headerView model =
     header [ id "header" ]
         [ div [ class "title" ]
             [ img [ id "logo", src "logo-small.svg", title "ElmGossip Logo" ] []
             , div []
-                [ h1 [] [ text "ElmGossip" ] ]
+                [ h1 [] [ text "ElmGossip" ]
+                ]
             ]
         , div [ class "info" ]
             [ a
@@ -771,7 +774,7 @@ headerView =
                 [ Icon.viewIcon Icon.github
                 , text "Source code"
                 ]
-            , button [ class "transparent help icon", title "About this tool", onClick (ShowModal "ElmGossip" headerHelpView) ]
+            , button [ class "transparent help icon", title "About this tool", onClick (ShowModal ([text "ElmGossip ", span [ class "note" ] [text "v", text model.applicationVersion]]) (headerHelpView)) ]
                 [ Icon.viewIcon Icon.infoCircle, text "About" ]
             ]
         ]
@@ -885,7 +888,7 @@ gossipGraphView model =
             [ label [ for "gossip-graph-input" ] [ text "Gossip graph input" ]
             , div [ class "input-group" ]
                 [ input [ type_ "text", id "gossip-graph-input", value model.inputGossipGraph, onInput ChangeGossipGraph, placeholder "Gossip graph representation" ] []
-                , button [ type_ "button", title "Select one of several predefined gossip graphs", onClick <| ShowModal "Gossip Graph input examples" gossipGraphExamples ] [ text "Examples" ]
+                , button [ type_ "button", title "Select one of several predefined gossip graphs", onClick <| ShowModal [ text "Gossip Graph input examples" ] gossipGraphExamples ] [ text "Examples" ]
                 ]
             , label [ for "canonical-graph-input" ] [ text "Canonical representation" ]
             , div [ class "input-group" ]
@@ -987,7 +990,7 @@ historyView model =
             [ h2 [] [ text "Call history" ]
             , div [ class "input-set" ]
                 [ button [ type_ "button", title "Clear the call history", onClick ClearExecutionTree ] [ Icon.viewIcon Icon.eraser ]
-                , button [ type_ "button", title "Generate an execution tree", onClick (ShowModal "Execution Tree" (executionTreeModalView model)) ] [ Icon.viewIcon Icon.fastForward ]
+                , button [ type_ "button", title "Generate an execution tree", onClick (ShowModal [ text "Execution Tree" ] (executionTreeModalView model)) ] [ Icon.viewIcon Icon.fastForward ]
                 , helpButtonView "Call history" historyHelpView
                 ]
             ]
@@ -1231,7 +1234,7 @@ callSequenceView model =
                     , id "call-sequence-validity"
                     , onClick <|
                         ShowModal
-                            "Call sequence permissibility"
+                            [ text "Call sequence permissibility" ]
                             (callSequencePermissibilityHelpView (Maybe.withDefault "?" <| Dict.get model.protocolName Predefined.name) permitted)
                     ]
                     [ Icon.viewStyled [ style "color" "green" ] Icon.check ]
@@ -1242,7 +1245,7 @@ callSequenceView model =
                     , id "call-sequence-validity"
                     , onClick <|
                         ShowModal
-                            "Call sequence permissibility"
+                            [ text "Call sequence permissibility" ]
                             (callSequencePermissibilityHelpView (Maybe.withDefault "?" <| Dict.get model.protocolName Predefined.name) permitted)
                     ]
                     [ Icon.viewStyled [ style "color" "red" ] Icon.times ]
@@ -1642,7 +1645,7 @@ modalView model =
         ]
         [ div [ class "modal-window" ]
             [ header [ class "modal-header" ]
-                [ h3 [] [ text model.modal.title ]
+                [ h3 [] model.modal.title
                 , button [ type_ "button", title "Close window", onClick HideModal ] [ Icon.viewIcon Icon.times ]
                 ]
             , div [ class "modal-content" ] model.modal.content
@@ -1654,7 +1657,7 @@ view : Model -> Document Message
 view model =
     { title = "ElmGossip"
     , body =
-        [ headerView
+        [ headerView model
         , protocolView model
         , callSequenceView model
         , historyView model

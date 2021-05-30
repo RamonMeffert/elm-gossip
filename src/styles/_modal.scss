@@ -41,6 +41,11 @@
             h3 {
                 font-weight: normal;
                 margin: v.$pad-v / 2 v.$pad-h;
+
+                span.note {
+                    color: color.scale(theme.$baseTextColor, $alpha: -50%);
+                    font-size: 78%;
+                }
             }
 
             button {
