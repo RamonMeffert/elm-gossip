@@ -1,16 +1,10 @@
 # ElmGossip: Explore dynamic gossip in your browser
 
-[![Website](https://img.shields.io/website?url=https%3A%2F%2Framonmeffert.github.io%2Felm-gossip%2F)](https://ramonmeffert.github.io/elm-gossip/)
-[![License](https://img.shields.io/github/license/ramonmeffert/elm-gossip)](https://github.com/RamonMeffert/elm-gossip/blob/master/LICENSE)
+> **NOTE**: This is an _anonymized_ version of the tool and repository. Therefore, _some_ information that included references to the author(s) might be missing.
 
 ElmGossip is a web tool for exploring and analysing dynamic gossip, built in [Elm](https://elm-lang.org).
-The tool is available [online](https://ramonmeffert.github.io/elm-gossip/), or you can follow the [instructions](#running-locally) below to run the tool locally.
+The tool is available [online](https://ipfs.io/ipfs/QmNkZ9sZ6AYWnjitGAj49JEvgyG8UHMCtrr2HuGJaSskyA) if you have access to [IPFS](https://ipfs.io), or you can follow the [instructions](#running-locally) below to run the tool locally.
 In general, we advise using the online version unless you plan to do anything with the source code.
-
-## About
-
-This tool began its life as part of my [bachelor's thesis](https://fse.studenttheses.ub.rug.nl/23961/).
-Since finishing my thesis, I have been working on implementing new features and polishing the tool.
 
 ## Features
 
@@ -36,8 +30,6 @@ Since finishing my thesis, I have been working on implementing new features and 
 - Dark mode  
   _🌚_
 
-You can track the progress of these features on the [issues](https://github.com/RamonMeffert/tools-for-gossip/issues) page.
-
 ### Future ideas
 
 - Mobile support
@@ -45,7 +37,9 @@ You can track the progress of these features on the [issues](https://github.com/
 
 ## Running locally
 
-If you want to build this project yourself, you'll need [`yarn`][1] (or, alternatively, [`npm`][1]).
+If you want to build this project yourself, you'll need [`yarn`][1] (or,
+alternatively, [`npm`][1]). Clone the repository, and follow the instructions
+below:
 
 To install:
 

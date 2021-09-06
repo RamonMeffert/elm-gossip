@@ -705,16 +705,6 @@ headerHelpView =
     in
     
     [ p []
-        [ text "ElmGossip is a web tool for exploring and analysing dynamic gossip."
-        , text " This application is developed by "
-        , newTabLink (text "Ramon Meffert") "Ramon's personal website" "https://r3n.nl"
-        , text " and started as part of his "
-        , newTabLink (text "bachelor's research project") "the thesis on the project" "https://fse.studenttheses.ub.rug.nl/23961/"
-        , text " at the University of Groningen under supervision of Dr. "
-        , newTabLink (text "Malvin Gattinger") "Malvin's personal website" "https://malv.in"
-        , text "."
-        ]
-    , p []
         [ text "This tool is built on the following free software:" ]
     , ul []
         [ li []
@@ -747,11 +737,6 @@ headerHelpView =
             [ newTabLink ( text "Sass" ) "the Sass website" "https://sass-lang.org/"
             , text " for better CSS" ]
         ]
-    , p []
-        [ text "The source code is available on " 
-        , newTabLink (text "GitHub") "the GitHub repository for ElmGossip" "https://github.com/ramonmeffert/elm-gossip"
-        , text "."
-        ]
     ]
 
 
@@ -765,16 +750,7 @@ headerView model =
                 ]
             ]
         , div [ class "info" ]
-            [ a
-                [ class "transparent icon button"
-                , href "https://github.com/ramonmeffert/elm-gossip"
-                , title "Source code (opens in a new tab)"
-                , target "_blank"
-                ]
-                [ Icon.viewIcon Icon.github
-                , text "Source code"
-                ]
-            , button [ class "transparent help icon", title "About this tool", onClick (ShowModal ([text "ElmGossip ", span [ class "note" ] [text "v", text model.applicationVersion]]) (headerHelpView)) ]
+            [ button [ class "transparent help icon", title "About this tool", onClick (ShowModal ([text "ElmGossip ", span [ class "note" ] [text "v", text model.applicationVersion]]) (headerHelpView)) ]
                 [ Icon.viewIcon Icon.infoCircle, text "About" ]
             ]
         ]
