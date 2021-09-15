@@ -40,7 +40,7 @@ You can track the progress of these features on the [issues](https://github.com/
 
 ### Future ideas
 
-- Mobile support
+- Mobile support (#75)
 - Turn the site into a Progressive Web App for offline access
 
 ## Running locally
