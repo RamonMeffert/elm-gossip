@@ -32,7 +32,7 @@ In general, we advise using the online version unless you plan to do anything wi
 
 ### Future ideas
 
-- Mobile support
+- Mobile support ([#75](https://github.com/RamonMeffert/elm-gossip/issues/75))
 - Turn the site into a Progressive Web App for offline access
 
 ## Running locally
