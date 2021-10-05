@@ -36,11 +36,11 @@ Since finishing my thesis, I have been working on implementing new features and 
 - Dark mode  
   _🌚_
 
-You can track the progress of these features on the [issues](https://github.com/RamonMeffert/tools-for-gossip/issues) page.
+You can track the progress of these features on the [issues](https://github.com/RamonMeffert/elm-gossip/issues) page.
 
 ### Future ideas
 
-- Mobile support
+- Mobile support ([#75](https://github.com/RamonMeffert/elm-gossip/issues/75))
 - Turn the site into a Progressive Web App for offline access
 
 ## Running locally
