@@ -1,6 +1,7 @@
 @use 'mixins' as m;
 @use 'theme';
 @use 'sass:color';
+@use 'sass:math';
 @use 'variables' as v;
 
 #protocol-builder {
@@ -123,7 +124,7 @@
     .window {
         position: absolute;
         top: 0;
-        left: calc(25% - #{v.$pad-h / 2} + 1px);;
+        left: calc(25% - #{math.div(v.$pad-h, 2)} + 1px);;
         @include m.box;
         box-shadow: 0 .2rem 1rem rgba(0,0,0,.2);
         width: calc(50% - #{v.$pad-h} - 6px);
@@ -134,15 +135,15 @@
             width: 100%;
 
             button {
-                width: calc(50% - #{v.$pad-h / 2});
+                width: calc(50% - #{math.div(v.$pad-h, 2)});
                 box-sizing: border-box;
 
                 &:nth-child(2n - 1) {
-                    margin-right: v.$pad-h / 2;
+                    margin-right: math.div(v.$pad-h, 2);
                 }
 
                 &:nth-child(2n) {
-                    margin-left: v.$pad-h / 2;
+                    margin-left: math.div(v.$pad-h, 2);
                 }
 
                 &:not(:nth-child(1)):not(:nth-child(2)) {

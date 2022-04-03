@@ -2,6 +2,7 @@
 @use 'mixins'as m;
 @use 'theme';
 @use 'sass:color';
+@use 'sass:math';
 
 input[type=text]:disabled {
     background-color: color.scale(theme.$baseTextColor, $alpha: -90%);
@@ -57,10 +58,10 @@ a.button {
     }
 
     &.icon {
-        padding-left: v.$pad-h / 3 * 2;
+        padding-left: math.div(v.$pad-h, 3 * 2);
 
         svg {
-            margin-right: v.$pad-h / 2;
+            margin-right: math.div(v.$pad-h, 2);
         }
     }
 
@@ -80,15 +81,15 @@ a.button {
 select {
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 48'><path fill='#{theme.$baseTextColor}' d='M23.7 17.3c.9 1.5-.2 3.5-2 3.5H2.3c-1.8 0-2.9-1.9-2-3.5L10 1.1c.9-1.5 3-1.5 3.9 0 .1 0 9.8 16.2 9.8 16.2zM.3 30.7c-.9-1.5.2-3.5 2-3.5h19.4c1.8 0 2.9 1.9 2 3.5L14 46.9c-.9 1.5-3 1.5-3.9 0C10 46.9.3 30.7.3 30.7z'/></svg>");
     background-repeat: no-repeat;
-    background-position: center right (v.$pad-h / 1.5);
+    background-position: center right math.div(v.$pad-h, 1.5);
     background-origin: padding-box;
     background-size: .5rem;
     padding-right: v.$pad-h * 1.5;
 }
 
 label {
-    padding: 0 v.$pad-h / 2;
-    margin-bottom: v.$pad-v / 4;
+    padding: 0 math.div(v.$pad-h, 2);
+    margin-bottom: math.div(v.$pad-v, 4);
     display: block;
     font-size: 80%;
     color: color.scale(theme.$baseTextColor, $alpha: -50%);
@@ -98,7 +99,7 @@ label {
 .input-set {
     input:not([type=checkbox]), button, select, .input-group {
         &:not(:last-child) {
-            margin-right: v.$pad-h / 2;
+            margin-right: math.div(v.$pad-h, 2);
         }
     }
 }

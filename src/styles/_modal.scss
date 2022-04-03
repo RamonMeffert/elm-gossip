@@ -2,6 +2,7 @@
 @use 'mixins'as m;
 @use 'theme';
 @use 'sass:color';
+@use 'sass:math';
 
 .modal-overlay {
     position: absolute;
@@ -40,7 +41,7 @@
 
             h3 {
                 font-weight: normal;
-                margin: v.$pad-v / 2 v.$pad-h;
+                margin: math.div(v.$pad-v, 2) v.$pad-h;
 
                 span.note {
                     color: color.scale(theme.$baseTextColor, $alpha: -50%);
@@ -91,7 +92,7 @@
                 }
 
                 td {
-                    padding: v.$pad-v / 2 v.$pad-h / 2;
+                    padding: math.div(v.$pad-v, 2) math.div(v.$pad-h, 2);
                     border-bottom: 2px solid color.scale(theme.$baseTextColor, $alpha: -85%);
 
                     &.c {
@@ -100,7 +101,7 @@
                 }
 
                 th {
-                    padding: v.$pad-v / 2 v.$pad-h / 2;
+                    padding: math.div(v.$pad-v, 2) math.div(v.$pad-h, 2);
                     border-bottom: 2px solid color.scale(theme.$baseTextColor, $alpha: -75%);
                     text-align: left;
                 }
