@@ -9,6 +9,7 @@
 @use 'alert';
 @use 'modal';
 @use 'sass:color';
+@use 'sass:math';
 @use 'theme';
 
 html {
@@ -44,7 +45,7 @@ a {
     // padding: 0 v.$pad-h;
     // border: none;
     background-color: transparent;
-    grid-column: 1 / span 1;
+    grid-column: 1, span 1;
     grid-row: 1 / span 1;
     display: flex;
     justify-content: space-between;
@@ -183,11 +184,11 @@ hr {
 
 .connection-info {
     @include m.box;
-    padding: v.$pad-v /2 v.$pad-h / 2;
+    padding: math.div(v.$pad-v, 2) math.div(v.$pad-h, 2);
     display: flex;
     align-content: center;
     transition: all .2s;
-    margin-bottom: v.$pad-v / 2;
+    margin-bottom: math.div(v.$pad-v, 2);
 
     .explanation {
         display: none;
@@ -196,12 +197,12 @@ hr {
     .divider {
         width: 2px;
         background-color: color.scale(theme.$baseTextColor, $alpha: -90%);
-        margin-right: v.$pad-h / 2;
+        margin-right: math.div(v.$pad-h, 2);
     }
 
     & > div {
         &:not(:last-child) .icon {
-            margin-right: v.$pad-h / 2;
+            margin-right: math.div(v.$pad-h, 2);
         }
 
         .icon {
@@ -225,7 +226,7 @@ hr {
             line-height: 150%;
 
             .icon {
-                margin-right: v.$pad-h / 3 * 2;
+                margin-right: math.div(v.$pad-h, 3 * 2);
             }
         }
 
@@ -236,7 +237,7 @@ hr {
         .divider {
             width: 100%;
             height: 2px;
-            margin: v.$pad-v / 2 0;
+            margin: math.div(v.$pad-v, 2) 0;
         }
     }
 }

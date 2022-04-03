@@ -1,5 +1,6 @@
 @use 'variables' as v;
 @use 'sass:color';
+@use 'sass:math';
 @use 'mixins' as m;
 @use 'theme';
 
@@ -9,10 +10,10 @@
 }
 
 .call, .dead-end {
-    padding: 0 v.$pad-h / 2;
+    padding: 0 math.div(v.$pad-h, 2);
     line-height: 2rem;
-    margin-right: v.$pad-h / 2;
-    margin-bottom: v.$pad-v / 2;
+    margin-right: math.div(v.$pad-h, 2);
+    margin-bottom: math.div(v.$pad-v, 2);
     border-radius: v.$border-radius;
     text-align: center;
     cursor: default;
@@ -121,9 +122,9 @@
                     content: "";
                     position: absolute;
                     display: block;
-                    width: calc(#{$nwd / 2 + $hsp} + 3px);
-                    height: calc(#{$nht / 2 + $vsp} + 3px);
-                    left: calc(#{-$nwd / 2} - 3px);
+                    width: calc(#{math.div($nwd, 2) + $hsp} + 3px);
+                    height: calc(#{math.div($nht, 2) + $vsp} + 3px);
+                    left: calc(#{-1 * math.div($nwd, 2)} - 3px);
                     top: -$vsp;
                     box-sizing: border-box;
                     border-style: solid;
@@ -138,9 +139,9 @@
                     content: "";
                     position: absolute;
                     display: block;
-                    width: calc(#{$nwd / 2 + $hsp} + 3px);
-                    height: calc(#{$nht / 2 + $vsp} + 3px);
-                    left: calc(#{-$nwd / 2} - 3px);
+                    width: calc(#{math.div($nwd, 2) + $hsp} + 3px);
+                    height: calc(#{math.div($nht, 2) + $vsp} + 3px);
+                    left: calc(#{-1 * math.div($nwd, 2)} - 3px);
                     top: -$vsp;
                     box-sizing: border-box;
                     border-style: solid;
@@ -153,7 +154,7 @@
                     position: absolute;
                     display: block;
                     width: $ewd;
-                    left: calc(#{-$nwd / 2} - 3px);
+                    left: calc(#{-1 * math.div($nwd, 2)} - 3px);
                     height: 100%; //$nht + 2 * $vsp;
                     top: -$vsp;
                     background-color: theme.$baseTextColor;
@@ -167,7 +168,7 @@
                     position: absolute;
                     display: block;
                     width: $hsp;
-                    height: calc(#{$nht / 2 + $vsp} + 3px);
+                    height: calc(#{math.div($nht, 2) + $vsp} + 3px);
                     left: 0;
                     top: -$vsp;
                     box-sizing: border-box;
@@ -183,7 +184,7 @@
                     position: absolute;
                     display: block;
                     width: $ewd;
-                    left: calc(#{-$nwd / 2} - 3px);
+                    left: calc(#{-1 * math.div($nwd, 2)} - 3px);
                     height: calc(100% - #{$nht * 4} - #{$vsp * 2});
                     top: calc(#{$nht} + 4px);
                     background-color: theme.$baseTextColor;

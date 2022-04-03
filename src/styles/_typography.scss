@@ -23,7 +23,7 @@ body {
         border: 2px solid color.scale(theme.$baseTextColor, $alpha: -90%);
         font-family: $-mono;
         font-size: 85%;
-        padding: v.$pad-v / 8 v.$pad-h / 3 v.$pad-v / 10;
+        padding: math.div(v.$pad-v, 8) math.div(v.$pad-h, 3) math.div(v.$pad-v, 10);
         border-radius: v.$border-radius;
     }
 
@@ -32,7 +32,7 @@ body {
         border: 2px solid color.scale(theme.$baseTextColor, $alpha: -90%);
         font-family: $-mono;
         font-size: 85%;
-        padding: v.$pad-v / 2 v.$pad-h;
+        padding: math.div(v.$pad-v, 2) v.$pad-h;
         border-radius: v.$border-radius;
     }
 }
@@ -45,10 +45,10 @@ body {
         font-family: $-header;
         font-weight: bold;
         margin-top: 0;
-        margin-bottom: $size / 2;
+        margin-bottom: math.div($size, 2);
     }
 
     h#{$level} + p.subtitle {
-        font-size: $size / ($-type-scale * 2);
+        font-size: math.div($size, ($-type-scale * 2));
     }
 }
