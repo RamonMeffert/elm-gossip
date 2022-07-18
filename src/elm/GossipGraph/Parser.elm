@@ -96,53 +96,44 @@ parseAgents tokens =
 
             else if numberOfAgents < numberOfSegments then
                 Err <|
-                    "I found "
-                        ++ pluralize numberOfSegments "segment" "segments"
-                        ++ ", but I only found "
-                        ++ pluralize numberOfAgents "unique agent" "unique agents"
-                        ++ "."
+                    String.concat
+                        [ "I found "
+                        , pluralize numberOfSegments "segment" "segments"
+                        , ", but I only found "
+                        , pluralize numberOfAgents "unique agent" "unique agents"
+                        , "."
+                        ]
 
             else if numberOfAgents /= numberOfNames then
                 if numberOfAgents > numberOfNames then
                     Err <|
-                        "Your input contains the "
-                            ++ (if numberOfNames == 1 then
-                                    "name"
-
-                                else
-                                    "names"
-                               )
-                            ++ " of "
-                            ++ pluralize numberOfNames "agent" "agents"
-                            ++ ", but I found segments representing the relations of "
-                            ++ pluralize numberOfAgents "agent" "agents"
-                            ++ " ("
-                            ++ renderCharacterList (List.map (\a -> a.name) agents)
-                            ++ "). That's too many!"
+                        String.concat
+                            [ "Your input contains the "
+                            , pluralize numberOfNames "name" "names"
+                            , " of "
+                            , pluralize numberOfNames "agent" "agents"
+                            , ", but I found segments representing the relations of "
+                            , pluralize numberOfAgents "agent" "agents"
+                            , " ("
+                            , renderCharacterList (List.map (\a -> a.name) agents)
+                            , "). That's too many!"
+                            ]
 
                 else
                     Err <|
-                        "Your input contains the "
-                            ++ (if numberOfNames == 1 then
-                                    "name"
-
-                                else
-                                    "names"
-                               )
-                            ++ " of "
-                            ++ pluralize numberOfNames "agent" "agents"
-                            ++ ", but I only found "
-                            ++ (if numberOfAgents == 1 then
-                                    "one segment,"
-
-                                else
-                                    "segments"
-                               )
-                            ++ " representing "
-                            ++ pluralize numberOfAgents "agent" "agents"
-                            ++ " ("
-                            ++ renderCharacterList (List.map (\a -> a.name) agents)
-                            ++ "). Make sure every agent is represented in their own segment."
+                        String.concat
+                            [ "Your input contains the "
+                            , pluralize numberOfNames "name" "names"
+                            , " of "
+                            , pluralize numberOfNames "agent" "agents"
+                            , ", but I only found "
+                            , pluralize numberOfAgents "segment" "segments"
+                            , " representing "
+                            , pluralize numberOfAgents "agent" "agents"
+                            , " ("
+                            , renderCharacterList (List.map (\a -> a.name) agents)
+                            , "). Make sure every agent is represented in their own segment."
+                            ]
 
             else
                 Ok agents
@@ -188,11 +179,13 @@ parseAgents tokens =
                             case List.head rest of
                                 Just Separator ->
                                     Err <|
-                                        "I found multiple separators at position "
-                                            ++ String.fromInt pos
-                                            ++ ". "
-                                            ++ "This means I can't be sure which segment represents which agent. "
-                                            ++ "Please make sure every segment is separated by exactly one separator!"
+                                        String.concat
+                                            [ "I found multiple separators at position "
+                                            , String.fromInt pos
+                                            , ". "
+                                            , "This means I can't be sure which segment represents which agent. "
+                                            , "Please make sure every segment is separated by exactly one separator!"
+                                            ]
 
                                 _ ->
                                     parser rest Set.empty allNames highestIdAdded (pos + 1) (pos + 1)
