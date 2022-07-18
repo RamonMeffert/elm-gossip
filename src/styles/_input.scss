@@ -61,7 +61,7 @@ a.button {
         padding-left: math.div(v.$pad-h, 3 * 2);
 
         svg {
-            margin-right: math.div(v.$pad-h, 2);
+            margin: 0 math.div(v.$pad-h, 2);
         }
     }
 
