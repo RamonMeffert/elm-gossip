@@ -1,2 +1,2 @@
-let json = {"version":"0.3.2"};
+let json = {"version":"0.3.3"};
 export default json;
