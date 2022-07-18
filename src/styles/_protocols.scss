@@ -42,10 +42,9 @@
     .constituent {
         display: flex;
         justify-content: space-between;
-        align-items: stretch;
+        align-items: center;
     
         .protocol-constituent {
-            display: flex;
             align-items: center;
         }
     }
@@ -124,10 +123,11 @@
     .window {
         position: absolute;
         top: 0;
-        left: calc(25% - #{math.div(v.$pad-h, 2)} + 1px);;
+        left: min(25%, calc(50% - v.$pad-h - 110px));
         @include m.box;
         box-shadow: 0 .2rem 1rem rgba(0,0,0,.2);
-        width: calc(50% - #{v.$pad-h} - 6px);
+        width: calc(50% - 2 * 2px - 2 * v.$pad-h);
+        min-width: 220px;
 
         .constituents {
             flex-wrap: wrap;

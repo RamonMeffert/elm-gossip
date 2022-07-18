@@ -1599,17 +1599,7 @@ protocolView model =
                         calls =
                             GossipProtocol.selectCalls graph
                                 model.protocolCondition
-                                (Tree.flatten model.history
-                                    |> List.foldr
-                                        (\el acc ->
-                                            case el of
-                                                Node n ->
-                                                    n.call :: acc
-
-                                                _ ->
-                                                    acc
-                                        )
-                                        []
+                                (findHistoryUpToIndex model.history model.historyLocation
                                 )
                     in
                     if String.isEmpty model.inputGossipGraph then
@@ -1627,6 +1617,35 @@ protocolView model =
                     ]
             )
         ]
+
+
+findHistoryUpToIndex : Tree HistoryNode -> Int -> List Call
+findHistoryUpToIndex history index =
+    let
+        getIndex : HistoryNode -> Int
+        getIndex hNode =
+            case hNode of
+                Root -> 0
+                DeadEnd -> -1
+                Node a -> a.index
+
+        getCall : HistoryNode -> List Call
+        getCall hNode =
+            case hNode of
+                Node a -> [ a.call ]
+                _ -> []
+
+        makeHistory : List Call -> Tree.Zipper.Zipper HistoryNode -> List Call
+        makeHistory h zip =
+            case Tree.Zipper.parent zip of
+                Just z -> (Tree.Zipper.label z |> getCall) ++ h
+
+                Nothing -> h
+    in
+    Tree.Zipper.fromTree history
+        |> Tree.Zipper.findFromRoot (\l -> getIndex l == index)
+        |> Maybe.withDefault (Tree.Zipper.fromTree history)
+        |> (\t -> makeHistory (Tree.Zipper.label t |> getCall) t)
 
 
 addProtocolConstituentButton : ProtocolConstituent -> Html Message

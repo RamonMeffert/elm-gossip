@@ -1,6 +1,6 @@
 {
   "name": "elm-gossip",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "scripts": {
     "start": "snowpack dev",
     "build": "run-s versionify build-snowpack compress clean",

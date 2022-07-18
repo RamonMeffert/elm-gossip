@@ -324,7 +324,7 @@ evaluateFormulaAsProtocolCondition formula ( x, y ) relations sequence =
                             negate False
 
                         Constituents.Empty ->
-                            negate <| Constituents.empty sequence
+                            negate <| Constituents.empty sigma_x
 
                         Constituents.LastTo ->
                             negate <| Constituents.lastTo x sigma_x
