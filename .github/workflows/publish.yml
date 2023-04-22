@@ -22,13 +22,11 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.5.2
         with:
           persist-credentials: false
           fetch-depth: 0
-      - uses: actions/setup-node@v1
-        with:
-          node-version: '12'
+      - uses: actions/setup-node@v2.5.2
       - run: yarn install
       - run: yarn build
       - name: Commit files
